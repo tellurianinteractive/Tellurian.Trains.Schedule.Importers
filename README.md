@@ -20,7 +20,7 @@ Therefore a rigoruios validation is required before it is possible to import XPL
 Validation is performed in two stages:
 * First the referential integrity of the XPLN-document is checked to verify that it is consistent. 
 Errors found in this stage have to be fixed in the XPLN-document.
+This is handled by this package.
 * Secondly a number of possible scheduling conflicts are checked. 
 Warnings found in this stage can be fixed either in XPLN or in the database.
-
-The first stage is handled in this component, while the second stage is handled in the package *Tellurian.Trains.Models.Planning*. 
+This is handled in the package *Tellurian.Trains.Models.Planning*. 
