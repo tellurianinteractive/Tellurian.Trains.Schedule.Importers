@@ -1,14 +1,10 @@
-﻿using System.Globalization;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace Tellurian.Trains.Repositories.Xpln
 {
     public static class StringExtensions
     {
-        public static int ParseTrainNumber(this string me)
-        {
-            return int.Parse(Regex.Match(me, @"\d+").Value, NumberStyles.Any);
-        }
+        public static string ParseTrainNumber(this string me) => Regex.Match(me, @"\d+").Value;
 
         public static string ParsesTrainCategory(this string me)
         {

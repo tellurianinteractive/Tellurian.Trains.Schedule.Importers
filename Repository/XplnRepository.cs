@@ -17,7 +17,7 @@ namespace Tellurian.Trains.Repositories.Xpln
         }
     }
 
-    public sealed class XplnRepository : ILayoutRepository, ITimetableRepository, IScheduleRepository, IDisposable
+    public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, IScheduleReadStore, IDisposable
     {
         private const string XplnFileSuffix = ".ods";
         private const int TrainIdColumn = 8;
@@ -37,19 +37,9 @@ namespace Tellurian.Trains.Repositories.Xpln
             return Path.Combine(DocumentsDirectory.FullName, string.IsNullOrEmpty(Path.GetExtension(name)) ? name + XplnFileSuffix : name);
         }
 
-        public TrackLayout GetCurrentLayout()
-        {
-            throw new NotSupportedException();
-        }
-
-        public Timetable GetCurrentTimetable()
-        {
-            throw new NotSupportedException();
-        }
-
         #region Layouts
 
-        public (Maybe<TrackLayout> layout, IEnumerable<Message> layoutMessages) GetLayout(string name)
+        public (Maybe<TrackLayout> item, IEnumerable<Message> messages) GetLayout(string name)
         {
             var messages = new List<Message>();
             var result = new TrackLayout(name);
@@ -158,7 +148,7 @@ namespace Tellurian.Trains.Repositories.Xpln
 
         #region Timetable
 
-        public (Maybe<Timetable> maybe, IEnumerable<Message> messages) GetTimetable(string name)
+        public (Maybe<Timetable> item, IEnumerable<Message> messages) GetTimetable(string name)
         {
             var (layout, layoutMessages) = GetLayout(name);
             if (layoutMessages.HasStoppingErrors())
@@ -256,7 +246,7 @@ namespace Tellurian.Trains.Repositories.Xpln
 
         #region Schedule
 
-        public (Maybe<Schedule> schedule, IEnumerable<Message> scheduleMessages) GetSchedule(string name)
+        public (Maybe<Schedule> item, IEnumerable<Message> messages) GetSchedule(string name)
         {
             var (timetable, timetableMessages) = GetTimetable(name);
             if (timetableMessages.HasStoppingErrors())
@@ -406,11 +396,6 @@ namespace Tellurian.Trains.Repositories.Xpln
         public IEnumerable<string> Save(Timetable timetable)
         {
             throw new NotSupportedException(nameof(Save));
-        }
-
-        public void Save(Schedule schedule)
-        {
-            throw new NotSupportedException(nameof(schedule));
         }
 
         #region IDisposable Support

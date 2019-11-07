@@ -1,9 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Tellurian.Trains.Repositories.Xpln.Tests
 {
@@ -13,9 +8,9 @@ namespace Tellurian.Trains.Repositories.Xpln.Tests
         [TestMethod]
         public void ParsesTrainNumber()
         {
-            Assert.AreEqual(1234, "1234".ParseTrainNumber());
-            Assert.AreEqual(5814, "GT CL5814".ParseTrainNumber());
-            Assert.AreEqual(8318, "GT HCR 8318".ParseTrainNumber());
+            Assert.AreEqual("1234", "1234".ParseTrainNumber());
+            Assert.AreEqual("5814", "GT CL5814".ParseTrainNumber());
+            Assert.AreEqual("8318", "GT HCR 8318".ParseTrainNumber());
         }
 
         [TestMethod]
