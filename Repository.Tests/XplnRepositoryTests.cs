@@ -40,7 +40,7 @@ namespace Tellurian.Trains.Repositories.Xpln.Tests
         [TestMethod]
         public void ImportsHellerup2015()
         {
-            TestDocumentImport("Hellerup2015", "da-DK", 60, 24, 3, 0);
+            TestDocumentImport("Hellerup2015", "da-DK", 60, 24, 20, 0);
         }
 
         [TestMethod]

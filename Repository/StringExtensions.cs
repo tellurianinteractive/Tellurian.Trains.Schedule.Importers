@@ -1,10 +1,12 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
+using Tellurian.Trains.Models.Planning;
 
 namespace Tellurian.Trains.Repositories.Xpln
 {
     public static class StringExtensions
     {
-        public static string ParseTrainNumber(this string me) => Regex.Match(me, @"\d+").Value;
+        public static string ParseTrainNumber(this string me) => Regex.Match(me, @"\d+").Value.TrimStart('0');
 
         public static string ParsesTrainCategory(this string me)
         {
@@ -23,5 +25,8 @@ namespace Tellurian.Trains.Repositories.Xpln
             }
             return me.Substring(start, length);
         }
+
+        public static Time AsTime(this string value) =>
+            Time.FromDays(double.Parse(value.Replace(",", "."), NumberStyles.Float, CultureInfo.InvariantCulture));
     }
 }

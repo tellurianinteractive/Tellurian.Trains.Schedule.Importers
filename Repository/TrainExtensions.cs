@@ -8,12 +8,12 @@ namespace Tellurian.Trains.Repositories.Xpln
     {
         public static (Maybe<StationCall> call, int index) FindBetweenArrivlAndBeparture(this Train me, string stationSignature, Time time)
         {
-            var result = me.Calls.Select((call, index) => (call, index)).SingleOrDefault(item => item.call.Station.Signature == stationSignature && item.call.Arrival <= time && item.call.Departure >= time);
+            var result = me.Calls.Select((call, index) => (call, index)).SingleOrDefault(item => item.call.Station.Signature == stationSignature && item.call.Arrival <= time.Value && item.call.Departure >= time.Value);
             if (result.call is null)
             {
-                return (Maybe<StationCall>.None(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ThereIsNoStationWithSignatureOrName, stationSignature)), -1);
+                return (new Maybe<StationCall>(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ThereIsNoStationWithSignatureOrName, stationSignature)), -1);
             }
-            return (Maybe<StationCall>.Item(result.call), result.index);
+            return ( new Maybe<StationCall>(result.call), result.index);
         }
     }
 }
