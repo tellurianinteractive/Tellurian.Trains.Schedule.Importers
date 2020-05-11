@@ -9,13 +9,13 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Module for reading Xpln documents.</Description>
     <PackageId>Tellurian.Trains.Repositories.Xpln</PackageId>
-    <Version>1.4.0</Version>
+    <Version>1.5.0</Version>
   </PropertyGroup>
 
   <PropertyGroup>
     <LangVersion>8.0</LangVersion>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>1.4.0: Adapted to new version of Tellurian.Trains.Models.Planning.</PackageReleaseNotes>
+    <PackageReleaseNotes>1.5.0: Updated all dependencies.</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/tellurianinteractive/Tellurian.Trains.Repositories.Xpln/projects</PackageProjectUrl>
     <RepositoryUrl>https://github.com/tellurianinteractive/Tellurian.Trains.Repositories.Xpln</RepositoryUrl>
     <RepositoryType>Github</RepositoryType>
