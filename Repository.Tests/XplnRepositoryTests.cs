@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using Tellurian.Trains.Models.Planning;
+using Tellurian.Trains.Repositories.Interfaces;
 
 namespace Tellurian.Trains.Repositories.Xpln.Tests
 {

@@ -145,6 +145,6 @@
     <value>Omløb {0} i tog {1} har tider i forkert rækkefølge. Ankomst {2} er inden afgang {3}.</value>
   </data>
   <data name="TrainAtStationAtTimeRefersToANonexistingTrack" xml:space="preserve">
-    <value>Tog {0} på station {1} ank {2} afg {3} refererer til et ikke eksisterende spor {4}</value>
+    <value>Tog {0} på station {1} ank {2} afg {3} refererer til et ikke eksisterende spor {4}.</value>
   </data>
 </root>

@@ -8,10 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Tellurian.Trains.Repositories.Xpln.Resources
-{
-
-
+namespace Tellurian.Trains.Repositories.Xpln.Resources {
+    using System;
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -61,7 +61,7 @@ namespace Tellurian.Trains.Repositories.Xpln.Resources
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Arrival to station {0} not found for train {1} in loco schedule &apos;{2}&apos; at {3}&quot;).
+        ///   Looks up a localized string similar to Arrival to station {0} not found for train {1} in loco schedule &apos;{2}&apos; at {3}..
         /// </summary>
         internal static string ArrivatToStationNotFoundForTrainInLocoScheduleAtTime {
             get {
@@ -88,7 +88,7 @@ namespace Tellurian.Trains.Repositories.Xpln.Resources
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Departure from station {0} not found for train {1} in loco schedule &apos;{2}&apos; at {3}&quot;).
+        ///   Looks up a localized string similar to Departure from station {0} not found for train {1} in loco schedule &apos;{2}&apos; at {3}..
         /// </summary>
         internal static string DepartureFromStationNotFoundForTrainInLocoScheduleAtTime {
             get {

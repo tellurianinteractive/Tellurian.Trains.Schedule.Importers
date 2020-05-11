@@ -36,8 +36,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.6.0" />
-    <PackageReference Include="Tellurian.Trains.Models.Planning" Version="1.4.1" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Tellurian.Trains.Models.Planning" Version="1.5.0" />
+    <PackageReference Include="Tellurian.Trains.Repositories.Interfaces" Version="1.5.0" />
   </ItemGroup>
 
   <ItemGroup>

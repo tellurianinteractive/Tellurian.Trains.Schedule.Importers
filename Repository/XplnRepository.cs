@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using Tellurian.Trains.Models.Planning;
+using Tellurian.Trains.Repositories.Interfaces;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Tellurian.Trains.Repositories.Xpln
@@ -24,7 +25,7 @@ namespace Tellurian.Trains.Repositories.Xpln
         public readonly DirectoryInfo DocumentsDirectory;
         private Excel.Application _Excel;
 
-        private Excel.Application Excel => _Excel ?? (_Excel = new Excel.Application { Visible = false });
+        private Excel.Application Excel => _Excel ??= new Excel.Application { Visible = false };
 
         public XplnRepository(DirectoryInfo documentsDirectory)
         {
