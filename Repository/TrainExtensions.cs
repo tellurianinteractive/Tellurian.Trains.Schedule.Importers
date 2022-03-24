@@ -6,9 +6,9 @@ namespace Tellurian.Trains.Repositories.Xpln
 {
     internal static class TrainExtensions
     {
-        public static (Maybe<StationCall> call, int index) FindBetweenArrivlAndBeparture(this Train me, string stationSignature, Time time)
+        public static (Maybe<StationCall> call, int index) FindBetweenArrivalAndDeparture(this Train me, string stationSignature, Time time)
         {
-            var result = me.Calls.Select((call, index) => (call, index)).SingleOrDefault(item => item.call.Station.Signature == stationSignature && item.call.Arrival <= time.Value && item.call.Departure >= time.Value);
+            var result = me.Calls.Select((call, index) => (call, index)).SingleOrDefault(item => item.call.Station.Signature == stationSignature && item.call.Arrival <= time && item.call.Departure >= time);
             if (result.call is null)
             {
                 return (new Maybe<StationCall>(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ThereIsNoStationWithSignatureOrName, stationSignature)), -1);

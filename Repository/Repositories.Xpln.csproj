@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>Tellurian.Trains.Repositories.Xpln</AssemblyName>
     <RootNamespace>Tellurian.Trains.Repositories.Xpln</RootNamespace>
     <Authors>Stefan Fjällemark</Authors>
@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageReleaseNotes>1.5.0: Updated all dependencies.</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/tellurianinteractive/Tellurian.Trains.Repositories.Xpln/projects</PackageProjectUrl>
@@ -37,8 +37,11 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Tellurian.Trains.Models.Planning" Version="1.5.0" />
-    <PackageReference Include="Tellurian.Trains.Repositories.Interfaces" Version="1.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Models.Planning\Model\Model.csproj" />
+    <ProjectReference Include="..\..\Repositories.Interfaces\Repositories.Interfaces\Repositories.Interfaces.csproj" />
   </ItemGroup>
 
   <ItemGroup>
