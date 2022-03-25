@@ -117,7 +117,8 @@ namespace Tellurian.Trains.Repositories.Xpln.Tests
             TestDocumentImport("Värnamo2017", "sv-SE", 40, 12, 0, 29, 0);
         }
 
-        [TestMethod]
+        [Ignore("Should prevent import again")]
+        [TestMethod()]
         public void ImportDataToDatabase()
         {
             const string scheduleName = "Kolding2022";
@@ -155,8 +156,8 @@ namespace Tellurian.Trains.Repositories.Xpln.Tests
             Assert.AreEqual(expectedTrainsets, schedule.Item.TrainsetSchedules.Count, "Trainsets");
             Assert.AreEqual(expectedDuties, schedule.Item.DriverDuties.Count, "Duties");
             var validationErrors = schedule.Item.GetValidationErrors(new ValidationOptions { ValidateStretches = true, MinTrainSpeedMetersPerClockMinute = 0.5, MaxTrainSpeedMetersPerClockMinute = 2.0 });
-            Assert.AreEqual(expectedValidationErrors, validationErrors.Count());
             WriteLines(validationErrors.ToStrings(), file);
+            Assert.AreEqual(expectedValidationErrors, validationErrors.Count(), "Validation errors");
             schedule.Write();
         }
 
