@@ -1,62 +1,63 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <AssemblyName>Tellurian.Trains.Repositories.Xpln</AssemblyName>
-    <RootNamespace>Tellurian.Trains.Repositories.Xpln</RootNamespace>
-    <Authors>Stefan Fjällemark</Authors>
-    <Product>Tellurian Trains</Product>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Module for reading Xpln documents.</Description>
-    <PackageId>Tellurian.Trains.Repositories.Xpln</PackageId>
-    <Version>1.5.0</Version>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<AssemblyName>Tellurian.Trains.Repositories.Xpln</AssemblyName>
+		<RootNamespace>Tellurian.Trains.Repositories.Xpln</RootNamespace>
+		<Authors>Stefan Fjällemark</Authors>
+		<Product>Tellurian Trains</Product>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<Description>Module for reading Xpln documents.</Description>
+		<PackageId>Tellurian.Trains.Repositories.Xpln</PackageId>
+		<Platforms>AnyCPU</Platforms>
+		<Version>1.5.0</Version>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <Nullable>enable</Nullable>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>1.5.0: Updated all dependencies.</PackageReleaseNotes>
-    <PackageProjectUrl>https://github.com/tellurianinteractive/Tellurian.Trains.Repositories.Xpln/projects</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/tellurianinteractive/Tellurian.Trains.Repositories.Xpln</RepositoryUrl>
-    <RepositoryType>Github</RepositoryType>
-    <PackageTags>xpln model.railway planning timetable schedule</PackageTags>
-    <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
-  </PropertyGroup>
+	<PropertyGroup>
+		<Nullable>enable</Nullable>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+		<PackageReleaseNotes>1.5.0: Updated all dependencies.</PackageReleaseNotes>
+		<PackageProjectUrl>https://github.com/tellurianinteractive/Tellurian.Trains.Repositories.Xpln/projects</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/tellurianinteractive/Tellurian.Trains.Repositories.Xpln</RepositoryUrl>
+		<RepositoryType>Github</RepositoryType>
+		<PackageTags>xpln model.railway planning timetable schedule</PackageTags>
+		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <COMReference Include="Microsoft.Office.Excel.dll">
-      <Guid>00020813-0000-0000-c000-000000000046</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>9</VersionMinor>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Lcid>0</Lcid>
-      <Isolated>false</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-  </ItemGroup>
+	<ItemGroup>
+		<COMReference Include="Microsoft.Office.Excel.dll">
+			<Guid>00020813-0000-0000-c000-000000000046</Guid>
+			<VersionMajor>1</VersionMajor>
+			<VersionMinor>9</VersionMinor>
+			<WrapperTool>tlbimp</WrapperTool>
+			<Lcid>0</Lcid>
+			<Isolated>false</Isolated>
+			<EmbedInteropTypes>True</EmbedInteropTypes>
+		</COMReference>
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Models.Planning\Model\Model.csproj" />
-    <ProjectReference Include="..\..\Repositories.Interfaces\Repositories.Interfaces\Repositories.Interfaces.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Models.Planning\Model\Model.csproj" />
+		<ProjectReference Include="..\..\Repositories.Interfaces\Repositories.Interfaces\Repositories.Interfaces.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Resources\Strings.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Strings.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Update="Resources\Strings.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Strings.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="Resources\Strings.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Resources\Strings.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Strings.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
 
 </Project>

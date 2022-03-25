@@ -6,9 +6,9 @@ namespace Tellurian.Trains.Repositories.Xpln
 {
     public static class StringExtensions
     {
-        public static string ParseTrainNumber(this string me) => Regex.Match(me, @"\d+").Value.TrimStart('0');
+        public static string TrainNumber(this string me) => Regex.Match(me, @"\d+").Value.TrimStart('0');
 
-        public static string ParsesTrainCategory(this string me)
+        public static string TrainCategory(this string me)
         {
             var start = me.IndexOf(".") + 1;
             var length = 0;

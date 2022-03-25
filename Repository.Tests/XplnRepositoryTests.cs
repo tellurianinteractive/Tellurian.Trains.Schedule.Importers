@@ -117,6 +117,24 @@ namespace Tellurian.Trains.Repositories.Xpln.Tests
             TestDocumentImport("Värnamo2017", "sv-SE", 40, 12, 0, 29, 0);
         }
 
+        [TestMethod]
+        public void ImportDataToDatabase()
+        {
+            const string scheduleName = "Kolding2022";
+            var file = Target.DocumentsDirectory.EnumerateFiles(scheduleName + ".ods").Single();
+            var result = Target.GetSchedule("Kolding2022.ods");
+            if (result.IsFailure)
+            {
+                WriteLines(result.Messages, file);
+                Assert.Fail("Stopping errors.");
+            }
+            var schedule = result.Item;
+            //var schedule = Schedule.Create("Text", new Timetable("Test", new Layout()));
+
+
+            schedule.SaveToDatabase(18, @"Driver={Microsoft Access Driver (*.mdb, *.accdb)};Dbq=C:\Users\Stefan\OneDrive\Modelljärnväg\Träffar\2022\2022-06 Kolding\Timetable.accdb;Uid=Admin;Pwd=;");
+        }
+
         private void TestDocumentImport(string scheduleName, string? culture, int expectedTrains, int expectedLocos, int expectedTrainsets, int expectedDuties, int expectedValidationErrors)
         {
             if (string.IsNullOrWhiteSpace(scheduleName)) throw new ArgumentNullException(nameof(scheduleName));

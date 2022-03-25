@@ -215,7 +215,7 @@ namespace Tellurian.Trains.Repositories.Xpln
                         case "TRAINDEF":
                             if (currentTrain != null) timetable.AddTrain(currentTrain);
                             var trainId = row.Value(TrainIdColumn);
-                            currentTrain = new Train(trainId.ParseTrainNumber(), trainId) { Category = trainId.ParsesTrainCategory() };
+                            currentTrain = new Train(trainId.TrainNumber(), trainId) { Category = trainId.TrainCategory() };
                             break;
 
                         case "TIMETABLE":

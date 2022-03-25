@@ -8,16 +8,16 @@ namespace Tellurian.Trains.Repositories.Xpln.Tests
         [TestMethod]
         public void ParsesTrainNumber()
         {
-            Assert.AreEqual("1234", "1234".ParseTrainNumber());
-            Assert.AreEqual("5814", "GT CL5814".ParseTrainNumber());
-            Assert.AreEqual("8318", "GT HCR 8318".ParseTrainNumber());
+            Assert.AreEqual("1234", "1234".TrainNumber());
+            Assert.AreEqual("5814", "GT CL5814".TrainNumber());
+            Assert.AreEqual("8318", "GT HCR 8318".TrainNumber());
         }
 
         [TestMethod]
         public void ParsesTrainCategory()
         {
-            Assert.AreEqual("GT", "054738.GT CN54738".ParsesTrainCategory());
-            Assert.AreEqual("Snt", "000100.Snt100".ParsesTrainCategory());
+            Assert.AreEqual("GT", "054738.GT CN54738".TrainCategory());
+            Assert.AreEqual("Snt", "000100.Snt100".TrainCategory());
         }
     }
 }
