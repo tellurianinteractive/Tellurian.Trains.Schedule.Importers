@@ -458,7 +458,6 @@ namespace Tellurian.Trains.Repositories.Xpln
             {
                 if (disposing)
                 {
-                    Excel?.ActiveWorkbook.Close();
                     Excel?.Quit();
                 }
                 _Excel = null;
