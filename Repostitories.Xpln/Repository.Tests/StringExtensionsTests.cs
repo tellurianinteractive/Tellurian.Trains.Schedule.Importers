@@ -19,5 +19,14 @@ namespace Tellurian.Trains.Repositories.Xpln.Tests
             Assert.AreEqual("GT", "054738.GT CN54738".TrainCategory());
             Assert.AreEqual("Snt", "000100.Snt100".TrainCategory());
         }
+
+        [TestMethod]
+        public void IsTime()
+        {
+            Assert.IsTrue("12:34".IsTime());
+            Assert.IsTrue("1899-12-31 12:34:00".IsTime());
+            Assert.IsFalse("12.60".IsTime());
+            Assert.IsFalse("X".IsTime());
+        }
     }
 }

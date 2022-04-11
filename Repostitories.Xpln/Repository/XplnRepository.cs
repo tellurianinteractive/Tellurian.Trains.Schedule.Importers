@@ -1,489 +1,577 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Tellurian.Trains.Models.Planning;
 using Tellurian.Trains.Repositories.Interfaces;
-using Excel = Microsoft.Office.Interop.Excel;
+using Tellurian.Trains.Repositories.Xpln.DataSetProviders;
+using Tellurian.Trains.Repositories.Xpln.Extensions;
 
-namespace Tellurian.Trains.Repositories.Xpln
+namespace Tellurian.Trains.Repositories.Xpln;
+public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, IScheduleReadStore, IDisposable
 {
-    public static class Extensions
+    public readonly IDataSetProvider DataSetProvider;
+    private DataSet? Data;
+
+    public XplnRepository(IDataSetProvider dataSetProvider)
     {
-        public static string Value(this Array row, int col)
+        DataSetProvider = dataSetProvider;
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+    }
+
+
+    public RepositoryResult<Layout> GetLayout(string fileName)
+    {
+        const int Signature = 0;
+        const int Enum = 1;
+        const int TrackName = 2;
+        const int Lenght = 3;
+        const int Name = 4;
+        const int Type = 5;
+        const int SubType = 6;
+        const int Remark = 7;
+        const int MinLength = 7;
+
+        var messages = new List<Message>();
+        Data = GetData(fileName);
+        var stations = Data.Tables["StationTrack"];
+        if (stations is null)
+            return RepositoryResult<Layout>.Failure("Worksheet 'StationTracks' not found.");
+
+        var result = new Layout { Name = fileName };
+        var rowNumber = 1;
+        Station? current = null;
+        foreach (DataRow station in stations.Rows)
         {
-            if (row == null) throw new ArgumentNullException(nameof(row));
-            return row.GetValue(1, col)?.ToString() ?? string.Empty;
+            if (rowNumber > 1)
+            {
+                var itemMessages = new List<Message>();
+                var fields = station.GetRowFields();
+                if (fields.IsEmptyFields()) break;
+                itemMessages.AddRange(ValidateRow(fields, rowNumber));
+                if (itemMessages.HasNoStoppingErrors())
+                {
+                    if (fields[5].Is("Station"))
+                    {
+                        if (current is not null)
+                        {
+                            result.Add(current);
+                            current = null;
+                        }
+                        var validationMessages = ValidateStation(fields, rowNumber);
+                        if (validationMessages.HasNoStoppingErrors())
+                        {
+                            current = CreateStation(fields);
+                        }
+                        messages.AddRange(validationMessages);
+                    }
+                    else if (fields[5].Is("Track"))
+                    {
+                        if (current is null) continue;
+                        var validationMessages = ValidateTrack(fields, rowNumber);
+                        if (validationMessages.HasNoStoppingErrors())
+                        {
+                            current.Add(CreateTrack(fields));
+                        }
+                        itemMessages.AddRange(validationMessages);
+                    }
+                }
+                messages.AddRange(itemMessages);
+            }
+            rowNumber++;
+        }
+        if (current is not null) result.Add(current);
+        if (messages.HasStoppingErrors()) 
+            return RepositoryResult<Layout>.Failure(messages.ToStrings());
+        else 
+            return RepositoryResult<Layout>.Success(result, messages.ToStrings());
+
+        static Station CreateStation(string[] fields) =>
+            new()
+            {
+                Type = fields[Type],
+                Name = fields[Name],
+                Signature = fields[Signature],
+                IsShadow = fields[SubType].Is("Depot")
+            };
+
+        static StationTrack CreateTrack(string[] fields) =>
+            new(fields[TrackName])
+            {
+                IsMain = fields[SubType].Is("Main"),
+                IsScheduled = fields[SubType].Is("Main", "Depot"),
+                Usage = fields[Remark],
+                DisplayOrder = fields[1].NumberOrZero(),
+            };
+
+        static Message[] ValidateRow(string[] fields, int rowNumber)
+        {
+            var messages = new List<Message>();
+            if (fields.Length < MinLength)
+                messages.Add(Message.Error($"Row {rowNumber}: Not all fields present, count is {fields.Length}."));
+            if (!fields[Enum].IsNumber())
+                messages.Add(Message.Error($"Row {rowNumber}: Column 'Enum' must be a number, but value is '{fields[1]}'."));
+            if (!fields[Type].ValueOrEmpty().Is("Station", "Track"))
+                messages.Add(Message.Error($"Row {rowNumber}: Unsupported 'Type' '{fields[5]}'. Please, contact developer if you are missing a type."));
+            return messages.ToArray();
+        }
+
+        static Message[] ValidateStation(string[] fields, int rowNumber)
+        {
+            var messages = new List<Message>();
+            if (fields[Signature].IsEmpty())
+                messages.Add(Message.Error($"Row {rowNumber}: Column 'Name' must contain the short name of the station."));
+            if (!fields[SubType].ValueOrEmpty().Is("Station", "Block"))
+                messages.Add(Message.Error($"Row {rowNumber}: Unsupported 'SubType' '{fields[6]}'. Please, contact developer if you are missing a subtype."));
+            return messages.ToArray();
+        }
+
+        static Message[] ValidateTrack(string[] fields, int rowNumber)
+        {
+            var messages = new List<Message>();
+            if (fields[TrackName].IsEmpty())
+                messages.Add(Message.Error($"Row {rowNumber}: Column 'TrackName' must contain a value."));
+            if (fields[Lenght].IsEmpty())
+                messages.Add(Message.Warning($"Row {rowNumber}: 'Length' for track {fields[2]} is not specified."));
+            else if (!fields[Lenght].IsNumber())
+                messages.Add(Message.Error($"Row {rowNumber}: 'Length' must be a number, , but value is '{fields[3]}'"));
+            if (!fields[SubType].ValueOrEmpty().Is("Main", "Siding", "Depot"))
+                messages.Add(Message.Error($"Row {rowNumber}: Unsupported 'SubType' '{fields[6]}'. Please, contact developer if you are missing a subtype."));
+            return messages.ToArray();
         }
     }
 
-    public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, IScheduleReadStore, IDisposable
+    public RepositoryResult<Timetable> GetTimetable(string fileName)
     {
-        private const string XplnFileSuffix = ".ods";
-        private const int TrainIdColumn = 8;
-        public readonly DirectoryInfo DocumentsDirectory;
-        private Excel.Application? _Excel;
+        const int Enum = 1;
+        const int Station = 2;
+        const int Track = 3;
+        const int Arrival = 4;
+        const int Departure = 5;
+        const int Object = 7;
+        const int Type = 8;
+        const int Remark = 10;
+        const int MinLength = 10;
 
-        private Excel.Application Excel => _Excel ??= new Excel.Application { Visible = false };
-
-        public XplnRepository(DirectoryInfo documentsDirectory)
+        var messages = new List<Message>();
+        Data = GetData(fileName);
+        var trains = Data?.Tables["Trains"];
+        if (trains is null)
         {
-            DocumentsDirectory = documentsDirectory ?? throw new ArgumentNullException(nameof(documentsDirectory));
-            if (!DocumentsDirectory.Exists) throw new DirectoryNotFoundException(DocumentsDirectory.FullName);
+            messages.Add(Message.System("Document does not contain a worksheet 'Trains'."));
+            return RepositoryResult<Timetable>.Failure(messages.ToStrings());
         }
 
-        private string GetFullFilename(string name)
+        var layout = GetLayout(fileName);
+        var layoutMessages = layout.Messages.ToList();
+        if (layout.IsFailure)
         {
-            return Path.Combine(DocumentsDirectory.FullName, string.IsNullOrEmpty(Path.GetExtension(name)) ? name + XplnFileSuffix : name);
+            layoutMessages.Add(string.Format(CultureInfo.CurrentCulture, Resources.Strings.CannotReadTimetableDueToErrorsInLayout));
+            return RepositoryResult<Timetable>.Failure(layoutMessages);
         }
 
-        #region Layouts
+        var result = new Timetable(fileName, layout.Item);
+        var rowNumber = 1;
+        var callNumber = 0;
+        Train? current = null;
 
-        public RepositoryResult<Layout> GetLayout(string name)
+        foreach (DataRow row in trains.Rows)
         {
-            var messages = new List<Message>();
-            var result = new Layout { Name = name };
-            var app = Excel;
-            Excel.Workbook? book = null;
-            try
+            if (rowNumber > 1)
             {
-                var fileName = GetFullFilename(name);
-                book = app.Workbooks.Open(fileName);
-                messages.AddRange(GetStations(result, book));
-                if (messages.CanContinue()) messages.AddRange(GetStretches(result, book));
-            }
-            finally
-            {
-                book?.Close(false, GetFullFilename(name));
-            }
-            if (messages.HasStoppingErrors())
-            {
-                messages.Add(Message.Error("Has stopping errors. Import aborted."));
-                return RepositoryResult<Layout>.Failure(messages.ToStrings());
-            }
-            return RepositoryResult<Layout>.Success(result, messages.ToStrings());
-        }
-
-        private static IEnumerable<Message> GetStations(Layout layout, Excel.Workbook book)
-        {
-            var messages = new List<Message>();
-            var r = 1;
-            Station? station = null;
-            if (book.Worksheets["StationTrack"] is not Excel.Worksheet sheet)
-            {
-                messages.Add(Message.Error("Document does not contain a worksheet 'StationTrack'."));
-                return messages;
-            }
-            var loop = true;
-            while (loop)
-            {
-                var row = (Array)(sheet.get_Range(Cell("A", r), Cell("G", r)).Cells.Value);
-                var col1 = row.Value(1)?.ToString();
-                if (string.IsNullOrEmpty(col1)) break;
-
-                if (col1 != "Name")
+                var itemMessages = new List<Message>();
+                var fields = row.GetRowFields();
+                if (fields.IsEmptyFields()) break;
+                itemMessages.AddRange(ValidateRow(fields, rowNumber));
+                if (itemMessages.HasNoStoppingErrors())
                 {
-                    switch (row.Value(6)?.ToUpperInvariant())
-                    {
-                        case "STATION":
-                            if (station != null) layout.Add(station);
-                            station = new Station(row.Value(5), row.Value(1));
-                            break;
-                        case "TRACK":
-                            station?.Add(new StationTrack(row.Value(3)));
-                            break;
-                        default:
-                            loop = false;
-                            break;
-                    }
-                }
-                r++;
-            }
-            if (station != null) layout.Add(station);
-            return messages;
-        }
-
-        private static IEnumerable<Message> GetStretches(Layout layout, Excel.Workbook book)
-        {
-            var messages = new List<Message>();
-            if (book.Worksheets["Routes"] is not Excel.Worksheet sheet)
-            {
-                messages.Add(Message.System("Document does not contain a worksheet 'Routes'."));
-                return messages;
-            }
-
-            for (var r = 2; ; r++)
-            {
-                var row = (Array)sheet.get_Range(Cell("A", r), Cell("I", r)).Cells.Value;
-                var col1 = row.Value(1)?.ToString();
-                if (string.IsNullOrEmpty(col1)) break;
-
-                var timetableStretchNumber = row.Value(1);
-                var tracksCount = int.Parse(row.Value(8), CultureInfo.InvariantCulture);
-                var fromName = row.Value(3);
-                var toName = row.Value(5);
-                var distance = double.Parse(row.Value(9).Replace(",", "."), NumberStyles.Float, CultureInfo.InvariantCulture);
-
-                var fromStation = layout.Station(fromName);
-                if (fromStation.IsNone)
-                {
-                    messages.Add(Message.Error(fromStation.Message));
-                    continue;
-                }
-                var toStation = layout.Station(toName);
-                if (toStation.IsNone)
-                {
-                    messages.Add(Message.Error(toStation.Message));
-                }
-                else
-                {
-                    var stretch = new TrackStretch(fromStation.Value, toStation.Value, distance, tracksCount);
-                    var timetableStretch = layout.TimetableStretches.SingleOrDefault(ts => ts.Number.Equals(timetableStretchNumber, StringComparison.OrdinalIgnoreCase));
-                    if (timetableStretch is null)
-                    {
-                        timetableStretch = new TimetableStretch(timetableStretchNumber);
-                        layout.Add(timetableStretch);
-                    }
-                    var addedStretch = layout.Add(fromName, toName, distance, tracksCount);
-                    if (addedStretch.HasValue) timetableStretch.AddLast(addedStretch.Value);
-                }
-            }
-            return messages;
-        }
-
-        #endregion Layouts
-
-        #region Timetable
-
-        public RepositoryResult<Timetable> GetTimetable(string name)
-        {
-            var layout = GetLayout(name);
-            var layoutMessages = layout.Messages.ToList();
-            if (layout.IsFailure)
-            {
-                layoutMessages.Add(string.Format(CultureInfo.CurrentCulture, Resources.Strings.CannotReadTimetableDueToErrorsInLayout));
-                return RepositoryResult<Timetable>.Failure(layoutMessages);
-            }
-            var messages = new List<Message>();
-            var result = new Timetable(name, layout.Item);
-            var app = Excel;
-            Excel.Workbook? book = null;
-            try
-            {
-                book = app.Workbooks.Open(GetFullFilename(name));
-                messages.AddRange(GetTrains(result, book));
-            }
-            catch (Exception ex)
-            {
-                messages.Add(Message.System(ex.Message));
-            }
-            finally
-            {
-                book?.Close(false, GetFullFilename(name));
-            }
-            if (messages.HasStoppingErrors())
-            {
-                messages.Add(Message.Error("Has stopping errors. Import is aborted."));
-                return RepositoryResult<Timetable>.Failure(messages.ToStrings());
-            }
-            return RepositoryResult<Timetable>.Success(result, messages.ToStrings());
-        }
-
-        private static IEnumerable<Message> GetTrains(Timetable timetable, Excel.Workbook book)
-        {
-            var messages = new List<Message>();
-            if (book.Worksheets["Trains"] is not Excel.Worksheet sheet)
-            {
-                messages.Add(Message.System("Document does not contain a worksheet 'Trains'."));
-                return messages;
-            }
-            var r = 2;
-            Train? currentTrain = null;
-            while (true)
-            {
-                var row = (Array)sheet.get_Range(Cell("A", r), Cell("K", r)).Cells.Value;
-                if (row.GetValue(1, 1) == null)
-                {
-                    break;
-                }
-                else
-                {
-                    var type = row.Value(9).ToUpperInvariant();
+                    var type = fields[Type].ToLowerInvariant();
                     switch (type)
                     {
-                        case "TRAINDEF":
-                            if (currentTrain != null) timetable.AddTrain(currentTrain);
-                            var trainId = row.Value(TrainIdColumn);
-                            currentTrain = new Train(trainId.TrainNumber(), trainId) { Category = trainId.TrainCategory() };
+                        case "traindef":
+                            {
+                                if (current is not null)
+                                {
+                                    result.Add(current.WithFixedFirstAndLastCall());
+                                    current = null;
+                                    callNumber = 0;
+                                }
+
+                                var validationMessages = ValidateTrain(fields, rowNumber);
+                                if (validationMessages.HasNoStoppingErrors())
+                                {
+                                    current = CreateTrain(fields);
+                                }
+                                messages.AddRange(validationMessages);
+                            }
                             break;
 
-                        case "TIMETABLE":
-                            try
+                        case "timetable":
                             {
-                                var station = timetable.Layout.Station(row.Value(3));
-                                var arrivalTime = row.Value(5).AsTime();
-                                var departureTime = row.Value(6).AsTime();
-                                var note = row.Value(11);
-                                if (station.IsNone)
+                                if (current is null) continue;
+                                var validationMessages = ValidateCall(fields, rowNumber);
+                                if (validationMessages.HasNoStoppingErrors())
                                 {
-                                    messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ThereIsNoStationWithSignatureOrName, station.Value)));
-                                }
-                                else 
-                                {
-                                    var trackNumber = row.Value(4);
-                                    var track = station.Value.Track(trackNumber);
+                                    callNumber++;
+                                    var track = layout.Item.Track(fields[Station].ValueOrEmpty(), fields[Track].ValueOrEmpty());
                                     if (track.IsNone)
                                     {
-                                        messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.TrainAtStationAtTimeRefersToANonexistingTrack, currentTrain, station.Value, arrivalTime, departureTime, trackNumber)));
+                                        messages.Add(Message.Error(track.Message));
                                     }
-
-                                    if (messages.CanContinue())
+                                    else
                                     {
-                                        var call = new StationCall(track.Value, arrivalTime, departureTime);
-                                        if (!string.IsNullOrWhiteSpace(note)) call.Notes.Add(new Note { Text = note, IsDriverNote = true, IsStationNote = true });
-                                        currentTrain?.Add(call);
+                                        current.Add(CreateCall(fields, track.Value));
                                     }
                                 }
-                                
-                            }
-                            catch (Exception ex)
-                            {
-                                messages.Add(Message.System(ex.Message));
+                                messages.AddRange(validationMessages);
                             }
                             break;
+
+                        case "locomotive":
+                            {
+                                if (current is null) continue;
+                                if (fields[Object].HasValue())
+                                {
+                                    var note = new Note()
+                                    {
+                                        IsDriverNote = true,
+                                        IsStationNote = true,
+                                        LanguageCode = CultureInfo.CurrentCulture.TwoLetterISOLanguageName,
+                                        Text = fields[Remark].HasValue() ? $"Use loco {fields[Object]}, classes {fields[Remark]}" : $"Use loco {fields[Object]}"
+                                        //TODO: Localize
+                                    };
+                                    current.Calls.First().Notes.Add(note);
+                                };
+                            }
+                            break;
+
+                        case "trainset":
+                            {
+                                if (current is null) continue;
+                                if (fields[Remark].HasValue())
+                                {
+                                    var note = new Note()
+                                    {
+                                        IsDriverNote = true,
+                                        LanguageCode = CultureInfo.CurrentCulture.TwoLetterISOLanguageName,
+                                        Text = $"{fields[Remark]}"
+
+                                    };
+                                    current.Calls.First().Notes.Add(note);
+                                };
+
+                            }
+                            break;
+
                     }
                 }
-                r++;
             }
-            if (currentTrain != null) timetable.AddTrain(currentTrain);
-            foreach (var train in timetable.Trains)
-            {
-                train.FixSingleCallTrain();
-            }
-            return messages;
+            rowNumber++;
         }
+        if (current is not null) result.Add(current.WithFixedFirstAndLastCall());
+        return RepositoryResult<Timetable>.Success(result, messages.ToStrings());
 
-        #endregion Timetable
 
-        #region Schedule
 
-        public RepositoryResult<Schedule> GetSchedule(string name)
-        {
-            var timetable = GetTimetable(name);
-            if (timetable.IsFailure)
+        static Train CreateTrain(string[] fields) =>
+            new(fields[Object].TrainNumber(), fields[Object])
             {
-                return RepositoryResult<Schedule>.Failure(timetable.Messages);
-            }
-            var messages = new List<Message>();
-            var result = Schedule.Create(name, timetable.Item);
-            var app = new Excel.Application { Visible = false };
-            Excel.Workbook? book = null;
-            try
-            {
-                book = app.Workbooks.Open(GetFullFilename(name));
-                messages.AddRange(GetSchedules(result, book));
-            }
-            finally
-            {
-                book?.Close(false, GetFullFilename(name));
-                app.Quit();
-            }
-            if (messages.HasStoppingErrors())
-            {
-                messages.Add(Message.Error("Has stopping errors. Import is aborted."));
-                return RepositoryResult<Schedule>.Failure(messages.ToStrings());
-            }
-            return RepositoryResult<Schedule>.Success(result, messages.ToStrings());
-        }
+                Category = fields[Object].TrainCategory(),
+            };
 
-        private static IEnumerable<Message> GetSchedules(Schedule schedule, Excel.Workbook book)
+        static StationCall CreateCall(string[] fields, StationTrack track) =>
+            new(track, fields[Arrival].AsTime(), fields[Departure].AsTime())
+            {
+                IsArrival = true,
+                IsDeparture = true,
+
+            };
+
+        static Message[] ValidateRow(string[] fields, int rowNumber)
         {
             var messages = new List<Message>();
-            if (book.Worksheets["Trains"] is not Excel.Worksheet sheet)
+            if (fields.Length < MinLength)
+                messages.Add(Message.Error($"Row {rowNumber}: Not all fields present, count is {fields.Length}."));
+            if (!fields[Enum].IsNumber())
+                messages.Add(Message.Error($"Row {rowNumber}: Column 'Enum' must be a number, but value is '{fields[Enum]}'."));
+            if (!fields[Arrival].IsTime())
+                messages.Add(Message.Error($"Row {rowNumber}: Incorrect arrival time, value is '{fields[Arrival]}'."));
+            if (!fields[Departure].IsTime())
+                messages.Add(Message.Error($"Row {rowNumber}: Incorrect departure time, value is '{fields[Departure]}'."));
+            if (fields[Type].IsEmpty())
+                messages.Add(Message.Error($"Row {rowNumber}: Column 'Type' must have a value."));
+            else if (!fields[Type].Is("Traindef", "Timetable", "Locomotive", "Trainset", "Job", "Wheel", "Group"))
+                messages.Add(Message.Error($"Row {rowNumber}: Unsupported 'Type', value is '{fields[Type]}'. Please, contact developer if you are missing a type."));
+            return messages.ToArray();
+        }
+
+        static Message[] ValidateTrain(string[] fields, int rowNumber)
+        {
+            var messages = new List<Message>();
+            if (fields[Enum].ValueOrEmpty() != "0")
+                messages.Add(Message.Warning($"Row {rowNumber}: Column 'Enum' should be '0'."));
+            if (fields[Object].IsEmpty())
+                messages.Add(Message.Warning($"Row {rowNumber}: Column 'Object' should contain train identifier."));
+            return messages.ToArray();
+        }
+
+        static Message[] ValidateCall(string[] fields, int rowNumber)
+        {
+            var messages = new List<Message>();
+            if (fields[Track].IsEmpty())
+                messages.Add(Message.Error($"Row {rowNumber}: Column 'Track' must have a value."));
+            return messages.ToArray();
+
+        }
+    }
+
+    public RepositoryResult<Schedule> GetSchedule(string filename)
+    {
+        const int Enum = 1;
+        const int From = 2;
+        const int To = 3;
+        const int Arrival = 4;
+        const int Departure = 5;
+        const int Object = 7;
+        const int Type = 8;
+        const int TrainName = 9;
+        const int MinLength = 9;
+
+        var messages = new List<Message>();
+        var locoSchedules = new Dictionary<string, LocoSchedule>(100);
+        var trainsetSchedules = new Dictionary<string, TrainsetSchedule>(200);
+        var driverDuties = new Dictionary<string, DriverDuty>();
+
+        Data = GetData(filename);
+        var trains = Data?.Tables["Trains"];
+        if (trains is null)
+        {
+            messages.Add(Message.System("Document does not contain a worksheet 'Trains'."));
+            return RepositoryResult<Schedule>.Failure(messages.ToStrings());
+        }
+        var timetable = GetTimetable(filename);
+        if (timetable.IsFailure)
+        {
+            return RepositoryResult<Schedule>.Failure(timetable.Messages);
+        }
+        var schedule = Schedule.Create(filename, timetable.Item);
+        Train? currentTrain = null;
+
+        var rowNumber = 1;
+        foreach (DataRow row in trains.Rows)
+        {
+            if (rowNumber > 1)
             {
-                messages.Add(Message.System("Document does not contain a worksheet 'Trains'."));
-                return messages;
-            }
-            var r = 2;
-            Train? currentTrain = null;
-            string? trainId = null;
-            VehicleSchedule? currentLoco = null;
-            var locoSchedules = new Dictionary<string, LocoSchedule>();
-            var driverDuties = new Dictionary<string, DriverDuty>();
-            var trainsetSchedules = new Dictionary<string, TrainsetSchedule>();
-            while (true)
-            {
-                var row = (Array)sheet.get_Range(Cell("A", r), Cell("K", r)).Cells.Value;
-                if (row.GetValue(1, 1) == null)
+                var itemMessages = new List<Message>();
+                var fields = row.GetRowFields();
+                if (fields.IsEmptyFields()) break;
+                itemMessages.AddRange(ValidateRow(fields, rowNumber));
+                if (itemMessages.HasNoStoppingErrors())
                 {
-                    break;
-                }
-                else
-                {
-                    var type = row.Value(9).ToUpperInvariant();
+                    var type = fields[Type].ToLowerInvariant();
                     switch (type)
                     {
-                        case "TRAINDEF":
-                            trainId = row.Value(8);
-                            var train = schedule.Timetable.Train(trainId);
-                            if (train.IsNone)
+                        case "traindef":
                             {
-                                messages.Add(Message.Error($"Train {trainId} cannot be found."));
-                                break;
-                            }
-                            currentTrain = train.Value;
-                            break;
-                        case "LOCOMOTIVE":
-                            var locoId = row.Value(8);
-                            if (!string.IsNullOrEmpty(locoId))
-                            {
-                                if (!locoSchedules.ContainsKey(locoId)) locoSchedules.Add(locoId, new LocoSchedule(locoId));
-                                currentLoco = locoSchedules[locoId];
-                                if (currentTrain != null)
+                                var trainExternalId = fields[Object];
+                                var train = schedule.Timetable.Train(trainExternalId);
+                                if (train.IsNone)
                                 {
-                                    var locoMessages = new List<Message>();
-                                    var fromStationSignature = row.Value(3);
-                                    var toStationSignature = row.Value(4);
-                                    var fromTime = row.Value(5).AsTime();
-                                    var toTime = row.Value(6).AsTime();
+                                    messages.Add(Message.Error(train.Message));
+                                    currentTrain = null;
+                                    break;
+                                }
+                                currentTrain = train.Value;
+                            }
+                            break;
+                        case "locomotive":
+                            {
+                                if (currentTrain is null) break;
 
-                                    //if (lt2 < lt1) lt2 = lt2.AddDays(1); // TODO: Handle over midnight times, if necessary
-                                    var (fromCall, fromIndex) = currentTrain.FindBetweenArrivalAndDeparture(fromStationSignature, fromTime);
-                                    var (toCall, toIndex) = currentTrain.FindBetweenArrivalAndDeparture(toStationSignature, toTime);
+                                var locoMessages = new List<Message>();
+                                locoMessages.AddRange(ValidateLocoOrJob(fields, rowNumber));
 
-                                    if (fromCall.IsNone) locoMessages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.LocoAtStationWithDepartureDoNotRefersToAnExistingTimeInTrain, locoId, fromStationSignature, fromTime, currentTrain)));
-                                    if (toCall.IsNone) locoMessages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.LocoAtStationWithArrivalDoNotRefersToAnExistingTimeInTrain, locoId, fromStationSignature, toTime, currentTrain)));
-                                    if (fromIndex >= toIndex) locoMessages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.LocoInTrainHasWrongTimingEndStartionIsBeforeStartStation, locoId, currentTrain, fromTime, toTime)));
-                                    messages.AddRange(locoMessages);
-                                    if (locoMessages.CanContinue())
+                                if (locoMessages.HasNoStoppingErrors())
+                                {
+                                    var locoId = fields[Type];
+                                    if (!locoSchedules.ContainsKey(locoId))
+                                        locoSchedules.Add(locoId, new LocoSchedule(locoId));
+                                    if (locoSchedules.TryGetValue(locoId, out var loco))
                                     {
-                                        TrainPart trainPart = new TrainPart(fromCall.Value, toCall.Value);
-                                        currentLoco.Add(trainPart);
+                                        var keys = GetTrainPartKeys(fields, currentTrain);
+                                        locoMessages.AddRange(keys.Messages);
+                                        if (locoMessages.HasNoStoppingErrors())
+                                        {
+                                            TrainPart trainPart = new TrainPart(keys.FromCall.Value, keys.ToCall.Value);
+                                            loco.Add(trainPart);
+                                        }
                                     }
                                 }
+                                messages.AddRange(locoMessages);
                             }
                             break;
-                        case "TRAINSET":
-                            var trainsetId = row.Value(8);
-                            if (string.IsNullOrEmpty(trainsetId)) break;
-                            if (currentTrain is null) break;
-                            if (!trainsetSchedules.ContainsKey(trainsetId)) trainsetSchedules.Add(trainsetId, new TrainsetSchedule(trainsetId));
-                            if (trainsetSchedules.TryGetValue(trainsetId, out var trainset))
+                        case "trainset":
                             {
-                                var fromStationSignature = row.Value(3);
-                                var toStationSignature = row.Value(4);
-                                var fromTime = row.Value(5).AsTime();
-                                var toTime = row.Value(6).AsTime();
-                                var (fromCall, fromIndex) = currentTrain.FindBetweenArrivalAndDeparture(fromStationSignature, fromTime);
-                                var (toCall, toIndex) = currentTrain.FindBetweenArrivalAndDeparture(toStationSignature, toTime);
-                                var part = new TrainPart(fromCall.Value, toCall.Value);
-                                trainset.Add(part);
-                            }
-                            break;
-                        case "JOB":
-                            var jobId = row.Value(8);
-                            if (!string.IsNullOrEmpty(jobId))
-                            {
-                                var jobMessages = new List<Message>();
-                                if (currentTrain is null)
+                                if (currentTrain is null) break;
+                                var trainsetMessages = new List<Message>();
+                                trainsetMessages.AddRange(ValidateTrainset(fields, rowNumber));
+                                if (trainsetMessages.HasNoStoppingErrors())
                                 {
-                                    messages.Add(Message.Error($"There is not a current train for job {jobId}."));
-                                    break;
-                                }
-                                if (currentLoco is null)
-                                {
-                                    messages.Add(Message.Error($"There is not a current loco for job {jobId}."));
-                                    break;
-                                }
-                                if (!driverDuties.ContainsKey(jobId)) driverDuties.Add(jobId, new DriverDuty(jobId));
-                                var currentLocoSchedule = locoSchedules.Values.SingleOrDefault(l => l.Number == currentLoco.Number);
-                                if (currentLocoSchedule is null)
-                                {
-                                    messages.Add(Message.Error($"Job {jobId} referse no a nonexisting loco schedule {currentLoco}."));
-                                    break;
-                                }
-                                var dt1 = row.Value(5).AsTime();
-                                var dt2 = row.Value(6).AsTime();
-                                if (dt2 < dt1) dt2 = dt2.AddDays(1);
-                                var part = currentLocoSchedule.Parts.Select((value, index) => (value, index)).SingleOrDefault(p => p.value.Train.Number == currentTrain.Number && (p.value.From.Arrival == dt1 || p.value.From.Departure == dt1 || dt1 < currentLocoSchedule.Parts.First().From.Arrival) && (p.value.To.Arrival == dt2 || p.value.To.Departure == dt2 || dt2 > currentLocoSchedule.Parts.Last().To.Departure));
-                                if (part.value == null) jobMessages.Add(Message.Error($"Error in train {currentTrain} for job {jobId}."));
-                                if (jobMessages.CanContinue())
-                                {
-                                    messages.AddRange(jobMessages);
-                                    if (part.value != null)
+                                    var trainsetId = fields[Object].OrElse(fields[TrainName]);
+                                    if (!trainsetSchedules.ContainsKey(trainsetId))
+                                        trainsetSchedules.Add(trainsetId, new TrainsetSchedule(trainsetId));
+                                    if (trainsetSchedules.TryGetValue(trainsetId, out var trainset))
                                     {
-                                        var added = driverDuties[jobId].Add(new TrainPart(part.value.From, part.value.To));
-                                        if (added.IsNone) messages.Add(Message.Error(added.Message));
+                                        var keys = GetTrainPartKeys(fields, currentTrain);
+                                        trainsetMessages.AddRange(keys.Messages);
+                                        if (trainsetMessages.HasNoStoppingErrors())
+                                        {
+                                            TrainPart trainPart = new TrainPart(keys.FromCall.Value, keys.ToCall.Value);
+                                            trainset.Add(trainPart);
+                                        }
                                     }
                                 }
+                                messages.AddRange(trainsetMessages);
                             }
                             break;
-                        case "GROUP":
-                            if (currentTrain != null) currentTrain.Category = row.Value(8);
+                        case "job":
+                            {
+                                if (currentTrain is null) break;
+                                var dutyMessages = new List<Message>();
+                                dutyMessages.AddRange(ValidateLocoOrJob(fields, rowNumber));
+                                if (dutyMessages.HasNoStoppingErrors())
+                                {
+                                    var jobId = fields[Object];
+                                    if (!driverDuties.ContainsKey(jobId))
+                                        driverDuties.Add(jobId, new DriverDuty(jobId));
+                                    if (driverDuties.TryGetValue(jobId, out var duty))
+                                    {
+                                        var keys = GetTrainPartKeys(fields, currentTrain);
+                                        dutyMessages.AddRange(keys.Messages);
+                                        if (dutyMessages.HasNoStoppingErrors())
+                                        {
+                                            TrainPart trainPart = new TrainPart(keys.FromCall.Value, keys.ToCall.Value);
+                                            duty.Add(trainPart);
+                                        }
+                                    }
+
+                                }
+                                messages.AddRange(dutyMessages);
+                            }
+                            break;
+                        case "wheel":
+                            {
+                                if (currentTrain is null) break;
+
+                            }
+                            break;
+                        case "group":
+                            {
+                                if (currentTrain is null) break;
+
+                            }
                             break;
                     }
                 }
-                r++;
+
             }
-            foreach (var loco in locoSchedules.Values) schedule.AddLocoSchedule(loco);
-            foreach (var trainset in trainsetSchedules.Values) schedule.AddTrainsetSchedule(trainset);
-            foreach (var duty in driverDuties.Values) schedule.AddDriverDuty(duty);
-            return messages;
+            rowNumber++;
         }
+        if (messages.HasStoppingErrors()) return RepositoryResult<Schedule>.Failure(messages.ToStrings());
+        foreach (var loco in locoSchedules.Values) schedule.AddLocoSchedule(loco);
+        foreach (var trainset in trainsetSchedules.Values) schedule.AddTrainsetSchedule(trainset);
+        foreach (var duty in driverDuties.Values) schedule.AddDriverDuty(duty);
+        return RepositoryResult<Schedule>.Success(schedule);
 
-        #endregion Schedule
-
-        private static string Cell(string col, int row)
+        static TrainPartKeys GetTrainPartKeys(string[] fields, Train currentTrain)
         {
-            return col + row.ToString(CultureInfo.InvariantCulture);
+            var messages = new List<Message>();
+            var (from, to, departure, arrival) = GetTrainPartFields(fields);
+            var (fromCall, fromIndex) = currentTrain.FindBetweenArrivalAndDeparture(from, departure);
+            var (toCall, toIndex) = currentTrain.FindBetweenArrivalAndDeparture(to, arrival);
+            if (fromCall.IsNone)
+                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ObjectAtStationWithDepartureDoNotRefersToAnExistingTimeInTrain, fields[Object], fields[From], fields[Departure].AsTime(), currentTrain)));
+            if (toCall.IsNone)
+                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ObjectAtStationWithArrivalDoNotRefersToAnExistingTimeInTrain, fields[Object], fields[To], fields[Arrival].AsTime(), currentTrain)));
+            if (toCall.HasValue && fromCall.HasValue && fromIndex >= toIndex)
+                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ObjectInTrainHasWrongTimingEndStartionIsBeforeStartStation, fields[Object], currentTrain, fields[Departure].AsTime(), fields[Arrival].AsTime())));
+            return new TrainPartKeys(fromCall, toCall, messages);
         }
 
-        public IEnumerable<string> Save(Layout layout)
+
+        static (string from, string to, Time departure, Time arrival) GetTrainPartFields(string[] fields) =>
+           (fields[From], fields[To], fields[Arrival].AsTime(), fields[Departure].AsTime());
+
+        static Message[] ValidateRow(string[] fields, int rowNumber)
         {
-            throw new NotSupportedException(nameof(Save));
+            var messages = new List<Message>();
+            if (fields.Length < MinLength)
+                messages.Add(Message.Error($"Row {rowNumber}: Not all fields present, count is {fields.Length}."));
+            if (!fields[Enum].IsNumber())
+                messages.Add(Message.Error($"Row {rowNumber}: Column 'Enum' must be a number, but value is '{fields[Enum]}'."));
+            if (!fields[Departure].IsTime())
+                messages.Add(Message.Error($"Row {rowNumber}: Incorrect departure time, value is '{fields[Departure]}'."));
+            if (!fields[Arrival].IsTime())
+                messages.Add(Message.Error($"Row {rowNumber}: Incorrect arrival time, value is '{fields[Arrival]}'."));
+            if (fields[Type].IsEmpty())
+                messages.Add(Message.Error($"Row {rowNumber}: Column 'Type' must have a value."));
+            else if (!fields[Type].Is("Traindef", "Timetable", "Locomotive", "Trainset", "Job", "Wheel", "Group"))
+                messages.Add(Message.Error($"Row {rowNumber}: Unsupported 'Type', value is '{fields[Type]}'. Please, contact developer if you are missing a type."));
+            return messages.ToArray();
         }
 
-        public IEnumerable<string> Save(Timetable timetable)
+        static Message[] ValidateLocoOrJob(string[] fields, int rowNumber)
         {
-            throw new NotSupportedException(nameof(Save));
+            var messages = new List<Message>();
+            if (fields[Object].IsEmpty())
+                messages.Add(Message.Error($"Row {rowNumber}: Column 'Object' must have a value."));
+            return messages.ToArray();
         }
-
-        #region IDisposable Support
-        private bool disposedValue; // To detect redundant calls
-
-        private void Dispose(bool disposing)
+        static Message[] ValidateTrainset(string[] fields, int rowNumber)
         {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    Excel?.Quit();
-                }
-                _Excel = null;
-
-                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-                // TODO: set large fields to null.
-
-                disposedValue = true;
-            }
+            var messages = new List<Message>();
+            if (fields[Object].IsEmpty() && fields[TrainName].IsEmpty())
+                messages.Add(Message.Error($"Row {rowNumber}: Column 'Object' or 'TrainName' must have a value."));
+            return messages.ToArray();
         }
-
-        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
-        // ~XplnRepository()
-        // {
-        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-        //   Dispose(false);
-        // }
-
-        // This code added to correctly implement the disposable pattern.
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(true);
-            // TODO: uncomment the following line if the finalizer is overridden above.
-            // GC.SuppressFinalize(this);
-        }
-        #endregion
     }
+
+    private DataSet GetData(string filename)
+    {
+        if (Data is not null) return Data;
+        var data = DataSetProvider.LoadFromFile(filename);
+        if (data is null) throw new FileNotFoundException(filename);
+        return data;
+    }
+
+    #region IDisposable
+
+    private bool IsDisposed;
+    private void Dispose(bool disposing)
+    {
+        if (!IsDisposed)
+        {
+            if (disposing)
+            {
+                Data?.Dispose();
+            }
+            IsDisposed = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+
+
+
+    #endregion
+
+    internal record TrainPartKeys(Maybe<StationCall> FromCall, Maybe<StationCall> ToCall, IEnumerable<Message> Messages);
 }

@@ -132,19 +132,40 @@
   <data name="FeatureIsNotSupported" xml:space="preserve">
     <value>Feature {0} is not supported.</value>
   </data>
-  <data name="LocoAtStationWithArrivalDoNotRefersToAnExistingTimeInTrain" xml:space="preserve">
-    <value>Loco {0} at station {1} with arrival {2} refers to a nonexisting time in train {3}.</value>
+  <data name="ObjectAtStationWithArrivalDoNotRefersToAnExistingTimeInTrain" xml:space="preserve">
+    <value>Object  {0} at station {1} with arrival {2} refers to a non existing time in train {3}.</value>
   </data>
-  <data name="LocoAtStationWithDepartureDoNotRefersToAnExistingTimeInTrain" xml:space="preserve">
-    <value>Loco {0} at station {1} with departure {2} refers to a nonexisting time in train {3}.</value>
+  <data name="ObjectAtStationWithDepartureDoNotRefersToAnExistingTimeInTrain" xml:space="preserve">
+    <value>Object {0} at station {1} with departure {2} refers to a non existing time in train {3}.</value>
   </data>
-  <data name="LocoInTrainHasWrongTimingEndStartionIsBeforeStartStation" xml:space="preserve">
-    <value>Loco {0} in train {1} has wrong timing. Arrival {2} is before departure {3}.</value>
+  <data name="ObjectInTrainHasWrongTimingEndStartionIsBeforeStartStation" xml:space="preserve">
+    <value>Object {0} in train {1} has wrong timing. Arrival {2} is before departure {3}.</value>
   </data>
   <data name="ThereIsNoStationWithSignatureOrName" xml:space="preserve">
     <value>There is no station with signature or name '{0}'.</value>
   </data>
   <data name="TrainAtStationAtTimeRefersToANonexistingTrack" xml:space="preserve">
     <value>Train {0} at {1} arr {2} dep {3} referens to a nonexisting track {4}.</value>
+  </data>
+  <data name="Information" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="InvalidDataFor" xml:space="preserve">
+    <value>Invalid data '{1}' for {0}</value>
+  </data>
+  <data name="TrainHasSeveralCallsInTimeInterval" xml:space="preserve">
+    <value>Train {0} at {1} has several calls {1}.</value>
+  </data>
+  <data name="TrainHasNoCallsAtStation" xml:space="preserve">
+    <value>Train {0} has no call at {1}.</value>
+  </data>
+  <data name="TrainHasOverlappingTimesAtStation" xml:space="preserve">
+    <value>Train {0} has overlapping times at {1}.</value>
   </data>
 </root>

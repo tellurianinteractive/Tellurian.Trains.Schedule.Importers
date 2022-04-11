@@ -135,16 +135,25 @@
   <data name="DepartureFromStationNotFoundForTrainInLocoScheduleAtTime" xml:space="preserve">
     <value>Avgång från station {0} finns inte för tåg {1} i lokomlopp '{2}' vid {3}.</value>
   </data>
-  <data name="LocoAtStationWithArrivalDoNotRefersToAnExistingTimeInTrain" xml:space="preserve">
-    <value>Omlopp {0} vid station {1} ank {2} refererar till en tid som inte finns i tåg {3}.</value>
+  <data name="ObjectAtStationWithArrivalDoNotRefersToAnExistingTimeInTrain" xml:space="preserve">
+    <value>Objekt {0} vid station {1} ank {2} refererar till en tid som inte finns i tåg {3}.</value>
   </data>
-  <data name="LocoAtStationWithDepartureDoNotRefersToAnExistingTimeInTrain" xml:space="preserve">
-    <value>Omlopp {0} vid station {1} avg {2} refererar till en tid som inte finns i tåg {3}.</value>
+  <data name="ObjectAtStationWithDepartureDoNotRefersToAnExistingTimeInTrain" xml:space="preserve">
+    <value>Objekt {0} vid station {1} avg {2} refererar till en tid som inte finns i tåg {3}.</value>
   </data>
-  <data name="LocoInTrainHasWrongTimingEndStartionIsBeforeStartStation" xml:space="preserve">
-    <value>Omlopp {0} t tåg {1} har tider i fel ordning. Ankomst {2} är innan avgång {3}.</value>
+  <data name="ObjectInTrainHasWrongTimingEndStartionIsBeforeStartStation" xml:space="preserve">
+    <value>Objekt {0} i tåg {1} har tider i fel ordning. Ankomst {2} är innan avgång {3}.</value>
   </data>
   <data name="TrainAtStationAtTimeRefersToANonexistingTrack" xml:space="preserve">
     <value>Tåg {0} på station {1} ank {2} avg {3} refererar till ett ej existerande spår {4}.</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Varning</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Fel</value>
+  </data>
+  <data name="TrainHasNoCallsAtStation" xml:space="preserve">
+    <value>Tåg {0} passerar inte {1}.</value>
   </data>
 </root>

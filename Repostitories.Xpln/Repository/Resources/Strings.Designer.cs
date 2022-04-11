@@ -19,7 +19,7 @@ namespace Tellurian.Trains.Repositories.Xpln.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Strings {
@@ -97,6 +97,15 @@ namespace Tellurian.Trains.Repositories.Xpln.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        internal static string Error {
+            get {
+                return ResourceManager.GetString("Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Feature {0} is not supported..
         /// </summary>
         internal static string FeatureIsNotSupported {
@@ -106,29 +115,47 @@ namespace Tellurian.Trains.Repositories.Xpln.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Loco {0} at station {1} with arrival {2} refers to a nonexisting time in train {3}..
+        ///   Looks up a localized string similar to .
         /// </summary>
-        internal static string LocoAtStationWithArrivalDoNotRefersToAnExistingTimeInTrain {
+        internal static string Information {
             get {
-                return ResourceManager.GetString("LocoAtStationWithArrivalDoNotRefersToAnExistingTimeInTrain", resourceCulture);
+                return ResourceManager.GetString("Information", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Loco {0} at station {1} with departure {2} refers to a nonexisting time in train {3}..
+        ///   Looks up a localized string similar to Invalid data &apos;{1}&apos; for {0}.
         /// </summary>
-        internal static string LocoAtStationWithDepartureDoNotRefersToAnExistingTimeInTrain {
+        internal static string InvalidDataFor {
             get {
-                return ResourceManager.GetString("LocoAtStationWithDepartureDoNotRefersToAnExistingTimeInTrain", resourceCulture);
+                return ResourceManager.GetString("InvalidDataFor", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Loco {0} in train {1} has wrong timing. Arrival {2} is before departure {3}..
+        ///   Looks up a localized string similar to Object  {0} at station {1} with arrival {2} refers to a non existing time in train {3}..
         /// </summary>
-        internal static string LocoInTrainHasWrongTimingEndStartionIsBeforeStartStation {
+        internal static string ObjectAtStationWithArrivalDoNotRefersToAnExistingTimeInTrain {
             get {
-                return ResourceManager.GetString("LocoInTrainHasWrongTimingEndStartionIsBeforeStartStation", resourceCulture);
+                return ResourceManager.GetString("ObjectAtStationWithArrivalDoNotRefersToAnExistingTimeInTrain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Object {0} at station {1} with departure {2} refers to a non existing time in train {3}..
+        /// </summary>
+        internal static string ObjectAtStationWithDepartureDoNotRefersToAnExistingTimeInTrain {
+            get {
+                return ResourceManager.GetString("ObjectAtStationWithDepartureDoNotRefersToAnExistingTimeInTrain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Object {0} in train {1} has wrong timing. Arrival {2} is before departure {3}..
+        /// </summary>
+        internal static string ObjectInTrainHasWrongTimingEndStartionIsBeforeStartStation {
+            get {
+                return ResourceManager.GetString("ObjectInTrainHasWrongTimingEndStartionIsBeforeStartStation", resourceCulture);
             }
         }
         
@@ -147,6 +174,42 @@ namespace Tellurian.Trains.Repositories.Xpln.Resources {
         internal static string TrainAtStationAtTimeRefersToANonexistingTrack {
             get {
                 return ResourceManager.GetString("TrainAtStationAtTimeRefersToANonexistingTrack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Train {0} has no call at {1}..
+        /// </summary>
+        internal static string TrainHasNoCallsAtStation {
+            get {
+                return ResourceManager.GetString("TrainHasNoCallsAtStation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Train {0} has overlapping times at {1}..
+        /// </summary>
+        internal static string TrainHasOverlappingTimesAtStation {
+            get {
+                return ResourceManager.GetString("TrainHasOverlappingTimesAtStation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Train {0} at {1} has several calls {1}..
+        /// </summary>
+        internal static string TrainHasSeveralCallsInTimeInterval {
+            get {
+                return ResourceManager.GetString("TrainHasSeveralCallsInTimeInterval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning.
+        /// </summary>
+        internal static string Warning {
+            get {
+                return ResourceManager.GetString("Warning", resourceCulture);
             }
         }
     }
