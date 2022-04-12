@@ -32,7 +32,7 @@ public class XplnRepositoryTests
     [TestMethod]
     public void ImportsBarmstedt2022()
     {
-        TestDocumentImport("Barmstedt2022", "de-DE", 73, 26, 6, 54, 0);
+        TestDocumentImport("Barmstedt2022", "de-DE", 61, 18, 36, 45, 1);
     }
 
     [TestMethod]
@@ -115,9 +115,8 @@ public class XplnRepositoryTests
         Assert.AreEqual(expectedTrainsets, result.Item.TrainsetSchedules.Count, "Trainsets");
         Assert.AreEqual(expectedDuties, result.Item.DriverDuties.Count, "Duties");
         var validationErrors = result.Item.GetValidationErrors(new ValidationOptions { ValidateStretches = true, MinTrainSpeedMetersPerClockMinute = 0.5, MaxTrainSpeedMetersPerClockMinute = 2.0 });
-        WriteLines(result.Messages, file);
+        WriteLines(result.Messages.Concat(validationErrors.ToStrings()), file);
         Assert.AreEqual(expectedValidationErrors, validationErrors.Count(), "Validation errors");
-        //schedule.Write();
     }
 
     private static void WriteLines(IEnumerable<string> messages, FileInfo file)

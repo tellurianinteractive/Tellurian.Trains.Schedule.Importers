@@ -126,34 +126,58 @@
   <data name="FeatureIsNotSupported" xml:space="preserve">
     <value>Funksjon {0} er ikke supporteret.</value>
   </data>
-  <data name="ThereIsNoStationWithSignatureOrName" xml:space="preserve">
-    <value>Det finns ikke noen stasjon med signatur eller navn '{0}'.</value>
-  </data>
-  <data name="ArrivatToStationNotFoundForTrainInLocoScheduleAtTime" xml:space="preserve">
-    <value>Ankomst til stasjon {0} finnes ikke for tog {1} i lok omløp '{2}' at {3}.</value>
-  </data>
-  <data name="DepartureFromStationNotFoundForTrainInLocoScheduleAtTime" xml:space="preserve">
-    <value>Avgang fra stasjon {0} finnes ikke for tog {1} i lok omløp '{2}' at {3}.</value>
-  </data>
   <data name="ObjectAtStationWithArrivalDoNotRefersToAnExistingTimeInTrain" xml:space="preserve">
-    <value>Objekt {0} ved stasjon {1} ank {2} refererer til en tid der ikke finnes i tog {3}.</value>
+    <value>Rad {0}: Objekt '{1}' ved stasjon {2} ank {3} refererer til en tid der ikke finnes i tog {4}.</value>
   </data>
   <data name="ObjectAtStationWithDepartureDoNotRefersToAnExistingTimeInTrain" xml:space="preserve">
-    <value>Objekt {0} ved stasjon {1} avg {2} refererer til en tid der ikke finnes i tog {3}.</value>
+    <value>Rad {0}: Objekt '{1}' ved stasjon {2} avg {3} refererer til en tid der ikke finnes i tog {4}.</value>
   </data>
   <data name="ObjectInTrainHasWrongTimingEndStartionIsBeforeStartStation" xml:space="preserve">
-    <value>Objekt {0} i tog {1} har tider i feil rekkefølge. Ankomst {2} er innen avgang {3}.</value>
-  </data>
-  <data name="TrainAtStationAtTimeRefersToANonexistingTrack" xml:space="preserve">
-    <value>Tog {0} på stasjon {1} ank {2} avg {3} refererer til et ikke eksisterende spor {4}.</value>
+    <value>Rad {0}: Objekt '{1}' i tog {2} har tider i feil rekkefølge. Ankomst {3} er innen avgang {4}.</value>
   </data>
   <data name="Warning" xml:space="preserve">
-    <value>Warnung</value>
-  </data>
-  <data name="Error" xml:space="preserve">
-    <value>Fehler</value>
+    <value>Advarsel</value>
   </data>
   <data name="TrainHasNoCallsAtStation" xml:space="preserve">
-    <value>Tog {0} kjører ikke ved {1}.</value>
+    <value>Rad {0}: Tog {1} passerer ikke stasjon {2}.</value>
+  </data>
+  <data name="WorksheetNotFound" xml:space="preserve">
+    <value>Finner ikke regnearket {0}.</value>
+  </data>
+  <data name="UnsupportedType" xml:space="preserve">
+    <value>Rad {0}: Type {1} støttes ikke. Ta kontakt med utvikleren hvis du mangler en type.</value>
+  </data>
+  <data name="NotAllFieldsArePresent" xml:space="preserve">
+    <value>Rad {0}: Ikke alle felt er til stede, forventet antall er {1}, faktisk antall er {2}.</value>
+  </data>
+  <data name="UseLoco" xml:space="preserve">
+    <value>Bruk lok {0}.</value>
+  </data>
+  <data name="UseLocoClasses" xml:space="preserve">
+    <value>Bruk lok {0}, type {1}.</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Feil</value>
+  </data>
+  <data name="Information" xml:space="preserve">
+    <value>Informasjon</value>
+  </data>
+  <data name="TrainHasOverlappingTimesAtStation" xml:space="preserve">
+    <value>Rad {0}: Tog {1} har overlappende tider på {2}.</value>
+  </data>
+  <data name="ColumnMustHaveAValue" xml:space="preserve">
+    <value>Rad {0}: Kolonne {1} må inneholde en verdi.</value>
+  </data>
+  <data name="UnsupportedSubType" xml:space="preserve">
+    <value>Rad {0}: SubType {1} støttes ikke. Ta kontakt med utvikleren hvis du mangler en type.</value>
+  </data>
+  <data name="ColumnMustBeANumber" xml:space="preserve">
+    <value>Rad {0}: Kolonne {1} må inneholde et tall, gjeldende verdi er {2}.</value>
+  </data>
+  <data name="ColumnIsNotSpecified" xml:space="preserve">
+    <value>Rad {0}: Kolonne {1} er ikke spesifisert.</value>
+  </data>
+  <data name="ColumnMustBeATime" xml:space="preserve">
+    <value>Rad {0}: Kolonne {1} må være et tidspunkt, gjeldende verdi er {2}.</value>
   </data>
 </root>

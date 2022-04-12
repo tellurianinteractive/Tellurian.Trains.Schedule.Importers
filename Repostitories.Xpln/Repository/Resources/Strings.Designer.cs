@@ -61,15 +61,6 @@ namespace Tellurian.Trains.Repositories.Xpln.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Arrival to station {0} not found for train {1} in loco schedule &apos;{2}&apos; at {3}..
-        /// </summary>
-        internal static string ArrivatToStationNotFoundForTrainInLocoScheduleAtTime {
-            get {
-                return ResourceManager.GetString("ArrivatToStationNotFoundForTrainInLocoScheduleAtTime", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Cannot read schedule due to errors in timetable..
         /// </summary>
         internal static string CannotReadScheduleDueToErrorsInTimetable {
@@ -88,11 +79,38 @@ namespace Tellurian.Trains.Repositories.Xpln.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Departure from station {0} not found for train {1} in loco schedule &apos;{2}&apos; at {3}..
+        ///   Looks up a localized string similar to Row {0}: Column {1} is not specified..
         /// </summary>
-        internal static string DepartureFromStationNotFoundForTrainInLocoScheduleAtTime {
+        internal static string ColumnIsNotSpecified {
             get {
-                return ResourceManager.GetString("DepartureFromStationNotFoundForTrainInLocoScheduleAtTime", resourceCulture);
+                return ResourceManager.GetString("ColumnIsNotSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Row {0}: Column {1} must contain a number, current value is {2}..
+        /// </summary>
+        internal static string ColumnMustBeANumber {
+            get {
+                return ResourceManager.GetString("ColumnMustBeANumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Row {0}: Column {1} must be a time, current value is {2}..
+        /// </summary>
+        internal static string ColumnMustBeATime {
+            get {
+                return ResourceManager.GetString("ColumnMustBeATime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Row {0}: Column {1} must contain a value..
+        /// </summary>
+        internal static string ColumnMustHaveAValue {
+            get {
+                return ResourceManager.GetString("ColumnMustHaveAValue", resourceCulture);
             }
         }
         
@@ -115,7 +133,7 @@ namespace Tellurian.Trains.Repositories.Xpln.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Information.
         /// </summary>
         internal static string Information {
             get {
@@ -124,16 +142,16 @@ namespace Tellurian.Trains.Repositories.Xpln.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid data &apos;{1}&apos; for {0}.
+        ///   Looks up a localized string similar to Row {0}: Not all fields present, expected count is {1}, actual count is {2}..
         /// </summary>
-        internal static string InvalidDataFor {
+        internal static string NotAllFieldsArePresent {
             get {
-                return ResourceManager.GetString("InvalidDataFor", resourceCulture);
+                return ResourceManager.GetString("NotAllFieldsArePresent", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Object  {0} at station {1} with arrival {2} refers to a non existing time in train {3}..
+        ///   Looks up a localized string similar to Row {0}: Object &apos;{1}&apos; at station {2} with arrival {3} refers to a non existing time in train {4}..
         /// </summary>
         internal static string ObjectAtStationWithArrivalDoNotRefersToAnExistingTimeInTrain {
             get {
@@ -142,7 +160,7 @@ namespace Tellurian.Trains.Repositories.Xpln.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Object {0} at station {1} with departure {2} refers to a non existing time in train {3}..
+        ///   Looks up a localized string similar to Row {0}: Object &apos;{1}&apos; at station {2} with departure {3} refers to a non existing time in train {4}..
         /// </summary>
         internal static string ObjectAtStationWithDepartureDoNotRefersToAnExistingTimeInTrain {
             get {
@@ -151,7 +169,7 @@ namespace Tellurian.Trains.Repositories.Xpln.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Object {0} in train {1} has wrong timing. Arrival {2} is before departure {3}..
+        ///   Looks up a localized string similar to Row {0}: Object &apos;{1}&apos; in train {2} has wrong timing. Arrival {3} is before departure {4}..
         /// </summary>
         internal static string ObjectInTrainHasWrongTimingEndStartionIsBeforeStartStation {
             get {
@@ -160,25 +178,7 @@ namespace Tellurian.Trains.Repositories.Xpln.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There is no station with signature or name &apos;{0}&apos;..
-        /// </summary>
-        internal static string ThereIsNoStationWithSignatureOrName {
-            get {
-                return ResourceManager.GetString("ThereIsNoStationWithSignatureOrName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Train {0} at {1} arr {2} dep {3} referens to a nonexisting track {4}..
-        /// </summary>
-        internal static string TrainAtStationAtTimeRefersToANonexistingTrack {
-            get {
-                return ResourceManager.GetString("TrainAtStationAtTimeRefersToANonexistingTrack", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Train {0} has no call at {1}..
+        ///   Looks up a localized string similar to Row {0}: Train {1} does not pass station {2}..
         /// </summary>
         internal static string TrainHasNoCallsAtStation {
             get {
@@ -187,7 +187,7 @@ namespace Tellurian.Trains.Repositories.Xpln.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Train {0} has overlapping times at {1}..
+        ///   Looks up a localized string similar to Row {0}: Train {1} has overlapping times at {2}..
         /// </summary>
         internal static string TrainHasOverlappingTimesAtStation {
             get {
@@ -196,11 +196,38 @@ namespace Tellurian.Trains.Repositories.Xpln.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Train {0} at {1} has several calls {1}..
+        ///   Looks up a localized string similar to Row {0}: SubType {1} is not supported. Please, contact developer if you are missing a type..
         /// </summary>
-        internal static string TrainHasSeveralCallsInTimeInterval {
+        internal static string UnsupportedSubType {
             get {
-                return ResourceManager.GetString("TrainHasSeveralCallsInTimeInterval", resourceCulture);
+                return ResourceManager.GetString("UnsupportedSubType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Row {0}: Type {1} is not supported. Please, contact developer if you are missing a type..
+        /// </summary>
+        internal static string UnsupportedType {
+            get {
+                return ResourceManager.GetString("UnsupportedType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use loco {0}..
+        /// </summary>
+        internal static string UseLoco {
+            get {
+                return ResourceManager.GetString("UseLoco", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use loco {0}, classes {1}..
+        /// </summary>
+        internal static string UseLocoClasses {
+            get {
+                return ResourceManager.GetString("UseLocoClasses", resourceCulture);
             }
         }
         
@@ -210,6 +237,15 @@ namespace Tellurian.Trains.Repositories.Xpln.Resources {
         internal static string Warning {
             get {
                 return ResourceManager.GetString("Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Worksheet {0} not found..
+        /// </summary>
+        internal static string WorksheetNotFound {
+            get {
+                return ResourceManager.GetString("WorksheetNotFound", resourceCulture);
             }
         }
     }

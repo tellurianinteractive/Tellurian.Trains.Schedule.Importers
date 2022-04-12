@@ -126,26 +126,14 @@
   <data name="FeatureIsNotSupported" xml:space="preserve">
     <value>Funktion {0} understöds inte.</value>
   </data>
-  <data name="ThereIsNoStationWithSignatureOrName" xml:space="preserve">
-    <value>Det finns ingen station med signatur eller namn '{0}'.</value>
-  </data>
-  <data name="ArrivatToStationNotFoundForTrainInLocoScheduleAtTime" xml:space="preserve">
-    <value>Ankomst till station {0} finns inte för tåg {1} i lokomlopp '{2}' vid {3}.</value>
-  </data>
-  <data name="DepartureFromStationNotFoundForTrainInLocoScheduleAtTime" xml:space="preserve">
-    <value>Avgång från station {0} finns inte för tåg {1} i lokomlopp '{2}' vid {3}.</value>
-  </data>
   <data name="ObjectAtStationWithArrivalDoNotRefersToAnExistingTimeInTrain" xml:space="preserve">
-    <value>Objekt {0} vid station {1} ank {2} refererar till en tid som inte finns i tåg {3}.</value>
+    <value>Rad {0}: Objekt '{1}' vid station {2} ank {3} refererar till en tid som inte finns i tåg {4}.</value>
   </data>
   <data name="ObjectAtStationWithDepartureDoNotRefersToAnExistingTimeInTrain" xml:space="preserve">
-    <value>Objekt {0} vid station {1} avg {2} refererar till en tid som inte finns i tåg {3}.</value>
+    <value>Rad {0}: Objekt '{1}' vid station {2} avg {3} refererar till en tid som inte finns i tåg {4}.</value>
   </data>
   <data name="ObjectInTrainHasWrongTimingEndStartionIsBeforeStartStation" xml:space="preserve">
-    <value>Objekt {0} i tåg {1} har tider i fel ordning. Ankomst {2} är innan avgång {3}.</value>
-  </data>
-  <data name="TrainAtStationAtTimeRefersToANonexistingTrack" xml:space="preserve">
-    <value>Tåg {0} på station {1} ank {2} avg {3} refererar till ett ej existerande spår {4}.</value>
+    <value>Rad {0}: Objekt '{1}' i tåg {2} har tider i fel ordning. Ankomst {3} är innan avgång {4}.</value>
   </data>
   <data name="Warning" xml:space="preserve">
     <value>Varning</value>
@@ -154,6 +142,42 @@
     <value>Fel</value>
   </data>
   <data name="TrainHasNoCallsAtStation" xml:space="preserve">
-    <value>Tåg {0} passerar inte {1}.</value>
+    <value>Rad {0}: Tåg {1} passerar inte station {2}.</value>
+  </data>
+  <data name="WorksheetNotFound" xml:space="preserve">
+    <value>Kalkylbladet {0} hittades inte.</value>
+  </data>
+  <data name="UnsupportedType" xml:space="preserve">
+    <value>Rad {0}: Type {1} stöds inte. Vänligen kontakta utvecklaren om du saknar en typ.</value>
+  </data>
+  <data name="NotAllFieldsArePresent" xml:space="preserve">
+    <value>Rad {0}: Alla fält är inte närvarande, förväntat antal är {1}, faktisk antal är {2}.</value>
+  </data>
+  <data name="UseLoco" xml:space="preserve">
+    <value>Använd lok {0}.</value>
+  </data>
+  <data name="UseLocoClasses" xml:space="preserve">
+    <value>Använd lok {0}, littera {1}.</value>
+  </data>
+  <data name="Information" xml:space="preserve">
+    <value>Information</value>
+  </data>
+  <data name="TrainHasOverlappingTimesAtStation" xml:space="preserve">
+    <value>Rad {0}: Tåg {1} har överlappande tider vid {2}.</value>
+  </data>
+  <data name="ColumnMustHaveAValue" xml:space="preserve">
+    <value>Rad {0}: Kolumn {1} måste innehålla ett värde.</value>
+  </data>
+  <data name="UnsupportedSubType" xml:space="preserve">
+    <value>Rad {0}: SubType {1} stöds inte. Vänligen kontakta utvecklaren om du saknar en typ.</value>
+  </data>
+  <data name="ColumnMustBeANumber" xml:space="preserve">
+    <value>Rad {0}: Kolumn {1} måste innehålla ett tal, nuvarande värde är {2}.</value>
+  </data>
+  <data name="ColumnIsNotSpecified" xml:space="preserve">
+    <value>Rad {0}: Kolumn {1} är inte angiven.</value>
+  </data>
+  <data name="ColumnMustBeATime" xml:space="preserve">
+    <value>Rad {0}: Kolumn {1} måste vara en tid, nuvarande värde är {2}.</value>
   </data>
 </root>

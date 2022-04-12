@@ -14,7 +14,7 @@ namespace Tellurian.Trains.Repositories.Xpln;
 public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, IScheduleReadStore, IDisposable
 {
     public readonly IDataSetProvider DataSetProvider;
-    private DataSet? Data;
+    private DataSet? DataSet;
 
     public XplnRepository(IDataSetProvider dataSetProvider)
     {
@@ -25,8 +25,8 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
 
     public RepositoryResult<Layout> GetLayout(string fileName)
     {
+        const string WorkSheetName = "StationTrack";
         const int Signature = 0;
-        const int Enum = 1;
         const int TrackName = 2;
         const int Lenght = 3;
         const int Name = 4;
@@ -36,10 +36,10 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
         const int MinLength = 7;
 
         var messages = new List<Message>();
-        Data = GetData(fileName);
-        var stations = Data.Tables["StationTrack"];
+        DataSet = GetData(fileName);
+        var stations = DataSet.Tables[WorkSheetName];
         if (stations is null)
-            return RepositoryResult<Layout>.Failure("Worksheet 'StationTracks' not found.");
+            return RepositoryResult<Layout>.Failure(string.Format(CultureInfo.CurrentCulture, Resources.Strings.WorksheetNotFound, WorkSheetName));
 
         var result = new Layout { Name = fileName };
         var rowNumber = 1;
@@ -84,9 +84,9 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
             rowNumber++;
         }
         if (current is not null) result.Add(current);
-        if (messages.HasStoppingErrors()) 
+        if (messages.HasStoppingErrors())
             return RepositoryResult<Layout>.Failure(messages.ToStrings());
-        else 
+        else
             return RepositoryResult<Layout>.Success(result, messages.ToStrings());
 
         static Station CreateStation(string[] fields) =>
@@ -111,11 +111,9 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
         {
             var messages = new List<Message>();
             if (fields.Length < MinLength)
-                messages.Add(Message.Error($"Row {rowNumber}: Not all fields present, count is {fields.Length}."));
-            if (!fields[Enum].IsNumber())
-                messages.Add(Message.Error($"Row {rowNumber}: Column 'Enum' must be a number, but value is '{fields[1]}'."));
+                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.NotAllFieldsArePresent, rowNumber, MinLength, fields.Length)));
             if (!fields[Type].ValueOrEmpty().Is("Station", "Track"))
-                messages.Add(Message.Error($"Row {rowNumber}: Unsupported 'Type' '{fields[5]}'. Please, contact developer if you are missing a type."));
+                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.UnsupportedType, rowNumber, fields[Type])));
             return messages.ToArray();
         }
 
@@ -123,9 +121,9 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
         {
             var messages = new List<Message>();
             if (fields[Signature].IsEmpty())
-                messages.Add(Message.Error($"Row {rowNumber}: Column 'Name' must contain the short name of the station."));
+                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustHaveAValue, rowNumber, "Name")));
             if (!fields[SubType].ValueOrEmpty().Is("Station", "Block"))
-                messages.Add(Message.Error($"Row {rowNumber}: Unsupported 'SubType' '{fields[6]}'. Please, contact developer if you are missing a subtype."));
+                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.UnsupportedSubType, rowNumber, fields[SubType])));
             return messages.ToArray();
         }
 
@@ -133,20 +131,20 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
         {
             var messages = new List<Message>();
             if (fields[TrackName].IsEmpty())
-                messages.Add(Message.Error($"Row {rowNumber}: Column 'TrackName' must contain a value."));
+                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustHaveAValue, rowNumber, "TrackName")));
             if (fields[Lenght].IsEmpty())
-                messages.Add(Message.Warning($"Row {rowNumber}: 'Length' for track {fields[2]} is not specified."));
+                messages.Add(Message.Warning(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnIsNotSpecified, rowNumber, "Length")));
             else if (!fields[Lenght].IsNumber())
-                messages.Add(Message.Error($"Row {rowNumber}: 'Length' must be a number, , but value is '{fields[3]}'"));
+                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustBeANumber, rowNumber, "Length", fields[Lenght])));
             if (!fields[SubType].ValueOrEmpty().Is("Main", "Siding", "Depot"))
-                messages.Add(Message.Error($"Row {rowNumber}: Unsupported 'SubType' '{fields[6]}'. Please, contact developer if you are missing a subtype."));
+                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.UnsupportedSubType, rowNumber, fields[SubType])));
             return messages.ToArray();
         }
     }
 
     public RepositoryResult<Timetable> GetTimetable(string fileName)
     {
-        const int Enum = 1;
+        const string WorkSheetName = "Trains";
         const int Station = 2;
         const int Track = 3;
         const int Arrival = 4;
@@ -157,11 +155,11 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
         const int MinLength = 10;
 
         var messages = new List<Message>();
-        Data = GetData(fileName);
-        var trains = Data?.Tables["Trains"];
+        DataSet = GetData(fileName);
+        var trains = DataSet?.Tables[WorkSheetName];
         if (trains is null)
         {
-            messages.Add(Message.System("Document does not contain a worksheet 'Trains'."));
+            messages.Add(Message.System(string.Format(CultureInfo.CurrentCulture, Resources.Strings.WorksheetNotFound, WorkSheetName)));
             return RepositoryResult<Timetable>.Failure(messages.ToStrings());
         }
 
@@ -216,7 +214,7 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
                                 if (validationMessages.HasNoStoppingErrors())
                                 {
                                     callNumber++;
-                                    var track = layout.Item.Track(fields[Station].ValueOrEmpty(), fields[Track].ValueOrEmpty());
+                                    var track = layout.Item.Track(fields[Station], fields[Track]);
                                     if (track.IsNone)
                                     {
                                         messages.Add(Message.Error(track.Message));
@@ -240,8 +238,9 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
                                         IsDriverNote = true,
                                         IsStationNote = true,
                                         LanguageCode = CultureInfo.CurrentCulture.TwoLetterISOLanguageName,
-                                        Text = fields[Remark].HasValue() ? $"Use loco {fields[Object]}, classes {fields[Remark]}" : $"Use loco {fields[Object]}"
-                                        //TODO: Localize
+                                        Text = fields[Remark].HasValue() ?
+                                        string.Format(CultureInfo.CurrentCulture, Resources.Strings.UseLocoClasses, fields[Object], fields[Remark]) :
+                                            string.Format(CultureInfo.CurrentCulture, Resources.Strings.UseLoco, fields[Object])
                                     };
                                     current.Calls.First().Notes.Add(note);
                                 };
@@ -257,7 +256,7 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
                                     {
                                         IsDriverNote = true,
                                         LanguageCode = CultureInfo.CurrentCulture.TwoLetterISOLanguageName,
-                                        Text = $"{fields[Remark]}"
+                                        Text = fields[Remark]
 
                                     };
                                     current.Calls.First().Notes.Add(note);
@@ -265,7 +264,6 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
 
                             }
                             break;
-
                     }
                 }
             }
@@ -273,7 +271,6 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
         }
         if (current is not null) result.Add(current.WithFixedFirstAndLastCall());
         return RepositoryResult<Timetable>.Success(result, messages.ToStrings());
-
 
 
         static Train CreateTrain(string[] fields) =>
@@ -294,27 +291,21 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
         {
             var messages = new List<Message>();
             if (fields.Length < MinLength)
-                messages.Add(Message.Error($"Row {rowNumber}: Not all fields present, count is {fields.Length}."));
-            if (!fields[Enum].IsNumber())
-                messages.Add(Message.Error($"Row {rowNumber}: Column 'Enum' must be a number, but value is '{fields[Enum]}'."));
+                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.NotAllFieldsArePresent, rowNumber, MinLength, fields.Length)));
             if (!fields[Arrival].IsTime())
-                messages.Add(Message.Error($"Row {rowNumber}: Incorrect arrival time, value is '{fields[Arrival]}'."));
+                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustBeATime, rowNumber, "Arrival", fields[Arrival])));
             if (!fields[Departure].IsTime())
-                messages.Add(Message.Error($"Row {rowNumber}: Incorrect departure time, value is '{fields[Departure]}'."));
-            if (fields[Type].IsEmpty())
-                messages.Add(Message.Error($"Row {rowNumber}: Column 'Type' must have a value."));
+                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustBeATime, rowNumber, "Departure", fields[Arrival])));
             else if (!fields[Type].Is("Traindef", "Timetable", "Locomotive", "Trainset", "Job", "Wheel", "Group"))
-                messages.Add(Message.Error($"Row {rowNumber}: Unsupported 'Type', value is '{fields[Type]}'. Please, contact developer if you are missing a type."));
+                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.UnsupportedType, rowNumber, fields[Type])));
             return messages.ToArray();
         }
 
         static Message[] ValidateTrain(string[] fields, int rowNumber)
         {
             var messages = new List<Message>();
-            if (fields[Enum].ValueOrEmpty() != "0")
-                messages.Add(Message.Warning($"Row {rowNumber}: Column 'Enum' should be '0'."));
             if (fields[Object].IsEmpty())
-                messages.Add(Message.Warning($"Row {rowNumber}: Column 'Object' should contain train identifier."));
+                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustHaveAValue, rowNumber, "Object")));
             return messages.ToArray();
         }
 
@@ -322,15 +313,14 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
         {
             var messages = new List<Message>();
             if (fields[Track].IsEmpty())
-                messages.Add(Message.Error($"Row {rowNumber}: Column 'Track' must have a value."));
+                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustHaveAValue, rowNumber, "Track")));
             return messages.ToArray();
-
         }
     }
 
     public RepositoryResult<Schedule> GetSchedule(string filename)
     {
-        const int Enum = 1;
+        const string WorkSheetName = "Trains";
         const int From = 2;
         const int To = 3;
         const int Arrival = 4;
@@ -345,11 +335,11 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
         var trainsetSchedules = new Dictionary<string, TrainsetSchedule>(200);
         var driverDuties = new Dictionary<string, DriverDuty>();
 
-        Data = GetData(filename);
-        var trains = Data?.Tables["Trains"];
+        DataSet = GetData(filename);
+        var trains = DataSet?.Tables[WorkSheetName];
         if (trains is null)
         {
-            messages.Add(Message.System("Document does not contain a worksheet 'Trains'."));
+            messages.Add(Message.System(string.Format(CultureInfo.CurrentCulture, Resources.Strings.WorksheetNotFound, WorkSheetName)));
             return RepositoryResult<Schedule>.Failure(messages.ToStrings());
         }
         var timetable = GetTimetable(filename);
@@ -396,12 +386,12 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
 
                                 if (locoMessages.HasNoStoppingErrors())
                                 {
-                                    var locoId = fields[Type];
+                                    var locoId = fields[Object];
                                     if (!locoSchedules.ContainsKey(locoId))
                                         locoSchedules.Add(locoId, new LocoSchedule(locoId));
                                     if (locoSchedules.TryGetValue(locoId, out var loco))
                                     {
-                                        var keys = GetTrainPartKeys(fields, currentTrain);
+                                        var keys = GetTrainPartKeys(fields, currentTrain, rowNumber);
                                         locoMessages.AddRange(keys.Messages);
                                         if (locoMessages.HasNoStoppingErrors())
                                         {
@@ -425,7 +415,7 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
                                         trainsetSchedules.Add(trainsetId, new TrainsetSchedule(trainsetId));
                                     if (trainsetSchedules.TryGetValue(trainsetId, out var trainset))
                                     {
-                                        var keys = GetTrainPartKeys(fields, currentTrain);
+                                        var keys = GetTrainPartKeys(fields, currentTrain, rowNumber);
                                         trainsetMessages.AddRange(keys.Messages);
                                         if (trainsetMessages.HasNoStoppingErrors())
                                         {
@@ -449,7 +439,7 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
                                         driverDuties.Add(jobId, new DriverDuty(jobId));
                                     if (driverDuties.TryGetValue(jobId, out var duty))
                                     {
-                                        var keys = GetTrainPartKeys(fields, currentTrain);
+                                        var keys = GetTrainPartKeys(fields, currentTrain, rowNumber);
                                         dutyMessages.AddRange(keys.Messages);
                                         if (dutyMessages.HasNoStoppingErrors())
                                         {
@@ -486,18 +476,29 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
         foreach (var duty in driverDuties.Values) schedule.AddDriverDuty(duty);
         return RepositoryResult<Schedule>.Success(schedule);
 
-        static TrainPartKeys GetTrainPartKeys(string[] fields, Train currentTrain)
+        static TrainPartKeys GetTrainPartKeys(string[] fields, Train currentTrain, int rowNumber)
         {
             var messages = new List<Message>();
-            var (from, to, departure, arrival) = GetTrainPartFields(fields);
-            var (fromCall, fromIndex) = currentTrain.FindBetweenArrivalAndDeparture(from, departure);
-            var (toCall, toIndex) = currentTrain.FindBetweenArrivalAndDeparture(to, arrival);
-            if (fromCall.IsNone)
-                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ObjectAtStationWithDepartureDoNotRefersToAnExistingTimeInTrain, fields[Object], fields[From], fields[Departure].AsTime(), currentTrain)));
-            if (toCall.IsNone)
-                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ObjectAtStationWithArrivalDoNotRefersToAnExistingTimeInTrain, fields[Object], fields[To], fields[Arrival].AsTime(), currentTrain)));
-            if (toCall.HasValue && fromCall.HasValue && fromIndex >= toIndex)
-                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ObjectInTrainHasWrongTimingEndStartionIsBeforeStartStation, fields[Object], currentTrain, fields[Departure].AsTime(), fields[Arrival].AsTime())));
+            var (start, end, startTime, endTime) = GetTrainPartFields(fields);
+            if (startTime > endTime)
+                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ObjectInTrainHasWrongTimingEndStartionIsBeforeStartStation, rowNumber, fields[Object], currentTrain, fields[Arrival].AsTime(), fields[Departure].AsTime())));
+            var (fromCall, fromIndex) = currentTrain.FindBetweenArrivalAndDeparture(start, startTime, rowNumber);
+            var (toCall, toIndex) = currentTrain.FindBetweenArrivalAndDeparture(end, endTime, rowNumber);
+            if (messages.HasNoStoppingErrors())
+            {
+                if (fromCall.IsNone)
+                {
+                    messages.Add(Message.Error(fromCall.Message));
+                    messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ObjectAtStationWithDepartureDoNotRefersToAnExistingTimeInTrain, rowNumber, fields[Object], fields[From], fields[Departure].AsTime(), currentTrain)));
+                }
+                if (toCall.IsNone)
+                {
+                    messages.Add(Message.Error(toCall.Message));
+                    messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ObjectAtStationWithArrivalDoNotRefersToAnExistingTimeInTrain, rowNumber, fields[Object], fields[To], fields[Arrival].AsTime(), currentTrain)));
+                }
+                if (toCall.HasValue && fromCall.HasValue && fromIndex >= toIndex)
+                    messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ObjectInTrainHasWrongTimingEndStartionIsBeforeStartStation, rowNumber, fields[Object], currentTrain, fields[Departure].AsTime(), fields[Arrival].AsTime())));
+            }
             return new TrainPartKeys(fromCall, toCall, messages);
         }
 
@@ -509,17 +510,13 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
         {
             var messages = new List<Message>();
             if (fields.Length < MinLength)
-                messages.Add(Message.Error($"Row {rowNumber}: Not all fields present, count is {fields.Length}."));
-            if (!fields[Enum].IsNumber())
-                messages.Add(Message.Error($"Row {rowNumber}: Column 'Enum' must be a number, but value is '{fields[Enum]}'."));
-            if (!fields[Departure].IsTime())
-                messages.Add(Message.Error($"Row {rowNumber}: Incorrect departure time, value is '{fields[Departure]}'."));
+                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.NotAllFieldsArePresent, rowNumber, MinLength, fields.Length)));
             if (!fields[Arrival].IsTime())
-                messages.Add(Message.Error($"Row {rowNumber}: Incorrect arrival time, value is '{fields[Arrival]}'."));
-            if (fields[Type].IsEmpty())
-                messages.Add(Message.Error($"Row {rowNumber}: Column 'Type' must have a value."));
+                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustBeATime, rowNumber, "Arrival", fields[Arrival])));
+            if (!fields[Departure].IsTime())
+                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustBeATime, rowNumber, "Departure", fields[Arrival])));
             else if (!fields[Type].Is("Traindef", "Timetable", "Locomotive", "Trainset", "Job", "Wheel", "Group"))
-                messages.Add(Message.Error($"Row {rowNumber}: Unsupported 'Type', value is '{fields[Type]}'. Please, contact developer if you are missing a type."));
+                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.UnsupportedType, rowNumber, fields[Type])));
             return messages.ToArray();
         }
 
@@ -527,21 +524,21 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
         {
             var messages = new List<Message>();
             if (fields[Object].IsEmpty())
-                messages.Add(Message.Error($"Row {rowNumber}: Column 'Object' must have a value."));
+                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustHaveAValue, rowNumber, "Object")));
             return messages.ToArray();
         }
         static Message[] ValidateTrainset(string[] fields, int rowNumber)
         {
             var messages = new List<Message>();
             if (fields[Object].IsEmpty() && fields[TrainName].IsEmpty())
-                messages.Add(Message.Error($"Row {rowNumber}: Column 'Object' or 'TrainName' must have a value."));
+                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustHaveAValue, rowNumber, "Object|TrainName")));
             return messages.ToArray();
         }
     }
 
     private DataSet GetData(string filename)
     {
-        if (Data is not null) return Data;
+        if (DataSet is not null) return DataSet;
         var data = DataSetProvider.LoadFromFile(filename);
         if (data is null) throw new FileNotFoundException(filename);
         return data;
@@ -556,7 +553,8 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
         {
             if (disposing)
             {
-                Data?.Dispose();
+                DataSet?.Dispose();
+                if (DataSetProvider is IDisposable disposable) disposable.Dispose();
             }
             IsDisposed = true;
         }
