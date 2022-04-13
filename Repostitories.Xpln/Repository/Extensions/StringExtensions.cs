@@ -35,18 +35,19 @@ namespace Tellurian.Trains.Repositories.Xpln
             Time.FromDays(double.Parse(value.Replace(",", "."), NumberStyles.Float, CultureInfo.InvariantCulture));
 
         public static bool IsTime(this string? value) =>
-            value.HasValue() && 
-                (TimeSpan.TryParse(value, out var _) || 
-                DateTime.TryParse(value, out var _) || 
+            value.HasValue() &&
+                (TimeSpan.TryParse(value, out var _) ||
+                DateTime.TryParse(value, out var _) ||
                 (double.TryParse(value.Replace(",", "."), NumberStyles.Float, CultureInfo.InvariantCulture, out var t) && t >= 0.0 && t <= 1.0));
 
 
         public static bool IsTrackNumber(this string? value) =>
-            value is not null && int.TryParse(value,  NumberStyles.Float, CultureInfo.InvariantCulture, out _);
-    
+            value is not null && int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _);
+
+
         public static bool Is(this string? me, string? value) =>
-            me is not null && 
-            value is not null && 
+            me is not null &&
+            value is not null &&
             me.Equals(value, System.StringComparison.OrdinalIgnoreCase);
         public static bool Is(this string? me, params string[] values) =>
              me is not null &&
@@ -60,12 +61,18 @@ namespace Tellurian.Trains.Repositories.Xpln
             value is null ? 0 : int.TryParse(value, out var number) ? number : 0;
 
         public static bool IsNumber(this string? value) =>
-            int.TryParse(value, out var _);
+            int.TryParse(value, out var _) || double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var _ );
+
+        public static int AsInteger(this string? value) =>
+            int.TryParse(value, out var number) ? number : 0;
+
+        public static double AsDouble(this string? value) =>
+            double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var number)? number : 0.0;
 
         public static bool IsEmpty(this string? value) =>
             string.IsNullOrWhiteSpace(value);
 
-        public static string OrElse(this string? value, string? other) => 
+        public static string OrElse(this string? value, string? other) =>
             !string.IsNullOrWhiteSpace(value) ? value :
             !string.IsNullOrWhiteSpace(other) ? other :
             throw new ArgumentException("Must be a non whitespace string.", nameof(other));

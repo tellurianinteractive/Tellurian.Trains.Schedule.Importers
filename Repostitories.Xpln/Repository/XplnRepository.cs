@@ -25,6 +25,18 @@ public sealed partial class XplnRepository : ILayoutReadStore, ITimetableReadSto
 
     public RepositoryResult<Layout> GetLayout(string fileName)
     {
+        DataSet = GetData(fileName);
+        var name = Path.GetFileNameWithoutExtension(fileName);
+        var result = new Layout { Name = name };
+        var messages = new List<Message>();
+        var stations = AddStations(result, messages);
+        if (stations.IsFailure) return stations;
+        var routes = AddRoutes(result, messages);
+        return routes;
+    }
+
+    private RepositoryResult<Layout> AddStations(Layout layout, List<Message> messages)
+    {
         const string WorkSheetName = "StationTrack";
         const int Signature = 0;
         const int TrackName = 2;
@@ -35,13 +47,10 @@ public sealed partial class XplnRepository : ILayoutReadStore, ITimetableReadSto
         const int Remark = 7;
         const int MinLength = 7;
 
-        var messages = new List<Message>();
-        DataSet = GetData(fileName);
-        var stations = DataSet.Tables[WorkSheetName];
+        var stations = DataSet?.Tables[WorkSheetName];
         if (stations is null)
             return RepositoryResult<Layout>.Failure(string.Format(CultureInfo.CurrentCulture, Resources.Strings.WorksheetNotFound, WorkSheetName));
 
-        var result = new Layout { Name = fileName };
         var rowNumber = 1;
         Station? current = null;
         foreach (DataRow station in stations.Rows)
@@ -50,7 +59,7 @@ public sealed partial class XplnRepository : ILayoutReadStore, ITimetableReadSto
             {
                 var itemMessages = new List<Message>();
                 var fields = station.GetRowFields();
-                if (fields.IsEmptyFields()) { if (result.Stations.Any()) break; else continue; }
+                if (fields.IsEmptyFields()) { if (layout.Stations.Any()) break; else continue; }
                 itemMessages.AddRange(ValidateRow(fields, rowNumber));
                 if (itemMessages.HasNoStoppingErrors())
                 {
@@ -58,7 +67,7 @@ public sealed partial class XplnRepository : ILayoutReadStore, ITimetableReadSto
                     {
                         if (current is not null)
                         {
-                            result.Add(current);
+                            layout.Add(current);
                             current = null;
                         }
                         var validationMessages = ValidateStation(fields, rowNumber);
@@ -83,11 +92,12 @@ public sealed partial class XplnRepository : ILayoutReadStore, ITimetableReadSto
             }
             rowNumber++;
         }
-        if (current is not null) result.Add(current);
+        if (current is not null) layout.Add(current);
+
         if (messages.HasStoppingErrors())
             return RepositoryResult<Layout>.Failure(messages.ToStrings());
         else
-            return RepositoryResult<Layout>.Success(result, messages.ToStrings());
+            return RepositoryResult<Layout>.Success(layout, messages.ToStrings());
 
         static Station CreateStation(string[] fields) =>
             new()
@@ -111,9 +121,9 @@ public sealed partial class XplnRepository : ILayoutReadStore, ITimetableReadSto
         {
             var messages = new List<Message>();
             if (fields.Length < MinLength)
-                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.NotAllFieldsArePresent, rowNumber, MinLength, fields.Length)));
+                messages.Add(Message.Error(Resources.Strings.NotAllFieldsArePresent, rowNumber, MinLength, fields.Length));
             if (!fields[Type].ValueOrEmpty().Is("Station", "Track"))
-                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.UnsupportedType, rowNumber, fields[Type])));
+                messages.Add(Message.Error(Resources.Strings.UnsupportedType, rowNumber, fields[Type]));
             return messages.ToArray();
         }
 
@@ -121,9 +131,9 @@ public sealed partial class XplnRepository : ILayoutReadStore, ITimetableReadSto
         {
             var messages = new List<Message>();
             if (fields[Signature].IsEmpty())
-                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustHaveAValue, rowNumber, "Name")));
+                messages.Add(Message.Error(Resources.Strings.ColumnMustHaveAValue, rowNumber, "Name"));
             if (!fields[SubType].ValueOrEmpty().Is("Station", "Block"))
-                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.UnsupportedSubType, rowNumber, fields[SubType])));
+                messages.Add(Message.Error(Resources.Strings.UnsupportedSubType, rowNumber, fields[SubType]));
             return messages.ToArray();
         }
 
@@ -131,15 +141,92 @@ public sealed partial class XplnRepository : ILayoutReadStore, ITimetableReadSto
         {
             var messages = new List<Message>();
             if (fields[TrackName].IsEmpty())
-                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustHaveAValue, rowNumber, "TrackName")));
+                messages.Add(Message.Error(Resources.Strings.ColumnMustHaveAValue, rowNumber, "TrackName"));
             if (fields[Lenght].IsEmpty())
-                messages.Add(Message.Warning(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnIsNotSpecified, rowNumber, "Length")));
+                messages.Add(Message.Warning(Resources.Strings.ColumnIsNotSpecified, rowNumber, "Length"));
             else if (!fields[Lenght].IsNumber())
-                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustBeANumber, rowNumber, "Length", fields[Lenght])));
+                messages.Add(Message.Error(Resources.Strings.ColumnMustBeANumber, rowNumber, "Length", fields[Lenght]));
             if (!fields[SubType].ValueOrEmpty().Is("Main", "Siding", "Depot", "Goods"))
-                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.UnsupportedSubType, rowNumber, fields[SubType])));
+                messages.Add(Message.Error(Resources.Strings.UnsupportedSubType, rowNumber, fields[SubType]));
             return messages.ToArray();
         }
+    }
+
+    private RepositoryResult<Layout> AddRoutes(Layout layout, List<Message> messages)
+    {
+        const string WorkSheetName = "Routes";
+        const int Route = 0;
+        const int StartStation = 2;
+        const int StartPosition = 3;
+        const int EndStation = 4;
+        const int EndPosition = 5;
+        const int Speed = 6;
+        const int Tracks = 7;
+        const int Time = 8;
+
+        var stations = DataSet?.Tables[WorkSheetName];
+        if (stations is null)
+            return RepositoryResult<Layout>.Failure(string.Format(CultureInfo.CurrentCulture, Resources.Strings.WorksheetNotFound, WorkSheetName));
+        var rowNumber = 1;
+        foreach (DataRow station in stations.Rows)
+        {
+            if (rowNumber > 1)
+            {
+                var itemMessages = new List<Message>();
+                var fields = station.GetRowFields();
+                if (fields.IsEmptyFields()) { if (layout.Stations.Any()) break; else continue; }
+
+                var start = layout.Station(fields[StartStation]);
+                var end = layout.Station(fields[EndStation]);
+                if (start.IsNone)
+                    itemMessages.Add(Message.Error(Resources.Strings.StationNotFoundInLayout, rowNumber, fields[StartStation]));
+                if (end.IsNone)
+                    itemMessages.Add(Message.Error(Resources.Strings.StationNotFoundInLayout, rowNumber, fields[EndStation]));
+                if (!fields[Tracks].IsNumber())
+                    itemMessages.Add(Message.Error(Resources.Strings.ColumnMustBeANumber, rowNumber, nameof(Tracks)));
+                if (!fields[Speed].IsNumber())
+                    itemMessages.Add(Message.Error(Resources.Strings.ColumnMustBeANumber, rowNumber, nameof(Speed)));
+                if (!fields[Time].IsNumber())
+                    itemMessages.Add(Message.Error(Resources.Strings.ColumnMustBeANumber, rowNumber, nameof(Time)));
+                if (!fields[EndPosition].IsNumber())
+                    itemMessages.Add(Message.Error(Resources.Strings.ColumnMustBeANumber, rowNumber, nameof(EndPosition)));
+                if (itemMessages.HasNoStoppingErrors())
+                {
+                    var routeNumber = fields[Route].AsInteger();
+                    TimetableStretch? timetableStretch = null;
+                    if (!layout.HasTimetableStretch(fields[Route]))
+                    {
+                        timetableStretch = new TimetableStretch(fields[Route]);
+                        layout.Add(timetableStretch);
+                    }
+                    else
+                    {
+                        var ts = layout.TimetableStretch(fields[Route]);
+                        if (ts.IsNone)
+                        {
+                            itemMessages.Add(Message.Error(Resources.Strings.RouteNotFoundInLayout, rowNumber, fields[Route]));
+                        }
+                        else
+                        {
+                            timetableStretch = ts.Value;
+                        }
+                    }
+                    if (itemMessages.HasNoStoppingErrors())
+                    {
+                        var distance = Math.Abs(fields[EndPosition].AsDouble() - fields[StartPosition].AsDouble());
+                        var stretch = new TrackStretch(start.Value, end.Value, distance, fields[Tracks].AsInteger(), fields[Speed].AsInteger(), fields[Time].AsInteger());
+                        stretch = timetableStretch!.AddLast(stretch);
+                        layout.Add(stretch);
+                    }
+                }
+                messages.AddRange(itemMessages);
+            }
+            rowNumber++;
+        }
+        if (messages.HasStoppingErrors())
+            return RepositoryResult<Layout>.Failure(messages.ToStrings());
+        else
+            return RepositoryResult<Layout>.Success(layout, messages.ToStrings());
     }
 
     public RepositoryResult<Timetable> GetTimetable(string fileName)

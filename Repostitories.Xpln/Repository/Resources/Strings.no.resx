@@ -183,4 +183,10 @@
   <data name="TrainHasNoCalls" xml:space="preserve">
     <value>Rad {0}: Tog {1} har ingen tider på stasjoner.</value>
   </data>
+  <data name="StationNotFoundInLayout" xml:space="preserve">
+    <value>Rad {0}: Stasjon '{1}' ikke funnet i gjeldende layout.</value>
+  </data>
+  <data name="RouteNotFoundInLayout" xml:space="preserve">
+    <value>Rad {0}: Ruten '{1}' ikke funnet i gjeldende layout.</value>
+  </data>
 </root>

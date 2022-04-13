@@ -1,10 +1,10 @@
-# Xpln Validator and Importer
+# Xpln Validator
 **This repository contains source code for a package for reading and validating XPLN (.ods) files.**
 > NOTE: This is an experimental software. It is not intended for production use, only
 > to demonstrate the issues with importing XPLN files into a database.
 
 #### XPLN
-XPLN is a model railway schedulling tool built on Open Office as an Open Document Spreadsheet, hence the .ods file type. 
+XPLN is a model railway scheduling tool built on *Open Office* spreadsheet, hence the .ods file type. 
 With this tool most aspect of model railway scheduling can be made. 
 Therefore it is essential that XPLN-documents can be imported into *Tellurian.Trains* database.
 
@@ -27,10 +27,9 @@ Therefore a rigoruios validation is required before it is possible to import XPL
 Validation is performed in two phases:
 * In the first phanse, the referential integrity of the XPLN-document is checked to verify that it is consistent. 
 Errors found in this stage stops import and must be fixed in the XPLN-document.
-* When the integrity is validated, the second validation phase checks for possible scheduling conflicts are checked. 
-Warnings found in this stage can be fixed either in XPLN or in the database.
+* When the integrity is validated, the second validation phase checks for possible scheduling conflicts. 
+Warnings found in this stage can be fixed either in XPLN or later in the forthcoming online planning application.
 
-The validation tests in this software uses a number of XPLN files to find different ways
-of using XPLN and different kind of inconsistencies. 
-All the test XPLN-files used had some kind of issue that required correction of the XPLN-file 
+The unit tests of this software uses a set of XPLN files from different origins.
+All the unit test XPLN-files had some kind of issue that required correction of the XPLN-file 
 before it could be succesfully validated. This indicates the problems with spreadsheet solutions. 

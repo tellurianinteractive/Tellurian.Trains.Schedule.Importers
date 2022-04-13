@@ -183,4 +183,10 @@
   <data name="TrainHasNoCalls" xml:space="preserve">
     <value>Row {0}: Train {1} has no times at stations.</value>
   </data>
+  <data name="StationNotFoundInLayout" xml:space="preserve">
+    <value>Row {0}: Station '{1}' not found in current layout.</value>
+  </data>
+  <data name="RouteNotFoundInLayout" xml:space="preserve">
+    <value>Row {0}: Route '{1}' not found in current layout.</value>
+  </data>
 </root>

@@ -183,4 +183,10 @@
   <data name="TrainHasNoCalls" xml:space="preserve">
     <value>Række {0}: Tog {1} har ingen gange på stationer.</value>
   </data>
+  <data name="StationNotFoundInLayout" xml:space="preserve">
+    <value>Række {0}: Station '{1}' blev ikke fundet i det aktuelle layout.</value>
+  </data>
+  <data name="RouteNotFoundInLayout" xml:space="preserve">
+    <value>Række {0}: Rute '{1}' blev ikke fundet i det aktuelle layout.</value>
+  </data>
 </root>

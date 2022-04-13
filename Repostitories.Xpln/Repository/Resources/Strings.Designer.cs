@@ -178,6 +178,24 @@ namespace Tellurian.Trains.Repositories.Xpln.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Row {0}: Route &apos;{1}&apos; not found in current layout..
+        /// </summary>
+        internal static string RouteNotFoundInLayout {
+            get {
+                return ResourceManager.GetString("RouteNotFoundInLayout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Row {0}: Station &apos;{1}&apos; not found in current layout..
+        /// </summary>
+        internal static string StationNotFoundInLayout {
+            get {
+                return ResourceManager.GetString("StationNotFoundInLayout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Row {0}: Train {1} has no times at stations..
         /// </summary>
         internal static string TrainHasNoCalls {

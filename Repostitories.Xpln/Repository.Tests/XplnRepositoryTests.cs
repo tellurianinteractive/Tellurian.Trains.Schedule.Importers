@@ -18,6 +18,20 @@ public class XplnRepositoryTests
     const string FileSuffix = ".ods";
     private DirectoryInfo TestDocumentsDirectory;
     private XplnRepository Target;
+    private ValidationOptions ValidationOptions = new()
+    {
+        MaxTrainSpeedMetersPerClockMinute = 8.0,
+        MinTrainSpeedMetersPerClockMinute = 0.3,
+        ValidateDriverDuties = true,
+        ValidateLocoSchedules = true,
+        ValidateStationCalls = true,
+        ValidateStationTracks = true,
+        ValidateStretches = true,
+        ValidateTrainsetSchedules = true,
+        ValidateTrainSpeed = true,
+        ValidateTrainNumbers = true,
+        
+    };
 
     [TestInitialize]
     public void TestInitialize()
@@ -32,7 +46,7 @@ public class XplnRepositoryTests
     [TestMethod]
     public void ImportsBarmstedt2022()
     {
-        TestDocumentImport("Barmstedt2022", "de-DE", 61, 18, 36, 45, 1);
+        TestDocumentImport("Barmstedt2022", "de-DE", 61, 18, 36, 45, 12);
     }
 
     [TestMethod]
@@ -62,7 +76,7 @@ public class XplnRepositoryTests
     [TestMethod]
     public void ImportsRotebro2015()
     {
-        TestDocumentImport("Rotebro2015", "sv-SE", 39, 15, 0, 31, 0);
+        TestDocumentImport("Rotebro2015", "sv-SE", 39, 15, 0, 31, 1);
     }
 
     [TestMethod]
@@ -114,14 +128,14 @@ public class XplnRepositoryTests
         Assert.AreEqual(expectedLocos, result.Item.LocoSchedules.Count, "Locos");
         Assert.AreEqual(expectedTrainsets, result.Item.TrainsetSchedules.Count, "Trainsets");
         Assert.AreEqual(expectedDuties, result.Item.DriverDuties.Count, "Duties");
-        var validationErrors = result.Item.GetValidationErrors(new ValidationOptions { ValidateStretches = true, MinTrainSpeedMetersPerClockMinute = 0.5, MaxTrainSpeedMetersPerClockMinute = 2.0 });
+        var validationErrors = result.Item.GetValidationErrors(ValidationOptions);
         WriteLines(result.Messages.Concat(validationErrors.ToStrings()), file);
         Assert.AreEqual(expectedValidationErrors, validationErrors.Count(), "Validation errors");
     }
 
     private static void WriteLines(IEnumerable<string> messages, FileInfo file)
     {
-        
+
         using var writer = new StreamWriter(file.FullName.Replace(FileSuffix, "Log.txt"));
         writer.WriteLine($"Validation at {DateTime.Now}");
         foreach (var message in messages) writer.WriteLine(message);

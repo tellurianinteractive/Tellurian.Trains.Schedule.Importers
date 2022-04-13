@@ -183,4 +183,7 @@
   <data name="TrainHasNoCalls" xml:space="preserve">
     <value>Rad {0}: Tåg {1} har inga tider på stationer.</value>
   </data>
+  <data name="StationNotFoundInLayout" xml:space="preserve">
+    <value>Rad {0}: Station '{1}' hittades inte i nuvarande layout.</value>
+  </data>
 </root>
