@@ -1,0 +1,243 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ArrivalIsAfterDeparture" xml:space="preserve">
+    <value>At {0} arrival {1} is after departure {2}.</value>
+  </data>
+  <data name="CallAtStationHasConflictsWithOtherCall" xml:space="preserve">
+    <value>Train {0} {1} has conflicts with train {2} {3}.</value>
+  </data>
+  <data name="CallMustBeAfterPreviousCall" xml:space="preserve">
+    <value>Call {0} must be after previous call {1} for train {2}.</value>
+  </data>
+  <data name="ConflictOnStretchBetweenPassingTrains" xml:space="preserve">
+    <value>Conflict on stretch {0} between {1} and {2}.</value>
+  </data>
+  <data name="DuplicateAddOfStation" xml:space="preserve">
+    <value>Duplicate add of station {0}.</value>
+  </data>
+  <data name="DuplicateTrainInLocoSchedule" xml:space="preserve">
+    <value>Duplicate train number {0} in loco schedule {1}.</value>
+  </data>
+  <data name="LocoScheduleMustHaveAnIdentity" xml:space="preserve">
+    <value>A loco schedule must have an identity.</value>
+  </data>
+  <data name="NameOfObjectIsRequired" xml:space="preserve">
+    <value>Name of {0} is required.</value>
+  </data>
+  <data name="NumberOfObjectIsRequired" xml:space="preserve">
+    <value>Number of {0} is required.</value>
+  </data>
+  <data name="SignatureOfObjectIsRequired" xml:space="preserve">
+    <value>Signature of {0} is required.</value>
+  </data>
+  <data name="Station" xml:space="preserve">
+    <value>Station</value>
+  </data>
+  <data name="StationExitIsNotInLayout" xml:space="preserve">
+    <value>Station exit {0} is not in layout.</value>
+  </data>
+  <data name="StationHasNotTrackNumber" xml:space="preserve">
+    <value>Station {0} has no track number {1}.</value>
+  </data>
+  <data name="StretchMayNotStartAndEndAtSameStationExit" xml:space="preserve">
+    <value>Stretch may not start and end at the same station exit.</value>
+  </data>
+  <data name="StretchToString" xml:space="preserve">
+    <value>{0} to {1}</value>
+  </data>
+  <data name="ThereIsNoStretchBetweenStation1AndStation2" xml:space="preserve">
+    <value>There is no stretch between {0} and {1}.</value>
+  </data>
+  <data name="TheStationNameIsNotPartOfTheStretch" xml:space="preserve">
+    <value>The station {0} is not part of the timetable stretch.</value>
+  </data>
+  <data name="TimetableStretch" xml:space="preserve">
+    <value>Timetable stretch</value>
+  </data>
+  <data name="TrackInStationReferredInTrainIsNotInLayout" xml:space="preserve">
+    <value>Track {0} in station {1} referred in train {2} is not in layout.</value>
+  </data>
+  <data name="TrackIsOccupiedByTrainBetween" xml:space="preserve">
+    <value>Track {0} in station {1} is occupied by train {2} during {3}.</value>
+  </data>
+  <data name="TrackStretchIsAlreadyAssignedToExitNameAtStationName" xml:space="preserve">
+    <value>Track stretch is already assigned to exit {0} at station {1}.</value>
+  </data>
+  <data name="CallAtStationTrackDuringTimes" xml:space="preserve">
+    <value>at {0} track {1} arr {2} dep {3}</value>
+  </data>
+  <data name="TrainHasConflictingCalls" xml:space="preserve">
+    <value>Train {0} calls {1} and {2} are conflicting.</value>
+  </data>
+  <data name="TrainMustHaveMinimumTwoCalls" xml:space="preserve">
+    <value>Train {0} must stop at at least two stations.</value>
+  </data>
+  <data name="MoreThanOneStretchBetweenStations" xml:space="preserve">
+    <value>More than one stretch between {0} and {1}.</value>
+  </data>
+  <data name="StretchMayNotStartAndEndAtTheSameStation" xml:space="preserve">
+    <value>A stretch may not start and end at the same station {0}.</value>
+  </data>
+  <data name="TrainSpeedBetweenCallsIsTooFast" xml:space="preserve">
+    <value>Train {0} speed from {1} {2} to {3} {4} is too fast, length {5:F1} meters.</value>
+  </data>
+  <data name="TrainSpeedBetweenCallsIsTooSlow" xml:space="preserve">
+    <value>Train {0} speed from {1} {2} to {3} {4} is too slow, length {5:F1} meters.</value>
+  </data>
+  <data name="VehicleScheduleContainsOverlappingTrainParts" xml:space="preserve">
+    <value>Vehicle schedule {0} contains overlapping {1} and {2}.</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Information" xml:space="preserve">
+    <value>Information</value>
+  </data>
+  <data name="System" xml:space="preserve">
+    <value>System</value>
+  </data>
+  <data name="ThereIsNoFromStationWithSignatureOrName" xml:space="preserve">
+    <value>There is no from-station with signature or name {0}.</value>
+  </data>
+  <data name="ThereIsNoStationWithNameOrSignature" xml:space="preserve">
+    <value>There is no station with name or signature {0}.</value>
+  </data>
+  <data name="ThereIsNoToStationWithSignatureOrName" xml:space="preserve">
+    <value>There is no to-station with signature or name {0}.</value>
+  </data>
+  <data name="SignatureOfStationIsRequired" xml:space="preserve">
+    <value>Signature of station is required.</value>
+  </data>
+  <data name="MaxLengthIs5" xml:space="preserve">
+    <value>Max length is 5 characters.</value>
+  </data>
+  <data name="MaxLengthIs50" xml:space="preserve">
+    <value>Max length is 50 characters.</value>
+  </data>
+  <data name="NoValue" xml:space="preserve">
+    <value>Value is missing.</value>
+  </data>
+  <data name="TrainBetweenPassingIsConflictingWithTrainBetweenPassing" xml:space="preserve">
+    <value>Train {0} between {1} is conflicting with train {2} between {3}.</value>
+  </data>
+</root>

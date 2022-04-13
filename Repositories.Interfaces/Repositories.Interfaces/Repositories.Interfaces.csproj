@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<AssemblyName>Tellurian.Trains.Repositories.Interfaces</AssemblyName>
+		<RootNamespace>Tellurian.Trains.Repositories.Interfaces</RootNamespace>
+		<Product>Tellurian Trains</Product>
+		<Description>Storage operations for layouts, timetables and schedules.</Description>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<Copyright>© Stefan Fjällemark 2019</Copyright>
+		<Authors>Stefan Fjällemark</Authors>
+		<Version>2.0.0</Version>
+		<AssemblyVersion>2.0.0.0</AssemblyVersion>
+		<PackageId>Tellurian.Trains.Repositories.Interfaces</PackageId>
+		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+		<RepositoryUrl>https://github.com/tellurianinteractive/Tellurian.Trains.Repositories.Interfaces/</RepositoryUrl>
+		<RepositoryType>Github</RepositoryType>
+		<PackageReleaseNotes></PackageReleaseNotes>
+		<NeutralLanguage>en-GB</NeutralLanguage>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+		<Company>Tellurian Interactive AB</Company>
+		<PackageProjectUrl>https://github.com/tellurianinteractive/Tellurian.Trains.Repositories.Interfaces/</PackageProjectUrl>
+		<PackageTags>model.trains scheduling timetables</PackageTags>
+		<Platforms>AnyCPU</Platforms>
+	</PropertyGroup>
+
+	<Target Name="CopyPackage" AfterTargets="Pack">
+		<Copy SourceFiles="$(OutputPath)..\$(PackageId).$(PackageVersion).nupkg" DestinationFolder="C:\NuGets\" />
+	</Target>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Models.Planning\Model\Model.csproj" />
+	</ItemGroup>
+
+</Project>

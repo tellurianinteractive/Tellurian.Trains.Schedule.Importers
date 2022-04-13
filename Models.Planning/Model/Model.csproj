@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<AssemblyName>Tellurian.Trains.Models.Planning</AssemblyName>
+		<RootNamespace>Tellurian.Trains.Models.Planning</RootNamespace>
+		<Product>Tellurian Trains</Product>
+		<Description>Common data model for track layout, timetables and resouces scheduling.</Description>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<Copyright>© Stefan Fjällemark 2019</Copyright>
+		<Authors>Stefan Fjällemark</Authors>
+		<Version>2.0.0</Version>
+		<AssemblyVersion>2.0.0.2</AssemblyVersion>
+		<PackageId>Tellurian.Trains.Models.Planning</PackageId>
+		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+		<RepositoryUrl>https://github.com/tellurianinteractive/Tellurian.Trains.Models.Planning</RepositoryUrl>
+		<RepositoryType>Github</RepositoryType>
+		<PackageReleaseNotes></PackageReleaseNotes>
+		<NeutralLanguage>en-GB</NeutralLanguage>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+		<Company>Tellurian Interactive AB</Company>
+		<PackageProjectUrl>https://github.com/tellurianinteractive/Tellurian.Trains.Models.Planning/projects/</PackageProjectUrl>
+		<PackageTags>model.trains scheduling timetables</PackageTags>
+		<Platforms>AnyCPU</Platforms>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.1.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Resources\Strings.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Strings.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="Resources\Strings.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Strings.Designer.cs</LastGenOutput>
+			<CustomToolNamespace></CustomToolNamespace>
+		</EmbeddedResource>
+	</ItemGroup>
+
+	<Target Name="CopyPackage" AfterTargets="Pack">
+		<Copy SourceFiles="$(OutputPath)..\$(PackageId).$(PackageVersion).nupkg" DestinationFolder="C:\NuGets\" />
+	</Target>
+
+</Project>

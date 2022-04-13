@@ -1,0 +1,243 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ArrivalIsAfterDeparture" xml:space="preserve">
+    <value>Vid {0} är ankomsttid {1} är senare än avgångstid {2}.</value>
+  </data>
+  <data name="CallMustBeAfterPreviousCall" xml:space="preserve">
+    <value>Angöring {0} måste vara senare än föregående {1} för tåg {2}.</value>
+  </data>
+  <data name="DuplicateAddOfStation" xml:space="preserve">
+    <value>Dubblett tillagd av station {0}.</value>
+  </data>
+  <data name="StationExitIsNotInLayout" xml:space="preserve">
+    <value>Stationsutfart {0} finns inte i banplanen.</value>
+  </data>
+  <data name="TrackInStationReferredInTrainIsNotInLayout" xml:space="preserve">
+    <value>Spår {0} på station {1} angiven i tåg {2} saknas i banplanen.</value>
+  </data>
+  <data name="TrackIsOccupiedByTrainBetween" xml:space="preserve">
+    <value>Spår {0} på station {1} är upptaget av tåg {2} under tiden {3}.</value>
+  </data>
+  <data name="TrainMustHaveMinimumTwoCalls" xml:space="preserve">
+    <value>Tåg {0} måste stanna vid minst två stationer.</value>
+  </data>
+  <data name="CallAtStationHasConflictsWithOtherCall" xml:space="preserve">
+    <value>Tåg {0} {1} är i konflikt med tåg {2} {3}.</value>
+  </data>
+  <data name="ConflictOnStretchBetweenPassingTrains" xml:space="preserve">
+    <value>Konflikt på sträckan {0} mellan {1} och {2}.</value>
+  </data>
+  <data name="DuplicateTrainInLocoSchedule" xml:space="preserve">
+    <value>Dubblett tåg nummer {0} i lokomlopp {1}.</value>
+  </data>
+  <data name="LocoScheduleMustHaveAnIdentity" xml:space="preserve">
+    <value>Ett lokomlopp måste ha en unik identitet.</value>
+  </data>
+  <data name="NameOfObjectIsRequired" xml:space="preserve">
+    <value>Namn för {0} krävs.</value>
+  </data>
+  <data name="NumberOfObjectIsRequired" xml:space="preserve">
+    <value>Nummer för {0} krävs.</value>
+  </data>
+  <data name="SignatureOfObjectIsRequired" xml:space="preserve">
+    <value>Signatur för {0} krävs.</value>
+  </data>
+  <data name="Station" xml:space="preserve">
+    <value>Station</value>
+  </data>
+  <data name="StationHasNotTrackNumber" xml:space="preserve">
+    <value>Station {0} har inget spårnummer {1}.</value>
+  </data>
+  <data name="StretchMayNotStartAndEndAtSameStationExit" xml:space="preserve">
+    <value>Sträckan får inte starta och sluta på samma utfart.</value>
+  </data>
+  <data name="StretchToString" xml:space="preserve">
+    <value>{0} till {1}</value>
+  </data>
+  <data name="ThereIsNoStretchBetweenStation1AndStation2" xml:space="preserve">
+    <value>Det finns ingen sträcka mellan {0} och {1}.</value>
+  </data>
+  <data name="TheStationNameIsNotPartOfTheStretch" xml:space="preserve">
+    <value>Stationen {0} är inte med på tidtabellsträckan.</value>
+  </data>
+  <data name="TimetableStretch" xml:space="preserve">
+    <value>Tidtabellssträcka</value>
+  </data>
+  <data name="TrackStretchIsAlreadyAssignedToExitNameAtStationName" xml:space="preserve">
+    <value>Spårsträckan är redan kopplad till utfart {0} på {1}.</value>
+  </data>
+  <data name="CallAtStationTrackDuringTimes" xml:space="preserve">
+    <value>vid {0} spår {1} ank {2} avg {3}</value>
+  </data>
+  <data name="TrainHasConflictingCalls" xml:space="preserve">
+    <value>Tåg {0} passagerna {1} och {2} är i konflikt.</value>
+  </data>
+  <data name="MoreThanOneStretchBetweenStations" xml:space="preserve">
+    <value>Mer än en spårsträcka mellan {0} och {1}.</value>
+  </data>
+  <data name="StretchMayNotStartAndEndAtTheSameStation" xml:space="preserve">
+    <value>En spårsträcka får inte starta och sluta på samma station {0}.</value>
+  </data>
+  <data name="TrainSpeedBetweenCallsIsTooFast" xml:space="preserve">
+    <value>Hastigheten för tåg {0} från {1} {2} till {3} {4} är för hög, längd {5:F1} meter.</value>
+  </data>
+  <data name="TrainSpeedBetweenCallsIsTooSlow" xml:space="preserve">
+    <value>Hastigheten för tåg {0} från {1} {2} till {3} {4} är för låg, längd {5:F1} meter.</value>
+  </data>
+  <data name="VehicleScheduleContainsOverlappingTrainParts" xml:space="preserve">
+    <value>Fordonsomlopp {0} är överlappande {1} och {2}.</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Varning</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Fel</value>
+  </data>
+  <data name="Information" xml:space="preserve">
+    <value>Information</value>
+  </data>
+  <data name="System" xml:space="preserve">
+    <value>System</value>
+  </data>
+  <data name="ThereIsNoFromStationWithSignatureOrName" xml:space="preserve">
+    <value>Det finns ingen från-station med signatur eller namn {0}.</value>
+  </data>
+  <data name="ThereIsNoStationWithNameOrSignature" xml:space="preserve">
+    <value>Det finns ingen station med signatur eller namn {0}.</value>
+  </data>
+  <data name="ThereIsNoToStationWithSignatureOrName" xml:space="preserve">
+    <value>Det finns ingen till-station med signatur eller namn {0}.</value>
+  </data>
+  <data name="SignatureOfStationIsRequired" xml:space="preserve">
+    <value>Signatur för station krävs.</value>
+  </data>
+  <data name="MaxLengthIs5" xml:space="preserve">
+    <value>Max längd är 5 tecken.</value>
+  </data>
+  <data name="MaxLengthIs50" xml:space="preserve">
+    <value>Max längd är 50 tecken.</value>
+  </data>
+  <data name="NoValue" xml:space="preserve">
+    <value>Värde saknas.</value>
+  </data>
+  <data name="TrainBetweenPassingIsConflictingWithTrainBetweenPassing" xml:space="preserve">
+    <value>Tåg {0} mellan {1} är i konflikt med tåg {2} mellan {3}.</value>
+  </data>
+</root>

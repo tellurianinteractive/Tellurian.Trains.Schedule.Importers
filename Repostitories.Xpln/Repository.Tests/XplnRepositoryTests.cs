@@ -18,7 +18,7 @@ public class XplnRepositoryTests
     const string FileSuffix = ".ods";
     private DirectoryInfo TestDocumentsDirectory;
     private XplnRepository Target;
-    private ValidationOptions ValidationOptions = new()
+    private readonly ValidationOptions ValidationOptions = new()
     {
         MaxTrainSpeedMetersPerClockMinute = 8.0,
         MinTrainSpeedMetersPerClockMinute = 0.3,
@@ -46,7 +46,7 @@ public class XplnRepositoryTests
     [TestMethod]
     public void ImportsBarmstedt2022()
     {
-        TestDocumentImport("Barmstedt2022", "de-DE", 61, 18, 36, 45, 12);
+        TestDocumentImport("Barmstedt2022", "de-DE", 61, 18, 36, 45, 2);
     }
 
     [TestMethod]
