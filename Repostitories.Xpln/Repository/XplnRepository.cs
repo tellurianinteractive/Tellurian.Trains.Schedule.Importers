@@ -75,7 +75,7 @@ public sealed partial class XplnRepository : ILayoutReadStore, ITimetableReadSto
                         {
                             current = CreateStation(fields);
                         }
-                        messages.AddRange(validationMessages);
+                        itemMessages.AddRange(validationMessages);
                     }
                     else if (fields[5].Is("Track"))
                     {
