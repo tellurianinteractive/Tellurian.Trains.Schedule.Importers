@@ -25,6 +25,7 @@ namespace Tellurian.Trains.Repositories.Xpln.Tests
         {
             Assert.IsTrue("12:34".IsTime());
             Assert.IsTrue("1899-12-31 12:34:00".IsTime());
+            Assert.IsTrue("0,22222222222646".IsTime());
             Assert.IsFalse("12.60".IsTime());
             Assert.IsFalse("X".IsTime());
         }

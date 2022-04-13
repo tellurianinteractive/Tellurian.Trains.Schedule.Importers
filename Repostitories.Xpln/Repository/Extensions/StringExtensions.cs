@@ -35,11 +35,14 @@ namespace Tellurian.Trains.Repositories.Xpln
             Time.FromDays(double.Parse(value.Replace(",", "."), NumberStyles.Float, CultureInfo.InvariantCulture));
 
         public static bool IsTime(this string? value) =>
-            value.HasValue() && (TimeSpan.TryParse(value, out var _) || DateTime.TryParse(value, out var _));
+            value.HasValue() && 
+                (TimeSpan.TryParse(value, out var _) || 
+                DateTime.TryParse(value, out var _) || 
+                (double.TryParse(value.Replace(",", "."), NumberStyles.Float, CultureInfo.InvariantCulture, out var t) && t >= 0.0 && t <= 1.0));
 
 
         public static bool IsTrackNumber(this string? value) =>
-            value is not null && int.TryParse(value,  NumberStyles.Integer, CultureInfo.InvariantCulture, out _);
+            value is not null && int.TryParse(value,  NumberStyles.Float, CultureInfo.InvariantCulture, out _);
     
         public static bool Is(this string? me, string? value) =>
             me is not null && 

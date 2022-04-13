@@ -10,7 +10,7 @@ namespace Tellurian.Trains.Repositories.Xpln
         {
             var station = me.Station(stationSignature);
             if (station.IsNone) return Maybe<StationTrack>.None;
-            var track = station.Value.Tracks.SingleOrDefault(t => t.Number == trackNumber); 
+            var track = station.Value.Tracks.SingleOrDefault(t => t.Number.Equals(trackNumber, StringComparison.OrdinalIgnoreCase)); 
             if (track is null) return Maybe<StationTrack>.None;
             return new Maybe<StationTrack>(track);
         }

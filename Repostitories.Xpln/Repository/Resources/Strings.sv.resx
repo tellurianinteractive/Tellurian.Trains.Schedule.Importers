@@ -180,4 +180,7 @@
   <data name="ColumnMustBeATime" xml:space="preserve">
     <value>Rad {0}: Kolumn {1} måste vara en tid, nuvarande värde är {2}.</value>
   </data>
+  <data name="TrainHasNoCalls" xml:space="preserve">
+    <value>Rad {0}: Tåg {1} har inga tider på stationer.</value>
+  </data>
 </root>

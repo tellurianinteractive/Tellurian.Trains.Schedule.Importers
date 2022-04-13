@@ -38,7 +38,7 @@ public class XplnRepositoryTests
     [TestMethod]
     public void ImportsKolding2022()
     {
-        TestDocumentImport("Kolding2022", "da-DK", 73, 26, 6, 54, 0);
+        TestDocumentImport("Kolding2022", "da-DK", 73, 26, 55, 55, 0);
     }
 
     [TestMethod]
@@ -50,31 +50,31 @@ public class XplnRepositoryTests
     [TestMethod]
     public void ImportsKoldingNorge2019()
     {
-        TestDocumentImport("KoldingNorge2019", "no-NO", 56, 16, 0, 0, 1);
+        TestDocumentImport("KoldingNorge2019", "no-NO", 56, 16, 0, 56, 1);
     }
 
     [TestMethod]
     public void ImportsHellerup2015()
     {
-        TestDocumentImport("Hellerup2015", "da-DK", 60, 24, 0, 20, 0);
+        TestDocumentImport("Hellerup2015", "da-DK", 60, 24, 57, 20, 0);
     }
 
     [TestMethod]
     public void ImportsRotebro2015()
     {
-        TestDocumentImport("Rotebro2015", "sv-SE", 39, 15, 0, 31, 1);
+        TestDocumentImport("Rotebro2015", "sv-SE", 39, 15, 0, 31, 0);
     }
 
     [TestMethod]
     public void ImportsRotebro2016()
     {
-        TestDocumentImport("Rotebro2016", "sv-SE", 32, 12, 0, 24, 33);
+        TestDocumentImport("Rotebro2016", "sv-SE", 32, 12, 0, 24, 0);
     }
 
     [TestMethod]
     public void ImportsTimmele2015()
     {
-        TestDocumentImport("Timmele2015", "sv-SE", 37, 13, 0, 33, 5);
+        TestDocumentImport("Timmele2015", "sv-SE", 37, 13, 0, 33, 4);
     }
 
     [TestMethod]
@@ -86,7 +86,7 @@ public class XplnRepositoryTests
     [TestMethod]
     public void ImportsKolding202009()
     {
-        TestDocumentImport("Kolding202009", "da-DK", 38, 12, 2, 28, 0);
+        TestDocumentImport("Kolding202009", "da-DK", 38, 14, 36, 28, 0);
     }
 
     [TestMethod]

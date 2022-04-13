@@ -11,7 +11,7 @@ using Tellurian.Trains.Repositories.Xpln.DataSetProviders;
 using Tellurian.Trains.Repositories.Xpln.Extensions;
 
 namespace Tellurian.Trains.Repositories.Xpln;
-public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, IScheduleReadStore, IDisposable
+public sealed partial class XplnRepository : ILayoutReadStore, ITimetableReadStore, IScheduleReadStore, IDisposable
 {
     public readonly IDataSetProvider DataSetProvider;
     private DataSet? DataSet;
@@ -50,7 +50,7 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
             {
                 var itemMessages = new List<Message>();
                 var fields = station.GetRowFields();
-                if (fields.IsEmptyFields()) break;
+                if (fields.IsEmptyFields()) { if (result.Stations.Any()) break; else continue; }
                 itemMessages.AddRange(ValidateRow(fields, rowNumber));
                 if (itemMessages.HasNoStoppingErrors())
                 {
@@ -136,7 +136,7 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
                 messages.Add(Message.Warning(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnIsNotSpecified, rowNumber, "Length")));
             else if (!fields[Lenght].IsNumber())
                 messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustBeANumber, rowNumber, "Length", fields[Lenght])));
-            if (!fields[SubType].ValueOrEmpty().Is("Main", "Siding", "Depot"))
+            if (!fields[SubType].ValueOrEmpty().Is("Main", "Siding", "Depot", "Goods"))
                 messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.UnsupportedSubType, rowNumber, fields[SubType])));
             return messages.ToArray();
         }
@@ -182,7 +182,7 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
             {
                 var itemMessages = new List<Message>();
                 var fields = row.GetRowFields();
-                if (fields.IsEmptyFields()) break;
+                if (fields.IsEmptyFields()) { if (result.Trains.Any()) break; else continue; }
                 itemMessages.AddRange(ValidateRow(fields, rowNumber));
                 if (itemMessages.HasNoStoppingErrors())
                 {
@@ -193,7 +193,7 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
                             {
                                 if (current is not null)
                                 {
-                                    result.Add(current.WithFixedFirstAndLastCall());
+                                    messages.AddRange(AddTrain(result, current, rowNumber));
                                     current = null;
                                     callNumber = 0;
                                 }
@@ -242,7 +242,8 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
                                         string.Format(CultureInfo.CurrentCulture, Resources.Strings.UseLocoClasses, fields[Object], fields[Remark]) :
                                             string.Format(CultureInfo.CurrentCulture, Resources.Strings.UseLoco, fields[Object])
                                     };
-                                    current.Calls.First().Notes.Add(note);
+                                    var train = result.Trains.SingleOrDefault(t => t.Equals(current));
+                                    if (train is not null) train.Calls.First().Notes.Add(note);
                                 };
                             }
                             break;
@@ -266,12 +267,29 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
                             break;
                     }
                 }
+                messages.AddRange(itemMessages);
             }
             rowNumber++;
         }
-        if (current is not null) result.Add(current.WithFixedFirstAndLastCall());
-        return RepositoryResult<Timetable>.Success(result, messages.ToStrings());
+        if (current is not null) messages.AddRange(AddTrain(result, current, rowNumber));
+        if (messages.HasStoppingErrors())
+            return RepositoryResult<Timetable>.Failure(messages.ToStrings());
+        else
+            return RepositoryResult<Timetable>.Success(result, messages.ToStrings());
 
+        static IEnumerable<Message> AddTrain(Timetable timetable, Train train, int rowNumber)
+        {
+            if (train.Calls.Count == 0)
+            {
+                return new[] { Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.TrainHasNoCalls, rowNumber, train)) };
+            }
+            else
+            {
+                timetable.Add(train.WithFixedSingleCallTrain().WithFixedFirstAndLastCall());
+                return Enumerable.Empty<Message>();
+            }
+
+        }
 
         static Train CreateTrain(string[] fields) =>
             new(fields[Object].TrainNumber(), fields[Object])
@@ -321,6 +339,7 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
     public RepositoryResult<Schedule> GetSchedule(string filename)
     {
         const string WorkSheetName = "Trains";
+        const int TrainNumber = 0;
         const int From = 2;
         const int To = 3;
         const int Arrival = 4;
@@ -357,7 +376,7 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
             {
                 var itemMessages = new List<Message>();
                 var fields = row.GetRowFields();
-                if (fields.IsEmptyFields()) break;
+                if (fields.IsEmptyFields()) { if (locoSchedules.Any() || trainsetSchedules.Any() || driverDuties.Any()) break; else continue; }
                 itemMessages.AddRange(ValidateRow(fields, rowNumber));
                 if (itemMessages.HasNoStoppingErrors())
                 {
@@ -382,7 +401,7 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
                                 if (currentTrain is null) break;
 
                                 var locoMessages = new List<Message>();
-                                locoMessages.AddRange(ValidateLocoOrJob(fields, rowNumber));
+                                locoMessages.AddRange(ValidateLoco(fields, rowNumber));
 
                                 if (locoMessages.HasNoStoppingErrors())
                                 {
@@ -431,10 +450,10 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
                             {
                                 if (currentTrain is null) break;
                                 var dutyMessages = new List<Message>();
-                                dutyMessages.AddRange(ValidateLocoOrJob(fields, rowNumber));
+                                dutyMessages.AddRange(ValidateJob(fields, rowNumber));
                                 if (dutyMessages.HasNoStoppingErrors())
                                 {
-                                    var jobId = fields[Object];
+                                    var jobId = fields[Object].OrElse(fields[TrainNumber]);
                                     if (!driverDuties.ContainsKey(jobId))
                                         driverDuties.Add(jobId, new DriverDuty(jobId));
                                     if (driverDuties.TryGetValue(jobId, out var duty))
@@ -520,11 +539,18 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
             return messages.ToArray();
         }
 
-        static Message[] ValidateLocoOrJob(string[] fields, int rowNumber)
+        static Message[] ValidateLoco(string[] fields, int rowNumber)
         {
             var messages = new List<Message>();
             if (fields[Object].IsEmpty())
                 messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustHaveAValue, rowNumber, "Object")));
+            return messages.ToArray();
+        }
+        static Message[] ValidateJob(string[] fields, int rowNumber)
+        {
+            var messages = new List<Message>();
+            if (fields[Object].OrElse(fields[TrainNumber]).IsEmpty())
+                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustHaveAValue, rowNumber, "Object|TrainNumber")));
             return messages.ToArray();
         }
         static Message[] ValidateTrainset(string[] fields, int rowNumber)
@@ -567,9 +593,5 @@ public sealed class XplnRepository : ILayoutReadStore, ITimetableReadStore, ISch
         GC.SuppressFinalize(this);
     }
 
-
-
     #endregion
-
-    internal record TrainPartKeys(Maybe<StationCall> FromCall, Maybe<StationCall> ToCall, IEnumerable<Message> Messages);
 }

@@ -178,6 +178,15 @@ namespace Tellurian.Trains.Repositories.Xpln.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Row {0}: Train {1} has no times at stations..
+        /// </summary>
+        internal static string TrainHasNoCalls {
+            get {
+                return ResourceManager.GetString("TrainHasNoCalls", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Row {0}: Train {1} does not pass station {2}..
         /// </summary>
         internal static string TrainHasNoCallsAtStation {

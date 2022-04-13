@@ -180,4 +180,7 @@
   <data name="ColumnMustBeATime" xml:space="preserve">
     <value>Række {0}: Kolonne {1} skal være et tidspunkt, den aktuelle værdi er {2}.</value>
   </data>
+  <data name="TrainHasNoCalls" xml:space="preserve">
+    <value>Række {0}: Tog {1} har ingen gange på stationer.</value>
+  </data>
 </root>

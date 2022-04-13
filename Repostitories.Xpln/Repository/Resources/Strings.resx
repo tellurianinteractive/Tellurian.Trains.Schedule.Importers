@@ -180,4 +180,7 @@
   <data name="ColumnMustBeATime" xml:space="preserve">
     <value>Row {0}: Column {1} must be a time, current value is {2}.</value>
   </data>
+  <data name="TrainHasNoCalls" xml:space="preserve">
+    <value>Row {0}: Train {1} has no times at stations.</value>
+  </data>
 </root>
