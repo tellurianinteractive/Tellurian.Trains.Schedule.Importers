@@ -49,7 +49,6 @@ namespace Tellurian.Trains.Repositories.Xpln
             {
                 result = (new Maybe<StationCall>(string.Format(CultureInfo.CurrentCulture, Resources.Strings.TrainHasNoCallsAtStation, rowNumber, me, stationSignature)), -1);
                 return false;
-
             }
             else
             {
