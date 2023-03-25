@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32120.378
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Importers.Model.Tests", "Models.Planning\Model.Tests\Importers.Model.Tests.csproj", "{B6966A0C-9CAE-46F9-815F-C0F0F5122DB5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Importers.Model.Tests", "Importers.Model\Model.Tests\Importers.Model.Tests.csproj", "{B6966A0C-9CAE-46F9-815F-C0F0F5122DB5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Importers.Model", "Models.Planning\Model\Importers.Model.csproj", "{9035AF49-DEFC-402E-AB2B-B435C5CA3023}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Importers.Model", "Importers.Model\Model\Importers.Model.csproj", "{9035AF49-DEFC-402E-AB2B-B435C5CA3023}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Importers.Interfaces", "Importers.Interfaces\Importers.Interfaces\Importers.Interfaces.csproj", "{2AF6D01E-2794-45BA-89B4-253503A62240}"
 EndProject

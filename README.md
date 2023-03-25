@@ -1,4 +1,4 @@
-# Xpln Validator
+# XPLN Validator
 **This repository contains source code for a package for reading and validating XPLN (.ods) files.**
 > NOTE: This is an experimental software. It is not intended for production use, only
 > to demonstrate the issues with importing XPLN files into a database.
@@ -27,10 +27,9 @@ Errors found in this stage must be fixed in the XPLN-document.
 * When the referntial integrity is ok, the second validation phase checks for possible scheduling conflicts. 
 Warnings found in this stage can be fixed either in XPLN or later in the forthcoming online planning application.
 
-### The Story of Reading XPLN-files
+### The story of reading XPLN-files
 XPLN is stored in ODS-files, an *Open Document* format. 
 Despite it is open, it is tricky to read. 
-
 - First, I used Excel COM-objects, which make reading dependent having Microsoft Excel installed.
 Excel can open ODS-files directly. This was easiest to start with, but not a solution that can run in the cloud or be distributed.
 - In the second effort, I found the **ExcelDataReader** package, that removed the dependency of Microsoft Excel.
@@ -39,7 +38,7 @@ Althoug there are free online converters, it forces the user to make a conversio
 - Finally, I found a 10+ year old codebase for reading ODS-files directly. 
 After some tweaking, I made i work. And it had much better performance than the initial Excel-solution.
 
-### How Was This Sofware Tested?
+### How is this Software tested?
 Not two planners use XPLN exacly the same way, validating one XPLN-file is'nt enough.
 The only way to test is to have a large number of XPLN-files to read an validate.
 Therefore, the tests of this software uses a set of XPLN files from different origins.
@@ -58,12 +57,12 @@ The package reads and validates the following parts of an XPLN file:
 
 The *wheel* and *group* tags are currenly not read. The groups I don't yet understand the meaning of.
 
-#### Multiple Language Support
+#### Multiple language support
 A lot of effort has been made to have descriptive validation messages.
 Errors found in the data integrity phase also displays the row number in the XPLN-file when the error is detected.
 Validation messages are currently in English, German, Danish, Norwegian and Swedish.
 
-#### Future Plans
+#### Future plans
 The next step is to offer the XPLN-valdidation as a cloud-service, as part of the [*Module Registry* toolset](https://moduleregistry.azurewebsites.net/Tools).
 The purpose is to help planners finding errors, but also to learn more about any weaknesses in the validation.
 
