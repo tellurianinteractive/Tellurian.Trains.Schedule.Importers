@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net70</TargetFramework>
 		<IsPackable>false</IsPackable>
 		<AssemblyName>Tellurian.Trains.Repositories.Xpln.Tests</AssemblyName>
 		<RootNamespace>Tellurian.Trains.Repositories.Xpln.Tests</RootNamespace>
@@ -17,22 +17,17 @@
 	<ItemGroup>
 		<PackageReference Include="ExcelDataReader" Version="3.6.0" />
 		<PackageReference Include="ExcelDataReader.DataSet" Version="3.6.0" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
-		<PackageReference Include="MSTest.TestAdapter" Version="2.2.8" />
-		<PackageReference Include="MSTest.TestFramework" Version="2.2.8" />
-		<PackageReference Include="coverlet.collector" Version="3.1.2">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="System.Data.Odbc" Version="6.0.0" />
-		<PackageReference Include="System.IO.Compression" Version="4.3.0" />
-		<PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+		<PackageReference Include="MSTest.TestAdapter" Version="3.0.2" />
+		<PackageReference Include="MSTest.TestFramework" Version="3.0.2" />
+		<PackageReference Include="System.Data.Odbc" Version="7.0.0" />
+		<PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\Importers.Interfaces\Importers.Interfaces\Importers.Interfaces.csproj" />
 		<ProjectReference Include="..\..\Models.Planning\Model\Model.csproj" />
-		<ProjectReference Include="..\..\Repositories.Interfaces\Repositories.Interfaces\Repositories.Interfaces.csproj" />
-		<ProjectReference Include="..\Repository\Repositories.Xpln.csproj" />
+		<ProjectReference Include="..\Importers\Importers.Xpln.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

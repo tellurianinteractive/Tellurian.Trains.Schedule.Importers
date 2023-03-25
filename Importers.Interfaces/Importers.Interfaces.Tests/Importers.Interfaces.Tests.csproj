@@ -3,16 +3,9 @@
   <PropertyGroup>
     <TargetFramework>net70</TargetFramework>
     <IsPackable>false</IsPackable>
-    <AssemblyName>Tellurian.Trains.Models.Planning.Tests</AssemblyName>
-    <RootNamespace>Tellurian.Trains.Models.Planning.Tests</RootNamespace>
-    <Nullable>enable</Nullable>
+    <AssemblyName>Tellurian.Trains.Repositories.Interfaces.Tests</AssemblyName>
+    <RootNamespace>Tellurian.Trains.Repositories.Interfaces.Tests</RootNamespace>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="TestRepository.cs" />
-    <Compile Remove="TimetableTests.cs" />
-    <Compile Remove="TrackLayoutTests.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
@@ -21,7 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Model\Model.csproj" />
+    <ProjectReference Include="..\..\Models.Planning\Model\Model.csproj" />
+    <ProjectReference Include="..\Importers.Interfaces\Importers.Interfaces.csproj" />
   </ItemGroup>
 
 </Project>

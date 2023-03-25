@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net70</TargetFramework>
 		<AssemblyName>Tellurian.Trains.Repositories.Interfaces</AssemblyName>
 		<RootNamespace>Tellurian.Trains.Repositories.Interfaces</RootNamespace>
 		<Product>Tellurian Trains</Product>

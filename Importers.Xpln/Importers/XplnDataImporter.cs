@@ -11,12 +11,12 @@ using Tellurian.Trains.Repositories.Xpln.DataSetProviders;
 using Tellurian.Trains.Repositories.Xpln.Extensions;
 
 namespace Tellurian.Trains.Repositories.Xpln;
-public sealed partial class XplnRepository : ILayoutReadStore, ITimetableReadStore, IScheduleReadStore, IDisposable
+public sealed partial class XplnDataImporter : ILayoutReadStore, ITimetableReadStore, IScheduleReadStore, IDisposable
 {
     public readonly IDataSetProvider DataSetProvider;
     private DataSet? DataSet;
 
-    public XplnRepository(IDataSetProvider dataSetProvider)
+    public XplnDataImporter(IDataSetProvider dataSetProvider)
     {
         DataSetProvider = dataSetProvider;
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -330,7 +330,7 @@ public sealed partial class XplnRepository : ILayoutReadStore, ITimetableReadSto
                                             string.Format(CultureInfo.CurrentCulture, Resources.Strings.UseLoco, fields[Object])
                                     };
                                     var train = result.Trains.SingleOrDefault(t => t.Equals(current));
-                                    if (train is not null) train.Calls.First().Notes.Add(note);
+                                    train?.Calls.First().Notes.Add(note);
                                 };
                             }
                             break;
@@ -653,8 +653,7 @@ public sealed partial class XplnRepository : ILayoutReadStore, ITimetableReadSto
     {
         if (DataSet is not null) return DataSet;
         var data = DataSetProvider.LoadFromFile(filename);
-        if (data is null) throw new FileNotFoundException(filename);
-        return data;
+        return data is null ? throw new FileNotFoundException(filename) : data;
     }
 
     #region IDisposable

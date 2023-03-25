@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net70</TargetFramework>
 		<AssemblyName>Tellurian.Trains.Repositories.Xpln</AssemblyName>
 		<RootNamespace>Tellurian.Trains.Repositories.Xpln</RootNamespace>
 		<Authors>Stefan Fjällemark</Authors>
@@ -27,14 +27,14 @@
 	<ItemGroup>
 		<PackageReference Include="ExcelDataReader" Version="3.6.0" />
 		<PackageReference Include="ExcelDataReader.DataSet" Version="3.6.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
-		<PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+		<PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\Importers.Interfaces\Importers.Interfaces\Importers.Interfaces.csproj" />
 		<ProjectReference Include="..\..\Models.Planning\Model\Model.csproj" />
-		<ProjectReference Include="..\..\Repositories.Interfaces\Repositories.Interfaces\Repositories.Interfaces.csproj" />
 	</ItemGroup>
 	
 

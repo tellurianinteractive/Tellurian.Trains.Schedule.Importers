@@ -13,11 +13,11 @@ namespace Tellurian.Trains.Repositories.Xpln.Tests;
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
 [TestClass]
-public class XplnRepositoryTests
+public class XplnImporterTests
 {
     const string FileSuffix = ".ods";
     private DirectoryInfo TestDocumentsDirectory;
-    private XplnRepository Target;
+    private XplnDataImporter Target;
     private readonly ValidationOptions ValidationOptions = new()
     {
         MaxTrainSpeedMetersPerClockMinute = 8.0,
@@ -39,7 +39,7 @@ public class XplnRepositoryTests
         TestDocumentsDirectory = new DirectoryInfo("Test data");
         var dataSetProvider =
             new OdsDataSetProvider(TestDocumentsDirectory, NullLogger.Instance);
-        Target = new XplnRepository(dataSetProvider);
+        Target = new XplnDataImporter(dataSetProvider);
     }
 
 
@@ -112,7 +112,7 @@ public class XplnRepositoryTests
     private void TestDocumentImport(string scheduleName, string? culture, int expectedTrains, int expectedLocos, int expectedTrainsets, int expectedDuties, int expectedValidationErrors)
     {
         if (string.IsNullOrWhiteSpace(scheduleName)) throw new ArgumentNullException(nameof(scheduleName));
-        if (culture == null) culture = "sv-SE";
+        culture ??= "sv-SE";
         CultureInfo.CurrentCulture = new CultureInfo(culture);
         CultureInfo.CurrentUICulture = CultureInfo.CurrentCulture;
         var file = TestDocumentsDirectory.EnumerateFiles(scheduleName + FileSuffix).Single();
@@ -128,6 +128,7 @@ public class XplnRepositoryTests
         Assert.AreEqual(expectedLocos, result.Item.LocoSchedules.Count, "Locos");
         Assert.AreEqual(expectedTrainsets, result.Item.TrainsetSchedules.Count, "Trainsets");
         Assert.AreEqual(expectedDuties, result.Item.DriverDuties.Count, "Duties");
+
         var validationErrors = result.Item.GetValidationErrors(ValidationOptions);
         WriteLines(result.Messages.Concat(validationErrors.ToStrings()), file);
         Assert.AreEqual(expectedValidationErrors, validationErrors.Count(), "Validation errors");
