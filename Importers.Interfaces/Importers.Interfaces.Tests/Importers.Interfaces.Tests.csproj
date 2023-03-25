@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net70</TargetFramework>
     <IsPackable>false</IsPackable>
-    <AssemblyName>Tellurian.Trains.Repositories.Interfaces.Tests</AssemblyName>
-    <RootNamespace>Tellurian.Trains.Repositories.Interfaces.Tests</RootNamespace>
+    <AssemblyName>TimetablePlanning.Importers.Interfaces.Tests</AssemblyName>
+    <RootNamespace>TimetablePlanning.Importers.Interfaces.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Models.Planning\Model\Model.csproj" />
+    <ProjectReference Include="..\..\Models.Planning\Model\Importers.Model.csproj" />
     <ProjectReference Include="..\Importers.Interfaces\Importers.Interfaces.csproj" />
   </ItemGroup>
 

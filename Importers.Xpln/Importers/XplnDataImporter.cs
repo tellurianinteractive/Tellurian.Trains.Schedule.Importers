@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Text;
-using Tellurian.Trains.Models.Planning;
-using Tellurian.Trains.Repositories.Interfaces;
-using Tellurian.Trains.Repositories.Xpln.DataSetProviders;
-using Tellurian.Trains.Repositories.Xpln.Extensions;
+using TimetablePlanning.Importers.Interfaces;
+using TimetablePlanning.Importers.Model;
+using TimetablePlanning.Importers.Xpln.DataSetProviders;
+using TimetablePlanning.Importers.Xpln.Extensions;
+using static TimetablePlanning.Importers.Model.Xpln.XplnDataImporter;
 
-namespace Tellurian.Trains.Repositories.Xpln;
-public sealed partial class XplnDataImporter : ILayoutReadStore, ITimetableReadStore, IScheduleReadStore, IDisposable
+namespace TimetablePlanning.Importers.Xpln;
+public sealed partial class XplnDataImporter : IDataSourceService, IDisposable
 {
     public readonly IDataSetProvider DataSetProvider;
     private DataSet? DataSet;
@@ -23,7 +20,7 @@ public sealed partial class XplnDataImporter : ILayoutReadStore, ITimetableReadS
     }
 
 
-    public RepositoryResult<Layout> GetLayout(string fileName)
+    public ImportResult<Layout> GetLayout(string fileName)
     {
         DataSet = GetData(fileName);
         var name = Path.GetFileNameWithoutExtension(fileName);
@@ -35,7 +32,7 @@ public sealed partial class XplnDataImporter : ILayoutReadStore, ITimetableReadS
         return routes;
     }
 
-    private RepositoryResult<Layout> AddStations(Layout layout, List<Message> messages)
+    private ImportResult<Layout> AddStations(Layout layout, List<Message> messages)
     {
         const string WorkSheetName = "StationTrack";
         const int Signature = 0;
@@ -49,7 +46,7 @@ public sealed partial class XplnDataImporter : ILayoutReadStore, ITimetableReadS
 
         var stations = DataSet?.Tables[WorkSheetName];
         if (stations is null)
-            return RepositoryResult<Layout>.Failure(string.Format(CultureInfo.CurrentCulture, Resources.Strings.WorksheetNotFound, WorkSheetName));
+            return ImportResult<Layout>.Failure(string.Format(CultureInfo.CurrentCulture, Resources.Strings.WorksheetNotFound, WorkSheetName));
 
         var rowNumber = 1;
         Station? current = null;
@@ -95,9 +92,9 @@ public sealed partial class XplnDataImporter : ILayoutReadStore, ITimetableReadS
         if (current is not null) layout.Add(current);
 
         if (messages.HasStoppingErrors())
-            return RepositoryResult<Layout>.Failure(messages.ToStrings());
+            return ImportResult<Layout>.Failure(messages.ToStrings());
         else
-            return RepositoryResult<Layout>.Success(layout, messages.ToStrings());
+            return ImportResult<Layout>.Success(layout, messages.ToStrings());
 
         static Station CreateStation(string[] fields) =>
             new()
@@ -152,7 +149,7 @@ public sealed partial class XplnDataImporter : ILayoutReadStore, ITimetableReadS
         }
     }
 
-    private RepositoryResult<Layout> AddRoutes(Layout layout, List<Message> messages)
+    private ImportResult<Layout> AddRoutes(Layout layout, List<Message> messages)
     {
         const string WorkSheetName = "Routes";
         const int Route = 0;
@@ -166,7 +163,7 @@ public sealed partial class XplnDataImporter : ILayoutReadStore, ITimetableReadS
 
         var stations = DataSet?.Tables[WorkSheetName];
         if (stations is null)
-            return RepositoryResult<Layout>.Failure(string.Format(CultureInfo.CurrentCulture, Resources.Strings.WorksheetNotFound, WorkSheetName));
+            return ImportResult<Layout>.Failure(string.Format(CultureInfo.CurrentCulture, Resources.Strings.WorksheetNotFound, WorkSheetName));
         var rowNumber = 1;
         foreach (DataRow station in stations.Rows)
         {
@@ -224,12 +221,12 @@ public sealed partial class XplnDataImporter : ILayoutReadStore, ITimetableReadS
             rowNumber++;
         }
         if (messages.HasStoppingErrors())
-            return RepositoryResult<Layout>.Failure(messages.ToStrings());
+            return ImportResult<Layout>.Failure(messages.ToStrings());
         else
-            return RepositoryResult<Layout>.Success(layout, messages.ToStrings());
+            return ImportResult<Layout>.Success(layout, messages.ToStrings());
     }
 
-    public RepositoryResult<Timetable> GetTimetable(string fileName)
+    public ImportResult<Timetable> GetTimetable(string fileName)
     {
         const string WorkSheetName = "Trains";
         const int Station = 2;
@@ -247,7 +244,7 @@ public sealed partial class XplnDataImporter : ILayoutReadStore, ITimetableReadS
         if (trains is null)
         {
             messages.Add(Message.System(string.Format(CultureInfo.CurrentCulture, Resources.Strings.WorksheetNotFound, WorkSheetName)));
-            return RepositoryResult<Timetable>.Failure(messages.ToStrings());
+            return ImportResult<Timetable>.Failure(messages.ToStrings());
         }
 
         var layout = GetLayout(fileName);
@@ -255,7 +252,7 @@ public sealed partial class XplnDataImporter : ILayoutReadStore, ITimetableReadS
         if (layout.IsFailure)
         {
             layoutMessages.Add(string.Format(CultureInfo.CurrentCulture, Resources.Strings.CannotReadTimetableDueToErrorsInLayout));
-            return RepositoryResult<Timetable>.Failure(layoutMessages);
+            return ImportResult<Timetable>.Failure(layoutMessages);
         }
 
         var result = new Timetable(fileName, layout.Item);
@@ -360,9 +357,9 @@ public sealed partial class XplnDataImporter : ILayoutReadStore, ITimetableReadS
         }
         if (current is not null) messages.AddRange(AddTrain(result, current, rowNumber));
         if (messages.HasStoppingErrors())
-            return RepositoryResult<Timetable>.Failure(messages.ToStrings());
+            return ImportResult<Timetable>.Failure(messages.ToStrings());
         else
-            return RepositoryResult<Timetable>.Success(result, messages.ToStrings());
+            return ImportResult<Timetable>.Success(result, messages.ToStrings());
 
         static IEnumerable<Message> AddTrain(Timetable timetable, Train train, int rowNumber)
         {
@@ -423,7 +420,7 @@ public sealed partial class XplnDataImporter : ILayoutReadStore, ITimetableReadS
         }
     }
 
-    public RepositoryResult<Schedule> GetSchedule(string filename)
+    public ImportResult<Schedule> GetSchedule(string filename)
     {
         const string WorkSheetName = "Trains";
         const int TrainNumber = 0;
@@ -446,12 +443,12 @@ public sealed partial class XplnDataImporter : ILayoutReadStore, ITimetableReadS
         if (trains is null)
         {
             messages.Add(Message.System(string.Format(CultureInfo.CurrentCulture, Resources.Strings.WorksheetNotFound, WorkSheetName)));
-            return RepositoryResult<Schedule>.Failure(messages.ToStrings());
+            return ImportResult<Schedule>.Failure(messages.ToStrings());
         }
         var timetable = GetTimetable(filename);
         if (timetable.IsFailure)
         {
-            return RepositoryResult<Schedule>.Failure(timetable.Messages);
+            return ImportResult<Schedule>.Failure(timetable.Messages);
         }
         var schedule = Schedule.Create(filename, timetable.Item);
         Train? currentTrain = null;
@@ -576,11 +573,11 @@ public sealed partial class XplnDataImporter : ILayoutReadStore, ITimetableReadS
             }
             rowNumber++;
         }
-        if (messages.HasStoppingErrors()) return RepositoryResult<Schedule>.Failure(messages.ToStrings());
+        if (messages.HasStoppingErrors()) return ImportResult<Schedule>.Failure(messages.ToStrings());
         foreach (var loco in locoSchedules.Values) schedule.AddLocoSchedule(loco);
         foreach (var trainset in trainsetSchedules.Values) schedule.AddTrainsetSchedule(trainset);
         foreach (var duty in driverDuties.Values) schedule.AddDriverDuty(duty);
-        return RepositoryResult<Schedule>.Success(schedule);
+        return ImportResult<Schedule>.Success(schedule);
 
         static TrainPartKeys GetTrainPartKeys(string[] fields, Train currentTrain, int rowNumber)
         {

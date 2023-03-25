@@ -1,8 +1,6 @@
-﻿using System;
-using System.Linq;
-using Tellurian.Trains.Models.Planning;
+﻿using TimetablePlanning.Importers.Model;
 
-namespace Tellurian.Trains.Repositories.Xpln
+namespace TimetablePlanning.Importers.Xpln.Extensions
 {
     public static class LayoutExtenstions
     {
@@ -10,7 +8,7 @@ namespace Tellurian.Trains.Repositories.Xpln
         {
             var station = me.Station(stationSignature);
             if (station.IsNone) return Maybe<StationTrack>.None;
-            var track = station.Value.Tracks.SingleOrDefault(t => t.Number.Equals(trackNumber, StringComparison.OrdinalIgnoreCase)); 
+            var track = station.Value.Tracks.SingleOrDefault(t => t.Number.Equals(trackNumber, StringComparison.OrdinalIgnoreCase));
             if (track is null) return Maybe<StationTrack>.None;
             return new Maybe<StationTrack>(track);
         }

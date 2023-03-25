@@ -1,14 +1,10 @@
 ﻿using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
-using Tellurian.Trains.Models.Planning;
-using Tellurian.Trains.Repositories.Xpln.DataSetProviders;
+using TimetablePlanning.Importers.Model;
+using TimetablePlanning.Importers.Xpln.DataSetProviders;
 
-namespace Tellurian.Trains.Repositories.Xpln.Tests;
+namespace TimetablePlanning.Importers.Xpln.Tests;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 

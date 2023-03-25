@@ -186,4 +186,7 @@
   <data name="StationNotFoundInLayout" xml:space="preserve">
     <value>Rad {0}: Station '{1}' hittades inte i nuvarande layout.</value>
   </data>
+  <data name="RouteNotFoundInLayout" xml:space="preserve">
+    <value>Rad {0}: Rutten'{1}' ej funnen i aktuell banlayout.</value>
+  </data>
 </root>

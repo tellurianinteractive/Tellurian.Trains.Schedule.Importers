@@ -1,15 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
-using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Xml;
-using Tellurian.Trains.Repositories.Xpln.Extensions;
+using TimetablePlanning.Importers.Xpln.Extensions;
 
-namespace Tellurian.Trains.Repositories.Xpln.DataSetProviders;
+namespace TimetablePlanning.Importers.Xpln.DataSetProviders;
 
 public sealed class OdsDataSetProvider : IDataSetProvider
 {

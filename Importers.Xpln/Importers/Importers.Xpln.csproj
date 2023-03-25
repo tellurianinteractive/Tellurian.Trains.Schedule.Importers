@@ -2,8 +2,8 @@
 
 	<PropertyGroup>
 		<TargetFramework>net70</TargetFramework>
-		<AssemblyName>Tellurian.Trains.Repositories.Xpln</AssemblyName>
-		<RootNamespace>Tellurian.Trains.Repositories.Xpln</RootNamespace>
+		<AssemblyName>TimetablePlanning.Importers.Xpln</AssemblyName>
+		<RootNamespace>TimetablePlanning.Importers.Xpln</RootNamespace>
 		<Authors>Stefan Fjällemark</Authors>
 		<Product>Tellurian Trains</Product>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -11,6 +11,7 @@
 		<PackageId>Tellurian.Trains.Repositories.Xpln</PackageId>
 		<Platforms>AnyCPU</Platforms>
 		<Version>2.0.0</Version>
+		<ImplicitUsings>true</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
@@ -34,7 +35,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Importers.Interfaces\Importers.Interfaces\Importers.Interfaces.csproj" />
-		<ProjectReference Include="..\..\Models.Planning\Model\Model.csproj" />
+		<ProjectReference Include="..\..\Models.Planning\Model\Importers.Model.csproj" />
 	</ItemGroup>
 	
 

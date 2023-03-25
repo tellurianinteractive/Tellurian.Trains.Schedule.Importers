@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Data.Odbc;
-using System.Linq;
-using Tellurian.Trains.Models.Planning;
+﻿using System.Data.Odbc;
+using TimetablePlanning.Importers.Model;
 
-namespace Tellurian.Trains.Repositories.Xpln.Tests;
+namespace TimetablePlanning.Importers.Xpln.Tests;
 internal static class ScheduleExtensions
 {
     public static void SaveToDatabase(this Schedule me, int layoutId, string connectionString)

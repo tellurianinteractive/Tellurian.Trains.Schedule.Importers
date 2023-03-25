@@ -3,7 +3,7 @@
 > NOTE: This is an experimental software. It is not intended for production use, only
 > to demonstrate the issues with importing XPLN files into a database.
 
-#### XPLN
+## XPLN
 XPLN is the defacto tool withing the FREMO community
 to create model railway schedules and printed media for module meetings.
 It is developed based on *OpenOffice Calc*, with scripting and forms. 
@@ -18,7 +18,7 @@ follow a strict workflow to not end up with inconsistent data.
 Therefore it is essential that XPLN-documents can be read and validated for formal data consistency
 before it can be imported into *Tellurian.Trains* database.
 
-#### Validation of XPLN-files
+### Validation of XPLN-files
 A rigoruios validation is required before it is possible to import XPLN-files into a database.
 Validation is performed in two phases:
 * In the first phase, the referential integrity of the XPLN-document is checked to verify that it is consistent. 
@@ -27,7 +27,7 @@ Errors found in this stage must be fixed in the XPLN-document.
 * When the referntial integrity is ok, the second validation phase checks for possible scheduling conflicts. 
 Warnings found in this stage can be fixed either in XPLN or later in the forthcoming online planning application.
 
-#### The Story of Reading XPLN-files
+### The Story of Reading XPLN-files
 XPLN is stored in ODS-files, an *Open Document* format. 
 Despite it is open, it is tricky to read. 
 
@@ -39,7 +39,7 @@ Althoug there are free online converters, it forces the user to make a conversio
 - Finally, I found a 10+ year old codebase for reading ODS-files directly. 
 After some tweaking, I made i work. And it had much better performance than the initial Excel-solution.
 
-#### How Was This Sofware Tested?
+### How Was This Sofware Tested?
 Not two planners use XPLN exacly the same way, validating one XPLN-file is'nt enough.
 The only way to test is to have a large number of XPLN-files to read an validate.
 Therefore, the tests of this software uses a set of XPLN files from different origins.
@@ -47,7 +47,7 @@ All of the tested XPLN-files had some kind of data integrity issue that required
 before it could be succesfully validated. 
 This clearly demonstrates the problems with using a spreadsheet for complex data storage.
 
-#### The package
+### The package
 The package reads and validates the following parts of an XPLN file:
 * Stations and tracks
 * Stretches and lines
@@ -63,7 +63,7 @@ A lot of effort has been made to have descriptive validation messages.
 Errors found in the data integrity phase also displays the row number in the XPLN-file when the error is detected.
 Validation messages are currently in English, German, Danish, Norwegian and Swedish.
 
-##### Future Plans
+#### Future Plans
 The next step is to offer the XPLN-valdidation as a cloud-service, as part of the [*Module Registry* toolset](https://moduleregistry.azurewebsites.net/Tools).
 The purpose is to help planners finding errors, but also to learn more about any weaknesses in the validation.
 

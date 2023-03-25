@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
+﻿using System.Data;
 
-namespace Tellurian.Trains.Repositories.Xpln.Extensions;
+namespace TimetablePlanning.Importers.Xpln.Extensions;
 internal static class DataSetExtensions
 {
     public static string[] GetRowFields(this DataRow row)

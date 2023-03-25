@@ -2,10 +2,10 @@
 
 	<PropertyGroup>
 		<TargetFramework>net70</TargetFramework>
-		<AssemblyName>Tellurian.Trains.Models.Planning</AssemblyName>
-		<RootNamespace>Tellurian.Trains.Models.Planning</RootNamespace>
+		<AssemblyName>TimetablePlanning.Importers.Model</AssemblyName>
+		<RootNamespace>TimetablePlanning.Importers.Model</RootNamespace>
 		<Product>Tellurian Trains</Product>
-		<Description>Common data model for track layout, timetables and resouces scheduling.</Description>
+		<Description>Common data model for import of track layout, timetables and resouces scheduling.</Description>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Copyright>© Stefan Fjällemark 2019</Copyright>
 		<Authors>Stefan Fjällemark</Authors>
@@ -22,6 +22,7 @@
 		<PackageProjectUrl>https://github.com/tellurianinteractive/Tellurian.Trains.Models.Planning/projects/</PackageProjectUrl>
 		<PackageTags>model.trains scheduling timetables</PackageTags>
 		<Platforms>AnyCPU</Platforms>
+		<ImplicitUsings>true</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 

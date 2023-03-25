@@ -1,11 +1,8 @@
-﻿using System;
-using System.Globalization;
-using System.IO;
-using System.Linq;
+﻿using System.Globalization;
 using System.Text.RegularExpressions;
-using Tellurian.Trains.Models.Planning;
+using TimetablePlanning.Importers.Model;
 
-namespace Tellurian.Trains.Repositories.Xpln
+namespace TimetablePlanning.Importers.Xpln.Extensions
 {
     public static class StringExtensions
     {
@@ -17,12 +14,10 @@ namespace Tellurian.Trains.Repositories.Xpln
             var length = 0;
             var end = me.IndexOf(" ");
             if (end >= 0)
-            {
                 length = end - start;
-            }
             else
             {
-                Regex re = new Regex(@"\d+");
+                var re = new Regex(@"\d+");
                 Match m = re.Match(me[start..]);
                 if (m.Success) length = m.Index;
             }
@@ -38,7 +33,7 @@ namespace Tellurian.Trains.Repositories.Xpln
             value.HasValue() &&
                 (TimeSpan.TryParse(value, out var _) ||
                 DateTime.TryParse(value, out var _) ||
-                (double.TryParse(value.Replace(",", "."), NumberStyles.Float, CultureInfo.InvariantCulture, out var t) && t >= 0.0 && t <= 1.0));
+                double.TryParse(value.Replace(",", "."), NumberStyles.Float, CultureInfo.InvariantCulture, out var t) && t >= 0.0 && t <= 1.0);
 
 
         public static bool IsTrackNumber(this string? value) =>
@@ -48,11 +43,11 @@ namespace Tellurian.Trains.Repositories.Xpln
         public static bool Is(this string? me, string? value) =>
             me is not null &&
             value is not null &&
-            me.Equals(value, System.StringComparison.OrdinalIgnoreCase);
+            me.Equals(value, StringComparison.OrdinalIgnoreCase);
         public static bool Is(this string? me, params string[] values) =>
              me is not null &&
              values is not null &&
-             values.Any(o => o.Equals(me, System.StringComparison.OrdinalIgnoreCase));
+             values.Any(o => o.Equals(me, StringComparison.OrdinalIgnoreCase));
 
         public static string ValueOrEmpty(this string? value) =>
             value is null ? string.Empty : value;
@@ -61,13 +56,13 @@ namespace Tellurian.Trains.Repositories.Xpln
             value is null ? 0 : int.TryParse(value, out var number) ? number : 0;
 
         public static bool IsNumber(this string? value) =>
-            int.TryParse(value, out var _) || double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var _ );
+            int.TryParse(value, out var _) || double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var _);
 
         public static int AsInteger(this string? value) =>
             int.TryParse(value, out var number) ? number : 0;
 
         public static double AsDouble(this string? value) =>
-            double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var number)? number : 0.0;
+            double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var number) ? number : 0.0;
 
         public static bool IsEmpty(this string? value) =>
             string.IsNullOrWhiteSpace(value);
@@ -79,6 +74,6 @@ namespace Tellurian.Trains.Repositories.Xpln
 
         public static bool HasFileExtension(this string? filename, params string[] extensions) =>
             filename is not null &&
-            extensions.Any(e => Path.GetExtension(filename).Equals(e, System.StringComparison.OrdinalIgnoreCase));
+            extensions.Any(e => Path.GetExtension(filename).Equals(e, StringComparison.OrdinalIgnoreCase));
     }
 }
