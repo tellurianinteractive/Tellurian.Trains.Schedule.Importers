@@ -1,13 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Odbc;
-using System.Linq;
-using System.Text;
-using Tellurian.Trains.Repositories.Access;
 
-namespace Tellurian.Trains.Repositories.Tests
+namespace TimetablePlanning.Importers.Access.Tests
 {
     [TestClass]
     public class ReadDatabaseTests
@@ -15,16 +8,11 @@ namespace Tellurian.Trains.Repositories.Tests
         [TestMethod]
         public void ReadsLayoutStations()
         {
-            var repository = new AccessRepository(@"C:\Users\Stefan\OneDrive\Modelljärnväg\Träffar\2020\2020-10 Värnamo\Trafikplanering\Timetable.accdb");
-            var layout = repository.GetLayout("Värnamo");
+            var repository = new AccessRepository(@"Test data\Timetable.accdb");
+            var layout = repository.GetLayout("Grimslöv H0");
             Assert.IsTrue(layout.IsSuccess);
-            Assert.AreEqual(13, layout.Item.Stations.Count);
+            Assert.AreEqual(16, layout.Item.Stations.Count);
+            Assert.AreEqual(62, layout.Item.Stations.Sum(s => s.Tracks.Count));
         }
-
-        [TestMethod]
-        public void ReadsLayoutStationTracks()
-        {
-        }
-
     }
 }

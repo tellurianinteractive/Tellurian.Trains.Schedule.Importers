@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-
-#pragma warning disable CS0649, IDE0044, RCS1169, CA1724, CA2227
+﻿using System.Globalization;
 
 namespace TimetablePlanning.Importers.Model;
 
@@ -59,6 +54,16 @@ public static class LayoutStationsExtensions
         }
         return stretch;
     }
+
+    public static TrackStretch Add(this Layout layout, string fromStationName, string toStationName, double distance, int tracksCount)
+    {
+        var fromStation = layout.Stations.Single(s => s.Name == fromStationName);
+        var toStation = layout.Stations.Single(s => s.Name == toStationName);
+        var trackStretch = new TrackStretch(fromStation, toStation, distance, tracksCount);
+        layout.Add(trackStretch);
+        return trackStretch;
+    }
+
 }
 
 public static class LayoutExtensions

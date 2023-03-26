@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace TimetablePlanning.Importers.Model;
+﻿namespace TimetablePlanning.Importers.Model;
 
 public sealed record Timetable
 {

@@ -1,18 +1,14 @@
-﻿namespace Tellurian.Trains.Repositories
-{
-    using System.Data;
-    using System.Data.Odbc;
+﻿using System.Data;
+using System.Data.Odbc;
 
-    internal static class LayoutStationTracks
-    {
-        public static IDbCommand CreateSelectCommand(string layoutName)
+namespace TimetablePlanning.Importers.Access;
+
+internal static class LayoutStationTracks
+{
+    public static IDbCommand CreateSelectCommand(string layoutName) =>
+        new OdbcCommand
         {
-            var result = new OdbcCommand
-            {
-                CommandType = CommandType.Text,
-                CommandText = $"SELECT Signature, Number FROM LayoutStationTracks WHERE LayoutName = '{layoutName}'"
-            };
-            return result;
-        }
-    }
+            CommandType = CommandType.Text,
+            CommandText = $"SELECT Signature, Number FROM LayoutStationTracks WHERE LayoutName = '{layoutName}'"
+        };
 }

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
-using System.Linq;
 using System.Runtime.Serialization;
-
-#pragma warning disable CS0649, IDE0044, RCS1169
 
 namespace TimetablePlanning.Importers.Model;
 
@@ -13,7 +8,7 @@ namespace TimetablePlanning.Importers.Model;
 public class TrackStretch : IEquatable<TrackStretch>
 {
     public TrackStretch(Station start, Station end, double distance) : this(start, end, distance, 1, 100, (int)Math.Round(distance, 0)) { }
-
+    public TrackStretch(Station start, Station end, double distance, int tracksCount) : this(start, end, distance, tracksCount, 100, (int)Math.Round(distance, 0)) { }
     public TrackStretch(Station start, Station end, double distance, int tracksCount, int speed, int time)
     {
         Start = start.ValueOrException(nameof(start));
@@ -28,7 +23,7 @@ public class TrackStretch : IEquatable<TrackStretch>
 
     [DataMember(IsRequired = false, Order = 1, Name = "Id")]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    private int _Id;
+    private int _Id =0;
 
     public int Id => _Id;
 

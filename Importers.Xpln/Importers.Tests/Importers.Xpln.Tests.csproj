@@ -27,7 +27,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Importers.Interfaces\Importers.Interfaces\Importers.Interfaces.csproj" />
-		<ProjectReference Include="..\..\Models.Planning\Model\Importers.Model.csproj" />
+		<ProjectReference Include="..\..\Importers.Model\Model\Importers.Model.csproj" />
 		<ProjectReference Include="..\Importers\Importers.Xpln.csproj" />
 	</ItemGroup>
 

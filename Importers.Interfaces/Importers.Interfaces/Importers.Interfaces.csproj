@@ -9,17 +9,17 @@
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Copyright>© Stefan Fjällemark 2023</Copyright>
 		<Authors>Stefan Fjällemark</Authors>
-		<Version>2.0.0</Version>
-		<AssemblyVersion>2.0.0.0</AssemblyVersion>
-		<PackageId>Tellurian.Trains.Repositories.Interfaces</PackageId>
+		<Version>1.0.0</Version>
+		<AssemblyVersion>1.0.0.0</AssemblyVersion>
+		<PackageId>TimetablePlanning.Importers.Interfaces</PackageId>
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
-		<RepositoryUrl>https://github.com/tellurianinteractive/Tellurian.Trains.Repositories.Interfaces/</RepositoryUrl>
+		<RepositoryUrl>https://github.com/tellurianinteractive/TimetablePlanning.Importers/</RepositoryUrl>
 		<RepositoryType>Github</RepositoryType>
 		<PackageReleaseNotes></PackageReleaseNotes>
 		<NeutralLanguage>en-GB</NeutralLanguage>
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 		<Company>Tellurian Interactive AB</Company>
-		<PackageProjectUrl>https://github.com/tellurianinteractive/Tellurian.Trains.Repositories.Interfaces/</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/tellurianinteractive/TimetablePlanning.Importers/</PackageProjectUrl>
 		<PackageTags>model.trains scheduling timetables</PackageTags>
 		<Platforms>AnyCPU</Platforms>
 		<ImplicitUsings>true</ImplicitUsings>
@@ -31,7 +31,7 @@
 	</Target>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\Models.Planning\Model\Importers.Model.csproj" />
+	  <ProjectReference Include="..\..\Importers.Model\Model\Importers.Model.csproj" />
 	</ItemGroup>
 
 </Project>

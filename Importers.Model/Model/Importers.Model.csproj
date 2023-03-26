@@ -5,21 +5,21 @@
 		<AssemblyName>TimetablePlanning.Importers.Model</AssemblyName>
 		<RootNamespace>TimetablePlanning.Importers.Model</RootNamespace>
 		<Product>Tellurian Trains</Product>
-		<Description>Common data model for import of track layout, timetables and resouces scheduling.</Description>
+		<Description>Import operations for layouts, timetables and schedules.</Description>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Copyright>© Stefan Fjällemark 2019</Copyright>
+		<Copyright>© Stefan Fjällemark 2023</Copyright>
 		<Authors>Stefan Fjällemark</Authors>
-		<Version>2.0.0</Version>
-		<AssemblyVersion>2.0.0.2</AssemblyVersion>
-		<PackageId>Tellurian.Trains.Models.Planning</PackageId>
+		<Version>1.0.0</Version>
+		<AssemblyVersion>1.0.0.0</AssemblyVersion>
+		<PackageId>TimetablePlanning.Importers.Model</PackageId>
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
-		<RepositoryUrl>https://github.com/tellurianinteractive/Tellurian.Trains.Models.Planning</RepositoryUrl>
+		<RepositoryUrl>https://github.com/tellurianinteractive/TimetablePlanning.Importers/</RepositoryUrl>
 		<RepositoryType>Github</RepositoryType>
 		<PackageReleaseNotes></PackageReleaseNotes>
 		<NeutralLanguage>en-GB</NeutralLanguage>
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 		<Company>Tellurian Interactive AB</Company>
-		<PackageProjectUrl>https://github.com/tellurianinteractive/Tellurian.Trains.Models.Planning/projects/</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/tellurianinteractive/TimetablePlanning.Importers/</PackageProjectUrl>
 		<PackageTags>model.trains scheduling timetables</PackageTags>
 		<Platforms>AnyCPU</Platforms>
 		<ImplicitUsings>true</ImplicitUsings>

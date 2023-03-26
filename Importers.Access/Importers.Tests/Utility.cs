@@ -2,7 +2,7 @@
 using System.Data.Odbc;
 using System.Globalization;
 
-namespace Tellurian.Trains.Repositories.Tests
+namespace TimetablePlanning.Importers.Access.Tests
 {
     internal static class Sql
     {
