@@ -189,4 +189,10 @@
   <data name="RouteNotFoundInLayout" xml:space="preserve">
     <value>Række {0}: Rute '{1}' blev ikke fundet i det aktuelle layout.</value>
   </data>
+  <data name="RouteNumberIsMissingUsingDefault" xml:space="preserve">
+    <value>Række {0}: Rutenummer mangler, bruger standardværdi '{1}'.</value>
+  </data>
+  <data name="ReadingWorksheet" xml:space="preserve">
+    <value>Læser arbejdsark {0}...</value>
+  </data>
 </root>

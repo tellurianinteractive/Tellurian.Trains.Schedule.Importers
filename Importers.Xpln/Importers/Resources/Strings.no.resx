@@ -189,4 +189,10 @@
   <data name="RouteNotFoundInLayout" xml:space="preserve">
     <value>Rad {0}: Ruten '{1}' ikke funnet i gjeldende layout.</value>
   </data>
+  <data name="RouteNumberIsMissingUsingDefault" xml:space="preserve">
+    <value>Rad {0}: Rutenummer mangler, bruker standardvædi '{1}'.</value>
+  </data>
+  <data name="ReadingWorksheet" xml:space="preserve">
+    <value>Leser arbeidsark {0}...</value>
+  </data>
 </root>

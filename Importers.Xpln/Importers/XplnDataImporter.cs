@@ -47,6 +47,8 @@ public sealed partial class XplnDataImporter : IDataSourceService, IDisposable
         var stations = DataSet?.Tables[WorkSheetName];
         if (stations is null)
             return ImportResult<Layout>.Failure(string.Format(CultureInfo.CurrentCulture, Resources.Strings.WorksheetNotFound, WorkSheetName));
+        else
+            messages.Add(Message.Information(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ReadingWorksheet, WorkSheetName)));
 
         var rowNumber = 1;
         Station? current = null;
@@ -54,6 +56,7 @@ public sealed partial class XplnDataImporter : IDataSourceService, IDisposable
         {
             if (rowNumber > 1)
             {
+                if (IsRepeatedHeader(station)) continue;
                 var itemMessages = new List<Message>();
                 var fields = station.GetRowFields();
                 if (fields.IsEmptyFields()) { if (layout.Stations.Any()) break; else continue; }
@@ -95,6 +98,9 @@ public sealed partial class XplnDataImporter : IDataSourceService, IDisposable
             return ImportResult<Layout>.Failure(messages.ToStrings());
         else
             return ImportResult<Layout>.Success(layout, messages.ToStrings());
+
+        static bool IsRepeatedHeader(DataRow row) =>
+            row[0].Equals("Name") && row[1].Equals("Enum");
 
         static Station CreateStation(string[] fields) =>
             new()
@@ -152,6 +158,7 @@ public sealed partial class XplnDataImporter : IDataSourceService, IDisposable
     private ImportResult<Layout> AddRoutes(Layout layout, List<Message> messages)
     {
         const string WorkSheetName = "Routes";
+        const string DefaultRoute = "1";
         const int Route = 0;
         const int StartStation = 2;
         const int StartPosition = 3;
@@ -164,6 +171,9 @@ public sealed partial class XplnDataImporter : IDataSourceService, IDisposable
         var stations = DataSet?.Tables[WorkSheetName];
         if (stations is null)
             return ImportResult<Layout>.Failure(string.Format(CultureInfo.CurrentCulture, Resources.Strings.WorksheetNotFound, WorkSheetName));
+        else
+            messages.Add(Message.Information(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ReadingWorksheet, WorkSheetName)));
+
         var rowNumber = 1;
         foreach (DataRow station in stations.Rows)
         {
@@ -189,19 +199,23 @@ public sealed partial class XplnDataImporter : IDataSourceService, IDisposable
                     itemMessages.Add(Message.Error(Resources.Strings.ColumnMustBeANumber, rowNumber, nameof(EndPosition)));
                 if (itemMessages.HasNoStoppingErrors())
                 {
-                    var routeNumber = fields[Route].AsInteger();
                     TimetableStretch? timetableStretch = null;
-                    if (!layout.HasTimetableStretch(fields[Route]))
+                    var routeNumber = fields[Route].HasText() ? fields[Route] : DefaultRoute;
+                    if (fields[Route].IsEmpty())
                     {
-                        timetableStretch = new TimetableStretch(fields[Route]);
+                        itemMessages.Add(Message.Warning(Resources.Strings.RouteNumberIsMissingUsingDefault, rowNumber, routeNumber));
+                    }
+                    if (!layout.HasTimetableStretch(routeNumber))
+                    {
+                        timetableStretch = new TimetableStretch(routeNumber);
                         layout.Add(timetableStretch);
                     }
                     else
                     {
-                        var ts = layout.TimetableStretch(fields[Route]);
+                        var ts = layout.TimetableStretch(routeNumber);
                         if (ts.IsNone)
                         {
-                            itemMessages.Add(Message.Error(Resources.Strings.RouteNotFoundInLayout, rowNumber, fields[Route]));
+                            itemMessages.Add(Message.Error(Resources.Strings.RouteNotFoundInLayout, rowNumber, routeNumber));
                         }
                         else
                         {
@@ -254,6 +268,8 @@ public sealed partial class XplnDataImporter : IDataSourceService, IDisposable
             layoutMessages.Add(string.Format(CultureInfo.CurrentCulture, Resources.Strings.CannotReadTimetableDueToErrorsInLayout));
             return ImportResult<Timetable>.Failure(layoutMessages);
         }
+        messages.AddRange(layout.Messages.Select(m => Message.Copy(m)));
+        messages.Add(Message.Information(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ReadingWorksheet, WorkSheetName)));
 
         var result = new Timetable(fileName, layout.Item);
         var rowNumber = 1;
@@ -450,6 +466,9 @@ public sealed partial class XplnDataImporter : IDataSourceService, IDisposable
         {
             return ImportResult<Schedule>.Failure(timetable.Messages);
         }
+        messages.AddRange(timetable.Messages.Select(m => Message.Copy(m)));
+        messages.Add(Message.Information(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ReadingWorksheet, WorkSheetName)));
+
         var schedule = Schedule.Create(filename, timetable.Item);
         Train? currentTrain = null;
 

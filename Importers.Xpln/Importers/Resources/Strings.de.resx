@@ -189,4 +189,10 @@
   <data name="RouteNotFoundInLayout" xml:space="preserve">
     <value>Reihe {0}: Route „{1}“ im aktuellen Layout nicht gefunden.</value>
   </data>
+  <data name="RouteNumberIsMissingUsingDefault" xml:space="preserve">
+    <value>Zeile {0}: Routennummer fehlt, Standardwert „{1}“ wird verwendet.</value>
+  </data>
+  <data name="ReadingWorksheet" xml:space="preserve">
+    <value>Arbeitsblatt {0} wird gelesen...</value>
+  </data>
 </root>

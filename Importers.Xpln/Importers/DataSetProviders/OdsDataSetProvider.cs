@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Data;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO.Compression;
 using System.Xml;
@@ -28,7 +29,7 @@ public sealed class OdsDataSetProvider : IDataSetProvider
 
     public DataSet? LoadFromFile(string filename, params string[]? worksheets)
     {
-        if (worksheets is null) worksheets = Array.Empty<string>();
+        worksheets ??= Array.Empty<string>();
         try
         {
             using var stream = GetStream(GetFullFilename(filename));
@@ -119,17 +120,28 @@ public sealed class OdsDataSetProvider : IDataSetProvider
     private static void GetCell(XmlNode cellNode, DataRow row, ref int cellIndex)
     {
         var cellRepeated = cellNode.Attributes?["table:number-columns-repeated"];
+            DataTable sheet = row.Table;
         if (cellRepeated == null)
         {
-            DataTable sheet = row.Table;
-            while (sheet.Columns.Count <= cellIndex)
+            if (sheet.Columns.Count <= cellIndex)
                 sheet.Columns.Add();
             row[cellIndex] = ReadCellValue(cellNode);
             cellIndex++;
         }
         else
         {
-            cellIndex += Convert.ToInt32(cellRepeated.Value, CultureInfo.InvariantCulture);
+            var repeated = Convert.ToInt32(cellRepeated.Value, CultureInfo.InvariantCulture);
+            if (cellIndex + repeated < sheet.Columns.Count)
+            {
+                for(int i = 0; i < repeated; i++)
+                {
+                    if (sheet.Columns.Count <= cellIndex)
+                        sheet.Columns.Add();
+                    row[cellIndex] = ReadCellValue(cellNode);
+                    cellIndex++;
+                }
+
+            }
         }
     }
     private static string? ReadCellValue(XmlNode cell)
@@ -144,9 +156,7 @@ public sealed class OdsDataSetProvider : IDataSetProvider
     private static XmlDocument GetContentXmlFile(ZipArchive archive)
     {
         const string entryName = "content.xml";
-        var entry = archive.GetEntry(entryName);
-        if (entry is null) throw new FileNotFoundException(entryName);
-
+        var entry = archive.GetEntry(entryName) ?? throw new FileNotFoundException(entryName);
         using var stream = entry.Open();
         XmlDocument document = new XmlDocument();
         document.Load(stream);

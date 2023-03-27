@@ -189,4 +189,10 @@
   <data name="RouteNotFoundInLayout" xml:space="preserve">
     <value>Rad {0}: Rutten'{1}' ej funnen i aktuell banlayout.</value>
   </data>
+  <data name="RouteNumberIsMissingUsingDefault" xml:space="preserve">
+    <value>Rad {0}: Ruttnummer saknas, med standardvärde '{1}'.</value>
+  </data>
+  <data name="ReadingWorksheet" xml:space="preserve">
+    <value>Läser arbetsblad {0}...</value>
+  </data>
 </root>

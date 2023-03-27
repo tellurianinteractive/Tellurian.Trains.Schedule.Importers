@@ -178,11 +178,29 @@ namespace TimetablePlanning.Importers.Xpln.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reading worksheet {0}....
+        /// </summary>
+        internal static string ReadingWorksheet {
+            get {
+                return ResourceManager.GetString("ReadingWorksheet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Row {0}: Route &apos;{1}&apos; not found in current layout..
         /// </summary>
         internal static string RouteNotFoundInLayout {
             get {
                 return ResourceManager.GetString("RouteNotFoundInLayout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Row {0}: Route number missing, using default &apos;{1}&apos;..
+        /// </summary>
+        internal static string RouteNumberIsMissingUsingDefault {
+            get {
+                return ResourceManager.GetString("RouteNumberIsMissingUsingDefault", resourceCulture);
             }
         }
         

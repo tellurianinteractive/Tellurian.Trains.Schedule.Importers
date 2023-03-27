@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
+﻿using System.Globalization;
 
 namespace TimetablePlanning.Importers.Model;
 
@@ -15,6 +12,7 @@ public sealed record Message : IEquatable<Message>
     public static Message Error(string text) => new (text, Severity.Error);
     public static Message Error(string format, params object[] args) => new (string.Format(CultureInfo.CurrentCulture, format, args), Severity.Error);
     public static Message System(string text) => new (text, Severity.System);
+    public static Message Copy(string text) => new(text, Severity.None);
 
     private Message(string text, Severity severity) { Text = text; Severity = severity; }
 
@@ -22,6 +20,7 @@ public sealed record Message : IEquatable<Message>
     public Severity Severity { get; }
 
     public override string ToString()=>
+        Severity == Severity.None ? Text :
         $"{Severity.ToLanguageString(CultureInfo.CurrentCulture)}: {Text}";
 
     public bool Equals(Message? other) =>
@@ -31,10 +30,11 @@ public sealed record Message : IEquatable<Message>
 
 public enum Severity
 {
-    Information = 0,
-    Warning = 1,
-    Error = 2,
-    System = 3
+    None = 0,
+    Information = 1,
+    Warning = 2,
+    Error = 3,
+    System = 4
 }
 
 public static class ErrorMessageExtensions

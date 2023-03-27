@@ -40,6 +40,11 @@ public class XplnImporterTests
 
 
     [TestMethod]
+    public void ImportsMontan2023()
+    {
+        TestDocumentImport("Montan2023H0e", "de-DE", 61, 18, 36, 45, 2);
+    }
+    [TestMethod]
     public void ImportsBarmstedt2022()
     {
         TestDocumentImport("Barmstedt2022", "de-DE", 61, 18, 36, 45, 2);
