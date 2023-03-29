@@ -99,7 +99,6 @@ public sealed class OdsDataSetProvider : IDataSetProvider
 
     private static bool GetRow(XmlNode rowNode, DataTable dataTable, XmlNamespaceManager namespaceManager, WorksheetConfiguration configuration, ref int rowIndex)
     {
-        //if (sheet.TableName == "Routes") Debugger.Break();
         var rowsRepeated = rowNode.Attributes?["table:number-rows-repeated"];
         var repeat = rowsRepeated is null ? 1 : Convert.ToInt32(rowsRepeated.Value, CultureInfo.InvariantCulture);
         if (repeat > configuration.MaxRowRepetitions) return false;
@@ -122,7 +121,6 @@ public sealed class OdsDataSetProvider : IDataSetProvider
         return true;
 
         static bool HasValue(DataRow row) => row.GetRowFields().Any(f => f.HasText() );
-
     }
 
     private static void GetCell(XmlNode cellNode, DataRow row, int columns, ref int cellIndex)
