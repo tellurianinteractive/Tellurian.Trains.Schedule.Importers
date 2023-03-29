@@ -47,9 +47,10 @@ public sealed class OdsDataSetProvider : IDataSetProvider
         }
     }
 
-    private static IEnumerable<DataTable> GetDataTables(XmlDocument document, DataSetConfiguration configuration, XmlNamespaceManager namespaceManager)
+    private IEnumerable<DataTable> GetDataTables(XmlDocument document, DataSetConfiguration configuration, XmlNamespaceManager namespaceManager)
     {
         var tableNodes = TableNodes(document, namespaceManager);
+        Logger.LogInformation("{count} table nodes in document.",tableNodes?.Count??0);
         if (tableNodes is not null)
         {
             foreach (XmlNode tableNode in tableNodes)
@@ -58,7 +59,8 @@ public sealed class OdsDataSetProvider : IDataSetProvider
                 var worksheetConfiguration = configuration.WorksheetConfiguration(nameAttribute?.Value);
                 if (worksheetConfiguration is not null)
                 {
-                    var table = GetSheet(tableNode, worksheetConfiguration, namespaceManager);
+                    Logger.LogInformation("Reading table {table}.", worksheetConfiguration.WorksheetName);
+                    var table = GetDataTable(tableNode, worksheetConfiguration, namespaceManager);
                     if (table is null) continue;
                     yield return table;
                 }
@@ -71,7 +73,7 @@ public sealed class OdsDataSetProvider : IDataSetProvider
         return document.SelectNodes("/office:document-content/office:body/office:spreadsheet/table:table", namespaceManager);
     }
 
-    private static DataTable? GetSheet(XmlNode tableNode, WorksheetConfiguration configuration, XmlNamespaceManager namespaceManager)
+    private static DataTable? GetDataTable(XmlNode tableNode, WorksheetConfiguration configuration, XmlNamespaceManager namespaceManager)
     {
         var nameAttribute = tableNode.Attributes?["table:name"];
         if (nameAttribute is null) return null;
@@ -83,7 +85,8 @@ public sealed class OdsDataSetProvider : IDataSetProvider
             int rowIndex = 0;
             foreach (XmlNode rowNode in rowNodes)
             {
-                GetRow(rowNode, dataTable, namespaceManager, configuration.Colums, ref rowIndex);
+                var isRead = GetRow(rowNode, dataTable, namespaceManager, configuration, ref rowIndex);
+                if (!isRead) break; ;
             }
         }
         if (dataTable.Rows.Count == 0)
@@ -94,27 +97,29 @@ public sealed class OdsDataSetProvider : IDataSetProvider
         return dataTable;
     }
 
-    private static void GetRow(XmlNode rowNode, DataTable dataTable, XmlNamespaceManager namespaceManager, int columns, ref int rowIndex)
+    private static bool GetRow(XmlNode rowNode, DataTable dataTable, XmlNamespaceManager namespaceManager, WorksheetConfiguration configuration, ref int rowIndex)
     {
         //if (sheet.TableName == "Routes") Debugger.Break();
         var rowsRepeated = rowNode.Attributes?["table:number-rows-repeated"];
         var repeat = rowsRepeated is null ? 1 : Convert.ToInt32(rowsRepeated.Value, CultureInfo.InvariantCulture);
+        if (repeat > configuration.MaxRowRepetitions) return false;
         for (var i = 0; i < repeat; i++)
         {
             var row = dataTable.NewRow();
-            while (dataTable.Columns.Count < columns)
+            while (dataTable.Columns.Count < configuration.MaxReadColumns)
                 dataTable.Columns.Add();
 
             var cellNodes = rowNode.SelectNodes("table:table-cell", namespaceManager);
             int cellIndex = 0;
             foreach (XmlNode cellNode in cellNodes!)
             {
-                GetCell(cellNode, row, columns, ref cellIndex);
-                if (cellIndex >= columns) break;
+                GetCell(cellNode, row, configuration.MaxReadColumns, ref cellIndex);
+                if (cellIndex >= configuration.MaxReadColumns) break;
             }
             if (HasValue(row)) dataTable.Rows.Add(row);
             rowIndex++;
         }
+        return true;
 
         static bool HasValue(DataRow row) => row.GetRowFields().Any(f => f.HasText() );
 
