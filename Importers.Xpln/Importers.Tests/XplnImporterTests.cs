@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Globalization;
+using System.IO.MemoryMappedFiles;
 using TimetablePlanning.Importers.Model;
 using TimetablePlanning.Importers.Xpln.DataSetProviders;
 
@@ -34,8 +35,20 @@ public class XplnImporterTests
     {
         TestDocumentsDirectory = new DirectoryInfo("Test data");
         var dataSetProvider =
-            new OdsDataSetProvider(TestDocumentsDirectory, NullLogger.Instance);
-        Target = new XplnDataImporter(dataSetProvider);
+            new OdsDataSetProvider(NullLogger<OdsDataSetProvider>.Instance);
+        Target = new XplnDataImporter(dataSetProvider, NullLogger<XplnDataImporter>.Instance);
+    }
+
+    [TestMethod]
+    public void ImportsMemoryMappedFile()
+    {
+        var m = MemoryMappedFile.CreateFromFile(TestDocumentsDirectory.FullName + "\\Montan2023H0e.ods");
+        var result = Target.GetSchedule(m.CreateViewStream(), "Montan2023H0e");
+        if (result.IsFailure)
+        {
+            Assert.Fail();
+        }
+
     }
 
 
@@ -67,7 +80,7 @@ public class XplnImporterTests
         CultureInfo.CurrentCulture = new CultureInfo(culture);
         CultureInfo.CurrentUICulture = CultureInfo.CurrentCulture;
         var file = TestDocumentsDirectory.EnumerateFiles(scheduleName + FileSuffix).Single();
-        var result = Target.GetSchedule(scheduleName);
+        var result = Target.GetSchedule(file, scheduleName);
         if (result.IsFailure)
         {
             WriteLines(result.Messages, file);
@@ -91,5 +104,6 @@ public class XplnImporterTests
         using var writer = new StreamWriter(file.FullName.Replace(FileSuffix, "Log.txt"));
         writer.WriteLine($"Validation at {DateTime.Now}");
         foreach (var message in messages) writer.WriteLine(message);
+        writer.WriteLine("Validation completed.");
     }
 }

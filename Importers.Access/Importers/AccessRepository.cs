@@ -10,7 +10,7 @@ using TimetablePlanning.Importers.Model;
 
 namespace TimetablePlanning.Importers.Access;
 
-public class AccessRepository : ILayoutService
+public class AccessRepository 
 {
     private readonly string DatabaseFileName;
 

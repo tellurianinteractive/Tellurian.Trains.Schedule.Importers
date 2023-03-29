@@ -11,15 +11,17 @@ public class OdsDataSetProviderTests
     [TestMethod]
     public void ReadsFile()
     {
-        var target = new OdsDataSetProvider(new DirectoryInfo("Test data"), NullLogger.Instance);
-        var dataSet = target.LoadFromFile("Montan2023H0e.ods", DataSetConfiguration());
+        const string path = "Test data\\Montan2023H0e.ods";
+        var target = new OdsDataSetProvider(NullLogger<OdsDataSetProvider>.Instance);
+        using var stream = File.OpenRead(path);
+        var dataSet = target.LoadFromFile( stream, DataSetConfiguration());
         Assert.IsNotNull(dataSet);
-        WriteDataSet(dataSet, "Test data\\Montan2023H0e");
+        WriteDataSet(dataSet, path);
     }
 
     private static DataSetConfiguration DataSetConfiguration()
     {
-        var result = new DataSetConfiguration();
+        var result = new DataSetConfiguration("XplnDocument");
         result.Add(new WorksheetConfiguration("StationTrack", 8));
         result.Add(new WorksheetConfiguration("Routes", 11));
         result.Add(new WorksheetConfiguration("Trains", 11));

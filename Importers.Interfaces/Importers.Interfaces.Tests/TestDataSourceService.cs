@@ -1,12 +1,19 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using TimetablePlanning.Importers.Model;
 
 namespace TimetablePlanning.Importers.Interfaces.Tests;
 
-public sealed class TestDataSourceService : IDataSourceService
+public sealed class TestDataSourceService 
 {
-    public ImportResult<Layout> GetLayout(string name) => ImportResult<Layout>.Success(GetTestLayout(name));
+    public static ImportResult<Layout> GetLayout(string name) => ImportResult<Layout>.Success(GetTestLayout(name));
+
+    public static ImportResult<Timetable> GetTimetable( string name)
+    {
+        var layout = GetTestLayout(name);
+        return GetTestTimetable(name, layout);
+    }
 
     public ImportResult<Layout> Save(Layout layout)
     {
@@ -28,13 +35,10 @@ public sealed class TestDataSourceService : IDataSourceService
         return layout;
     }
 
-    public ImportResult<Timetable> GetTimetable(string name) => GetTestTimetable(name);
 
-    private ImportResult<Timetable> GetTestTimetable(string name)
+    private static ImportResult<Timetable> GetTestTimetable(string name, Layout layout)
     {
-        var layout = GetLayout(name);
-        if (layout.IsFailure) return ImportResult<Timetable>.Failure(layout.Messages);
-        var timetable = new Timetable(name, layout.Item);
+        var timetable = new Timetable(name, layout);
         timetable.Add(TestDataFactory.CreateTrain1());
         timetable.Add(TestDataFactory.CreateTrain2());
         return ImportResult<Timetable>.Success(timetable);
@@ -54,4 +58,5 @@ public sealed class TestDataSourceService : IDataSourceService
     {
         throw new NotSupportedException();
     }
+
 }

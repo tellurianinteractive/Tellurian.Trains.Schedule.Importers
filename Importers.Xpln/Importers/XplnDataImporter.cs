@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using Microsoft.Extensions.Logging;
+using System.Data;
 using System.Globalization;
 using System.Text;
 using TimetablePlanning.Importers.Interfaces;
@@ -8,28 +9,51 @@ using TimetablePlanning.Importers.Xpln.Extensions;
 using static TimetablePlanning.Importers.Model.Xpln.XplnDataImporter;
 
 namespace TimetablePlanning.Importers.Xpln;
-public sealed partial class XplnDataImporter : IDataSourceService, IDisposable
+public sealed partial class XplnDataImporter : IScheduleSourceService, IDisposable
 {
     public readonly IDataSetProvider DataSetProvider;
     private DataSet? DataSet;
+    private readonly ILogger Logger;
 
-    public XplnDataImporter(IDataSetProvider dataSetProvider)
+    public XplnDataImporter(IDataSetProvider dataSetProvider, ILogger<XplnDataImporter> logger)
     {
         DataSetProvider = dataSetProvider;
+        Logger = logger;
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
     }
 
-
-    public ImportResult<Layout> GetLayout(string fileName)
+    public ImportResult<Schedule> GetSchedule(FileInfo inputFile, string name)
     {
-        DataSet = GetData(fileName);
-        var name = Path.GetFileNameWithoutExtension(fileName);
+        DataSet = GetData(inputFile.FullName);
+        return GetResult(name);
+    }
+
+    public ImportResult<Schedule> GetSchedule(Stream inputStream, string name)
+    {
+        DataSet = GetData(inputStream);
+        return GetResult(name);
+    }
+
+    private ImportResult<Schedule> GetResult(string name)
+    {
+        var layout = GetLayout(name);
+        if (layout.IsFailure) return new ImportResult<Schedule>() { Messages = layout.Messages };
+        var timetable = GetTimetable(name, layout.Item);
+        if (timetable.IsFailure) return new ImportResult<Schedule>() { Messages = layout.Messages.Concat(timetable.Messages) };
+        var schedule = GetSchedule(name, timetable.Item);
+        return schedule with { Messages=layout.Messages.Concat(timetable.Messages).Concat(schedule.Messages) };
+    }
+
+
+    private ImportResult<Layout> GetLayout(string name)
+    {
         var result = new Layout { Name = name };
         var messages = new List<Message>();
         var stations = AddStations(result, messages);
         if (stations.IsFailure) return stations;
         var routes = AddRoutes(result, messages);
         return routes;
+
     }
 
     private ImportResult<Layout> AddStations(Layout layout, List<Message> messages)
@@ -47,9 +71,8 @@ public sealed partial class XplnDataImporter : IDataSourceService, IDisposable
         var stations = DataSet?.Tables[WorkSheetName];
         if (stations is null)
             return ImportResult<Layout>.Failure(string.Format(CultureInfo.CurrentCulture, Resources.Strings.WorksheetNotFound, WorkSheetName));
-        else
-            messages.Add(Message.Information(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ReadingWorksheet, WorkSheetName)));
-
+ 
+        messages.Add(Message.Information(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ReadingWorksheet, WorkSheetName)));
         var rowNumber = 1;
         Station? current = null;
         foreach (DataRow station in stations.Rows)
@@ -240,8 +263,9 @@ public sealed partial class XplnDataImporter : IDataSourceService, IDisposable
             return ImportResult<Layout>.Success(layout, messages.ToStrings());
     }
 
-    public ImportResult<Timetable> GetTimetable(string fileName)
+    private ImportResult<Timetable> GetTimetable(string name, Layout layout)
     {
+        const string WorkSheetNameAndObjects = "Trains:traindef,timetable,remarks";
         const string WorkSheetName = "Trains";
         const int Station = 2;
         const int Track = 3;
@@ -253,7 +277,7 @@ public sealed partial class XplnDataImporter : IDataSourceService, IDisposable
         const int MinLength = 10;
 
         var messages = new List<Message>();
-        DataSet = GetData(fileName);
+
         var trains = DataSet?.Tables[WorkSheetName];
         if (trains is null)
         {
@@ -261,17 +285,8 @@ public sealed partial class XplnDataImporter : IDataSourceService, IDisposable
             return ImportResult<Timetable>.Failure(messages.ToStrings());
         }
 
-        var layout = GetLayout(fileName);
-        var layoutMessages = layout.Messages.ToList();
-        if (layout.IsFailure)
-        {
-            layoutMessages.Add(string.Format(CultureInfo.CurrentCulture, Resources.Strings.CannotReadTimetableDueToErrorsInLayout));
-            return ImportResult<Timetable>.Failure(layoutMessages);
-        }
-        messages.AddRange(layout.Messages.Select(m => Message.Copy(m)));
-        messages.Add(Message.Information(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ReadingWorksheet, WorkSheetName)));
-
-        var result = new Timetable(fileName, layout.Item);
+        messages.Add(Message.Information(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ReadingWorksheet, WorkSheetNameAndObjects)));
+        var result = new Timetable(name, layout);
         var rowNumber = 1;
         var callNumber = 0;
         Train? current = null;
@@ -314,7 +329,7 @@ public sealed partial class XplnDataImporter : IDataSourceService, IDisposable
                                 if (validationMessages.HasNoStoppingErrors())
                                 {
                                     callNumber++;
-                                    var track = layout.Item.Track(fields[Station], fields[Track]);
+                                    var track = layout.Track(fields[Station], fields[Track]);
                                     if (track.IsNone)
                                     {
                                         messages.Add(Message.Error(track.Message));
@@ -436,8 +451,9 @@ public sealed partial class XplnDataImporter : IDataSourceService, IDisposable
         }
     }
 
-    public ImportResult<Schedule> GetSchedule(string filename)
+    private ImportResult<Schedule> GetSchedule(string name, Timetable timetable)
     {
+        const string WorkSheetNameAndObjects = "Trains:locomotive,trainset,job,remarks";
         const string WorkSheetName = "Trains";
         const int TrainNumber = 0;
         const int From = 2;
@@ -454,22 +470,15 @@ public sealed partial class XplnDataImporter : IDataSourceService, IDisposable
         var trainsetSchedules = new Dictionary<string, TrainsetSchedule>(200);
         var driverDuties = new Dictionary<string, DriverDuty>();
 
-        DataSet = GetData(filename);
         var trains = DataSet?.Tables[WorkSheetName];
         if (trains is null)
         {
             messages.Add(Message.System(string.Format(CultureInfo.CurrentCulture, Resources.Strings.WorksheetNotFound, WorkSheetName)));
             return ImportResult<Schedule>.Failure(messages.ToStrings());
         }
-        var timetable = GetTimetable(filename);
-        if (timetable.IsFailure)
-        {
-            return ImportResult<Schedule>.Failure(timetable.Messages);
-        }
-        messages.AddRange(timetable.Messages.Select(m => Message.Copy(m)));
-        messages.Add(Message.Information(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ReadingWorksheet, WorkSheetName)));
 
-        var schedule = Schedule.Create(filename, timetable.Item);
+        messages.Add(Message.Information(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ReadingWorksheet, WorkSheetNameAndObjects)));
+        var schedule = Schedule.Create(name, timetable);
         Train? currentTrain = null;
 
         var rowNumber = 1;
@@ -596,7 +605,7 @@ public sealed partial class XplnDataImporter : IDataSourceService, IDisposable
         foreach (var loco in locoSchedules.Values) schedule.AddLocoSchedule(loco);
         foreach (var trainset in trainsetSchedules.Values) schedule.AddTrainsetSchedule(trainset);
         foreach (var duty in driverDuties.Values) schedule.AddDriverDuty(duty);
-        return ImportResult<Schedule>.Success(schedule);
+        return ImportResult<Schedule>.Success(schedule, messages.ToStrings());
 
         static TrainPartKeys GetTrainPartKeys(string[] fields, Train currentTrain, int rowNumber)
         {
@@ -668,15 +677,28 @@ public sealed partial class XplnDataImporter : IDataSourceService, IDisposable
     private DataSet GetData(string filename)
     {
         if (DataSet is not null) return DataSet;
+        try
+        {
+            using var stream = File.OpenRead(filename);
+            return GetData(stream);
 
-        var data = DataSetProvider.LoadFromFile(filename, DataSetConfiguration());
-        return data is null ? throw new FileNotFoundException(filename) : data;
+        }
+        catch (FileNotFoundException)
+        {
+            Logger.LogCritical("{file} not found.", filename);
+            throw;
+        }
+    }
+
+    private DataSet GetData(Stream stream)
+    {
+        return DataSetProvider.LoadFromFile(stream, DataSetConfiguration()) ?? throw new IOException("Stream cannot be read.");
     }
 
     private static DataSetConfiguration DataSetConfiguration()
     {
-        var result = new DataSetConfiguration();
-        result.Add(new WorksheetConfiguration("StationTrack",  8 ));
+        var result = new DataSetConfiguration("Test");
+        result.Add(new WorksheetConfiguration("StationTrack", 8));
         result.Add(new WorksheetConfiguration("Routes", 11));
         result.Add(new WorksheetConfiguration("Trains", 11));
         return result;
@@ -705,6 +727,8 @@ public sealed partial class XplnDataImporter : IDataSourceService, IDisposable
         Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
+
+
 
     #endregion
 }

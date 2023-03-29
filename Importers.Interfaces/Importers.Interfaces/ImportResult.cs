@@ -24,7 +24,7 @@ public readonly struct ImportResult<T>
     }
     public IEnumerable<T> Items { get; }
     public T Item => Items.First();
-    public IEnumerable<string> Messages { get; }
+    public IEnumerable<string> Messages { get; init; }
     public bool IsSuccess { get; }
     public bool IsFailure => !IsSuccess;
 }

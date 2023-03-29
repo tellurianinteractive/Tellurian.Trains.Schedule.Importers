@@ -1,5 +1,5 @@
 ﻿namespace TimetablePlanning.Importers.Xpln.DataSetProviders;
-public class DataSetConfiguration
+public record DataSetConfiguration(string Name)
 {
     private readonly List<WorksheetConfiguration> _WorksheetConfigurations = new();
 

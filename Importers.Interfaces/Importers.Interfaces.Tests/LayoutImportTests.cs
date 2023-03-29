@@ -9,8 +9,7 @@ public class LayoutImportTests
 {
      [TestMethod] public void ImportsTestLayout() {
         TestDataFactory.Init();
-        ILayoutSource repository = new TestDataSourceService();
-        var result = repository.GetLayout("test");
+        var result = TestDataSourceService.GetLayout("test");
         var layout = result.Item;
         Assert.AreEqual(3, layout.Stations.Count);
         Assert.AreEqual(layout.TrackStretches.First().End, layout.Station("Yb").Value);

@@ -10,39 +10,31 @@ namespace TimetablePlanning.Importers.Xpln.DataSetProviders;
 
 public sealed class OdsDataSetProvider : IDataSetProvider
 {
-    private const string DefaultDocumentSuffix = ".ods";
     private readonly ILogger Logger;
-    private readonly DirectoryInfo DocumentsDirectory;
-    public OdsDataSetProvider(DirectoryInfo documentsDirectory, ILogger logger)
+
+    public OdsDataSetProvider(ILogger<OdsDataSetProvider> logger)
     {
         Logger = logger;
-        DocumentsDirectory = documentsDirectory ?? throw new ArgumentNullException(nameof(documentsDirectory));
-        if (!DocumentsDirectory.Exists) throw new DirectoryNotFoundException(DocumentsDirectory.FullName);
     }
+
     public string[] GetRowData(DataRow row) => row.GetRowFields();
 
-    private string GetFullFilename(string fileName)
-    {
-        if (fileName.HasFileExtension(DefaultDocumentSuffix) && File.Exists(fileName)) return fileName;
-        return Path.Combine(DocumentsDirectory.FullName, string.IsNullOrEmpty(Path.GetExtension(fileName)) ? fileName + DefaultDocumentSuffix : fileName);
-    }
 
-    public DataSet? LoadFromFile(string filename, DataSetConfiguration configuration)
+    public DataSet? LoadFromFile(Stream stream, DataSetConfiguration configuration)
     {
         try
         {
-            using var stream = GetStream(GetFullFilename(filename));
             using var archive = GetZipArchive(stream);
             var document = GetContentXmlFile(archive);
             var namespaceMananger = InitializeXmlNamespaceManager(document);
-            var dataSet = new DataSet(Path.GetFileName(filename));
+            var dataSet = new DataSet(configuration.Name);
             var tables = GetDataTables(document, configuration, namespaceMananger);
             dataSet.Tables.AddRange(tables.ToArray());
             return dataSet;
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Error when reading {file}.", filename);
+            Logger.LogError(ex, "Error when reading {stream}.", stream.ToString());
             throw;
         }
     }
@@ -161,15 +153,6 @@ public sealed class OdsDataSetProvider : IDataSetProvider
             manager.AddNamespace(ns.Key, ns.Value);
         };
         return manager;
-    }
-
-    private static Stream GetStream(string filename)
-    {
-        if (File.Exists(filename))
-        {
-            return new FileStream(filename, FileMode.Open, FileAccess.Read);
-        }
-        throw new FileNotFoundException(filename);
     }
 
     private static ZipArchive GetZipArchive(Stream stream)

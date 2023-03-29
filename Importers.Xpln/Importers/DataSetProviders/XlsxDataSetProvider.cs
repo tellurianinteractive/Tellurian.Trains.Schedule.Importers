@@ -7,23 +7,17 @@ namespace TimetablePlanning.Importers.Xpln.DataSetProviders;
 
 public sealed class XlsxDataSetProvider : IDataSetProvider
 {
-    private const string DefaultDocumentSuffix = ".xlsx";
     private readonly ILogger Logger;
-    private readonly DirectoryInfo DocumentsDirectory;
-    public XlsxDataSetProvider(DirectoryInfo documentsDirectory, ILogger logger)
+    public XlsxDataSetProvider( ILogger logger)
     {
         Logger = logger;
-        DocumentsDirectory = documentsDirectory ?? throw new ArgumentNullException(nameof(documentsDirectory));
-        if (!DocumentsDirectory.Exists) throw new DirectoryNotFoundException(DocumentsDirectory.FullName);
     }
     public string[] GetRowData(DataRow row) => row.GetRowFields();
-    public DataSet? LoadFromFile(string filename, DataSetConfiguration configuration)
+    public DataSet? LoadFromFile(Stream stream, DataSetConfiguration configuration)
     {
         var worksheets = configuration.Worksheets;
         try
         {
-            var excelDocumentFilename = GetFullFilename(filename);
-            using var stream = File.Open(excelDocumentFilename, FileMode.Open, FileAccess.Read);
             using var reader = ExcelReaderFactory.CreateReader(stream);
             var dataSet = reader.AsDataSet();
             if (worksheets.Any())
@@ -40,14 +34,10 @@ public sealed class XlsxDataSetProvider : IDataSetProvider
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Error when reading {file}.", filename);
+            Logger.LogError(ex, "Error when reading {file}.", configuration.Name);
             throw;
         }
     }
 
-    private string GetFullFilename(string fileName)
-    {
-        if (fileName.HasFileExtension(DefaultDocumentSuffix, ".xls") && File.Exists(fileName)) return fileName;
-        return Path.Combine(DocumentsDirectory.FullName, string.IsNullOrEmpty(Path.GetExtension(fileName)) ? fileName + DefaultDocumentSuffix : fileName);
-    }
+    
 }
