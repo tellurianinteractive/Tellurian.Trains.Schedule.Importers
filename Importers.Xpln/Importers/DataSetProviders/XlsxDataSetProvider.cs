@@ -17,9 +17,9 @@ public sealed class XlsxDataSetProvider : IDataSetProvider
         if (!DocumentsDirectory.Exists) throw new DirectoryNotFoundException(DocumentsDirectory.FullName);
     }
     public string[] GetRowData(DataRow row) => row.GetRowFields();
-    public DataSet? LoadFromFile(string filename, params string[]? worksheets)
+    public DataSet? LoadFromFile(string filename, DataSetConfiguration configuration)
     {
-        if (worksheets is null) worksheets = Array.Empty<string>();
+        var worksheets = configuration.Worksheets;
         try
         {
             var excelDocumentFilename = GetFullFilename(filename);

@@ -668,9 +668,20 @@ public sealed partial class XplnDataImporter : IDataSourceService, IDisposable
     private DataSet GetData(string filename)
     {
         if (DataSet is not null) return DataSet;
-        var data = DataSetProvider.LoadFromFile(filename);
+
+        var data = DataSetProvider.LoadFromFile(filename, DataSetConfiguration());
         return data is null ? throw new FileNotFoundException(filename) : data;
     }
+
+    private static DataSetConfiguration DataSetConfiguration()
+    {
+        var result = new DataSetConfiguration();
+        result.Add(new WorksheetConfiguration("StationTrack",  8 ));
+        result.Add(new WorksheetConfiguration("Routes", 11));
+        result.Add(new WorksheetConfiguration("Trains", 11));
+        return result;
+    }
+
 
     #region IDisposable
 

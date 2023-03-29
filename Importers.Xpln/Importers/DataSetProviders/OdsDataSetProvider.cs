@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Data;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO.Compression;
 using System.Xml;
+using TimetablePlanning.Importers.Model;
 using TimetablePlanning.Importers.Xpln.Extensions;
 
 namespace TimetablePlanning.Importers.Xpln.DataSetProviders;
@@ -12,7 +12,7 @@ public sealed class OdsDataSetProvider : IDataSetProvider
 {
     private const string DefaultDocumentSuffix = ".ods";
     private readonly ILogger Logger;
-    private readonly DirectoryInfo DocumentsDirectory; 
+    private readonly DirectoryInfo DocumentsDirectory;
     public OdsDataSetProvider(DirectoryInfo documentsDirectory, ILogger logger)
     {
         Logger = logger;
@@ -27,9 +27,8 @@ public sealed class OdsDataSetProvider : IDataSetProvider
         return Path.Combine(DocumentsDirectory.FullName, string.IsNullOrEmpty(Path.GetExtension(fileName)) ? fileName + DefaultDocumentSuffix : fileName);
     }
 
-    public DataSet? LoadFromFile(string filename, params string[]? worksheets)
+    public DataSet? LoadFromFile(string filename, DataSetConfiguration configuration)
     {
-        worksheets ??= Array.Empty<string>();
         try
         {
             using var stream = GetStream(GetFullFilename(filename));
@@ -37,7 +36,7 @@ public sealed class OdsDataSetProvider : IDataSetProvider
             var document = GetContentXmlFile(archive);
             var namespaceMananger = InitializeXmlNamespaceManager(document);
             var dataSet = new DataSet(Path.GetFileName(filename));
-            var tables = GetDataTables(document, worksheets, namespaceMananger);
+            var tables = GetDataTables(document, configuration, namespaceMananger);
             dataSet.Tables.AddRange(tables.ToArray());
             return dataSet;
         }
@@ -48,16 +47,21 @@ public sealed class OdsDataSetProvider : IDataSetProvider
         }
     }
 
-    private static IEnumerable<DataTable> GetDataTables(XmlDocument document, string[] worksheets, XmlNamespaceManager namespaceManager)
+    private static IEnumerable<DataTable> GetDataTables(XmlDocument document, DataSetConfiguration configuration, XmlNamespaceManager namespaceManager)
     {
         var tableNodes = TableNodes(document, namespaceManager);
         if (tableNodes is not null)
         {
             foreach (XmlNode tableNode in tableNodes)
             {
-                var table = GetSheet(tableNode, worksheets, namespaceManager);
-                if (table is null) continue;
-                yield return table;
+                var nameAttribute = tableNode.Attributes?["table:name"];
+                var worksheetConfiguration = configuration.WorksheetConfiguration(nameAttribute?.Value);
+                if (worksheetConfiguration is not null)
+                {
+                    var table = GetSheet(tableNode, worksheetConfiguration, namespaceManager);
+                    if (table is null) continue;
+                    yield return table;
+                }
             }
         }
     }
@@ -67,81 +71,64 @@ public sealed class OdsDataSetProvider : IDataSetProvider
         return document.SelectNodes("/office:document-content/office:body/office:spreadsheet/table:table", namespaceManager);
     }
 
-    private static DataTable? GetSheet(XmlNode tableNode, string[] worksheets, XmlNamespaceManager namespaceManager)
+    private static DataTable? GetSheet(XmlNode tableNode, WorksheetConfiguration configuration, XmlNamespaceManager namespaceManager)
     {
-
         var nameAttribute = tableNode.Attributes?["table:name"];
         if (nameAttribute is null) return null;
-        if (IsSheetIncluded(nameAttribute, worksheets))
+
+        DataTable dataTable = new DataTable(nameAttribute.Value);
+        var rowNodes = tableNode.SelectNodes("table:table-row", namespaceManager);
+        if (rowNodes is not null)
         {
-            DataTable sheet = new DataTable(nameAttribute.Value);
-            var rowNodes = tableNode.SelectNodes("table:table-row", namespaceManager);
-            if (rowNodes is not null) {
-                int rowIndex = 0;
-                foreach (XmlNode rowNode in rowNodes)
-                {
-                    GetRow(rowNode, sheet, namespaceManager, ref rowIndex);
-                }
+            int rowIndex = 0;
+            foreach (XmlNode rowNode in rowNodes)
+            {
+                GetRow(rowNode, dataTable, namespaceManager, configuration.Colums, ref rowIndex);
             }
-            return sheet;
-
         }
-        return null;
-
-        static bool IsSheetIncluded(XmlAttribute nameAttribute, string[] worksheets) =>
-            worksheets.Length == 0 || worksheets.Contains(nameAttribute.Value, StringComparer.OrdinalIgnoreCase);
+        if (dataTable.Rows.Count == 0)
+        {
+            dataTable.Rows.Add(dataTable.NewRow());
+            dataTable.Columns.Add();
+        }
+        return dataTable;
     }
 
-    private static void GetRow(XmlNode rowNode, DataTable sheet, XmlNamespaceManager namespaceManager, ref int rowIndex)
+    private static void GetRow(XmlNode rowNode, DataTable dataTable, XmlNamespaceManager namespaceManager, int columns, ref int rowIndex)
     {
+        //if (sheet.TableName == "Routes") Debugger.Break();
         var rowsRepeated = rowNode.Attributes?["table:number-rows-repeated"];
-        if (rowsRepeated is null || Convert.ToInt32(rowsRepeated.Value, CultureInfo.InvariantCulture) == 1)
+        var repeat = rowsRepeated is null ? 1 : Convert.ToInt32(rowsRepeated.Value, CultureInfo.InvariantCulture);
+        for (var i = 0; i < repeat; i++)
         {
-            while (sheet.Rows.Count < rowIndex) sheet.Rows.Add(sheet.NewRow());
-            var row = sheet.NewRow();
+            var row = dataTable.NewRow();
+            while (dataTable.Columns.Count < columns)
+                dataTable.Columns.Add();
+
             var cellNodes = rowNode.SelectNodes("table:table-cell", namespaceManager);
             int cellIndex = 0;
             foreach (XmlNode cellNode in cellNodes!)
-                GetCell(cellNode, row, ref cellIndex);
-            sheet.Rows.Add(row);
+            {
+                GetCell(cellNode, row, columns, ref cellIndex);
+                if (cellIndex >= columns) break;
+            }
+            if (HasValue(row)) dataTable.Rows.Add(row);
             rowIndex++;
         }
-        else
-        {
-            rowIndex += Convert.ToInt32(rowsRepeated.Value, CultureInfo.InvariantCulture);
-        }
-        if (sheet.Rows.Count == 0)
-        {
-            sheet.Rows.Add(sheet.NewRow());
-            sheet.Columns.Add();
-        }
+
+        static bool HasValue(DataRow row) => row.GetRowFields().Any(f => f.HasText() );
+
     }
 
-    private static void GetCell(XmlNode cellNode, DataRow row, ref int cellIndex)
+    private static void GetCell(XmlNode cellNode, DataRow row, int columns, ref int cellIndex)
     {
         var cellRepeated = cellNode.Attributes?["table:number-columns-repeated"];
-            DataTable sheet = row.Table;
-        if (cellRepeated == null)
+        var repeat = cellRepeated is null ? 1 : Convert.ToInt32(cellRepeated.Value, CultureInfo.InvariantCulture);
+        for (int i = 0; i < repeat; i++)
         {
-            if (sheet.Columns.Count <= cellIndex)
-                sheet.Columns.Add();
+            if (cellIndex >= columns) break;
             row[cellIndex] = ReadCellValue(cellNode);
             cellIndex++;
-        }
-        else
-        {
-            var repeated = Convert.ToInt32(cellRepeated.Value, CultureInfo.InvariantCulture);
-            if (cellIndex + repeated < sheet.Columns.Count)
-            {
-                for(int i = 0; i < repeated; i++)
-                {
-                    if (sheet.Columns.Count <= cellIndex)
-                        sheet.Columns.Add();
-                    row[cellIndex] = ReadCellValue(cellNode);
-                    cellIndex++;
-                }
-
-            }
         }
     }
     private static string? ReadCellValue(XmlNode cell)

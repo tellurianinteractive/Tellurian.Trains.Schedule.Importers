@@ -51,7 +51,7 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="Test data\Montan2023H0e.ods">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="Test data\Rotebro2015.ods">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
