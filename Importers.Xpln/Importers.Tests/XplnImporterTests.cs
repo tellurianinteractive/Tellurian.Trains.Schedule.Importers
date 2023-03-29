@@ -42,7 +42,7 @@ public class XplnImporterTests
     [TestMethod]
     public void ImportsMemoryMappedFile()
     {
-        var m = MemoryMappedFile.CreateFromFile(TestDocumentsDirectory.FullName + "\\Montan2023H0e.ods");
+        using var m = MemoryMappedFile.CreateFromFile(TestDocumentsDirectory.FullName + "\\Montan2023H0e.ods");
         var result = Target.GetSchedule(m.CreateViewStream(), "Montan2023H0e");
         if (result.IsFailure)
         {
