@@ -9,7 +9,7 @@ using TimetablePlanning.Importers.Xpln.Extensions;
 using static TimetablePlanning.Importers.Model.Xpln.XplnDataImporter;
 
 namespace TimetablePlanning.Importers.Xpln;
-public sealed partial class XplnDataImporter : IScheduleSourceService, IDisposable
+public sealed partial class XplnDataImporter : IImportService, IDisposable
 {
     public readonly IDataSetProvider DataSetProvider;
     private DataSet? DataSet;
@@ -22,13 +22,13 @@ public sealed partial class XplnDataImporter : IScheduleSourceService, IDisposab
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
     }
 
-    public ImportResult<Schedule> GetSchedule(FileInfo inputFile, string name)
+    public ImportResult<Schedule> ImportSchedule(FileInfo inputFile, string name)
     {
         DataSet = GetData(inputFile.FullName);
         return GetResult(name);
     }
 
-    public ImportResult<Schedule> GetSchedule(Stream inputStream, string name)
+    public ImportResult<Schedule> ImportSchedule(Stream inputStream, string name)
     {
         DataSet = GetData(inputStream);
         return GetResult(name);
@@ -70,7 +70,7 @@ public sealed partial class XplnDataImporter : IScheduleSourceService, IDisposab
 
         var stations = DataSet?.Tables[WorkSheetName];
         if (stations is null)
-            return ImportResult<Layout>.Failure(string.Format(CultureInfo.CurrentCulture, Resources.Strings.WorksheetNotFound, WorkSheetName));
+            return ImportResult<Layout>.Failure(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.WorksheetNotFound, WorkSheetName)));
  
         messages.Add(Message.Information(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ReadingWorksheet, WorkSheetName)));
         var rowNumber = 1;
@@ -118,9 +118,9 @@ public sealed partial class XplnDataImporter : IScheduleSourceService, IDisposab
         if (current is not null) layout.Add(current);
 
         if (messages.HasStoppingErrors())
-            return ImportResult<Layout>.Failure(messages.ToStrings());
+            return ImportResult<Layout>.Failure(messages);
         else
-            return ImportResult<Layout>.Success(layout, messages.ToStrings());
+            return ImportResult<Layout>.Success(layout, messages);
 
         static bool IsRepeatedHeader(DataRow row) =>
             row[0].Equals("Name") && row[1].Equals("Enum");
@@ -193,7 +193,7 @@ public sealed partial class XplnDataImporter : IScheduleSourceService, IDisposab
 
         var stations = DataSet?.Tables[WorkSheetName];
         if (stations is null)
-            return ImportResult<Layout>.Failure(string.Format(CultureInfo.CurrentCulture, Resources.Strings.WorksheetNotFound, WorkSheetName));
+            return ImportResult<Layout>.Failure(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.WorksheetNotFound, WorkSheetName)));
         else
             messages.Add(Message.Information(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ReadingWorksheet, WorkSheetName)));
 
@@ -258,9 +258,9 @@ public sealed partial class XplnDataImporter : IScheduleSourceService, IDisposab
             rowNumber++;
         }
         if (messages.HasStoppingErrors())
-            return ImportResult<Layout>.Failure(messages.ToStrings());
+            return ImportResult<Layout>.Failure(messages);
         else
-            return ImportResult<Layout>.Success(layout, messages.ToStrings());
+            return ImportResult<Layout>.Success(layout, messages);
     }
 
     private ImportResult<Timetable> GetTimetable(string name, Layout layout)
@@ -282,7 +282,7 @@ public sealed partial class XplnDataImporter : IScheduleSourceService, IDisposab
         if (trains is null)
         {
             messages.Add(Message.System(string.Format(CultureInfo.CurrentCulture, Resources.Strings.WorksheetNotFound, WorkSheetName)));
-            return ImportResult<Timetable>.Failure(messages.ToStrings());
+            return ImportResult<Timetable>.Failure(messages);
         }
 
         messages.Add(Message.Information(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ReadingWorksheet, WorkSheetNameAndObjects)));
@@ -388,9 +388,9 @@ public sealed partial class XplnDataImporter : IScheduleSourceService, IDisposab
         }
         if (current is not null) messages.AddRange(AddTrain(result, current, rowNumber));
         if (messages.HasStoppingErrors())
-            return ImportResult<Timetable>.Failure(messages.ToStrings());
+            return ImportResult<Timetable>.Failure(messages);
         else
-            return ImportResult<Timetable>.Success(result, messages.ToStrings());
+            return ImportResult<Timetable>.Success(result, messages);
 
         static IEnumerable<Message> AddTrain(Timetable timetable, Train train, int rowNumber)
         {
@@ -474,7 +474,7 @@ public sealed partial class XplnDataImporter : IScheduleSourceService, IDisposab
         if (trains is null)
         {
             messages.Add(Message.System(string.Format(CultureInfo.CurrentCulture, Resources.Strings.WorksheetNotFound, WorkSheetName)));
-            return ImportResult<Schedule>.Failure(messages.ToStrings());
+            return ImportResult<Schedule>.Failure(messages);
         }
 
         messages.Add(Message.Information(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ReadingWorksheet, WorkSheetNameAndObjects)));
@@ -601,11 +601,11 @@ public sealed partial class XplnDataImporter : IScheduleSourceService, IDisposab
             }
             rowNumber++;
         }
-        if (messages.HasStoppingErrors()) return ImportResult<Schedule>.Failure(messages.ToStrings());
+        if (messages.HasStoppingErrors()) return ImportResult<Schedule>.Failure(messages);
         foreach (var loco in locoSchedules.Values) schedule.AddLocoSchedule(loco);
         foreach (var trainset in trainsetSchedules.Values) schedule.AddTrainsetSchedule(trainset);
         foreach (var duty in driverDuties.Values) schedule.AddDriverDuty(duty);
-        return ImportResult<Schedule>.Success(schedule, messages.ToStrings());
+        return ImportResult<Schedule>.Success(schedule, messages);
 
         static TrainPartKeys GetTrainPartKeys(string[] fields, Train currentTrain, int rowNumber)
         {

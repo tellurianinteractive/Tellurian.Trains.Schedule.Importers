@@ -30,7 +30,7 @@ public class AccessRepository
             ReadTimetableStretches(layout);
             return ImportResult<Layout>.Success(layout);
         }
-        return ImportResult<Layout>.Failure(string.Format(CultureInfo.CurrentCulture, Resources.Strings.TrackLayoutDoesNotExist, name));
+        return ImportResult<Layout>.Failure(Message.Error (string.Format(CultureInfo.CurrentCulture, Resources.Strings.TrackLayoutDoesNotExist, name)));
     }
 
     private Layout? ReadLayout(string layoutName)
@@ -109,7 +109,7 @@ public class AccessRepository
     {
         var existing = ReadLayout(layout.Name);
         if (existing is not null)
-            return ImportResult<Layout>.Failure(string.Format(CultureInfo.CurrentCulture, "Can only save new track layout, not update existing layout {0}.", layout.Name));
+            return ImportResult<Layout>.Failure(Message.Error(string.Format(CultureInfo.CurrentCulture, "Can only save new track layout, not update existing layout {0}.", layout.Name)));
         using var command = Layouts.CreateInsertCommand(layout);
         _ = ExecuteNonQuery(command);
 
@@ -122,14 +122,14 @@ public class AccessRepository
             return ImportResult<Layout>.Success();
 
         }
-        return ImportResult<Layout>.Failure(string.Format(CultureInfo.CurrentCulture, "Layout {0} does not exist.", layout.Name));
+        return ImportResult<Layout>.Failure(Message.Error(string.Format(CultureInfo.CurrentCulture, "Layout {0} does not exist.", layout.Name)));
     }
 
     public ImportResult<Timetable> Save(Timetable timetable)
     {
         var existing = ReadLayout(timetable.Name);
         if (existing is not null)
-            return ImportResult<Timetable>.Failure(string.Format(CultureInfo.CurrentCulture, "Can only save new timetable, not update existing timetable {0}.", timetable.Name));
+            return ImportResult<Timetable>.Failure(Message.Error(string.Format(CultureInfo.CurrentCulture, "Can only save new timetable, not update existing timetable {0}.", timetable.Name)));
         Save(timetable.Layout);
         using var command = CreateCommand("SELECT Id FROM Layout WHERE [Name] = @Name", "@Name", timetable.Name);
         var layoutId = (int?)ExecuteScalar(CreateConnection(), command);
@@ -138,7 +138,7 @@ public class AccessRepository
             foreach (var train in timetable.Trains) Trains.Add(layoutId.Value, train, this);
             return ImportResult<Timetable>.Success();
         }
-        return ImportResult<Timetable>.Failure(string.Format(CultureInfo.CurrentCulture, "Layout {0} does not exist.", timetable.Layout.Name));
+        return ImportResult<Timetable>.Failure(Message.Error(string.Format(CultureInfo.CurrentCulture, "Layout {0} does not exist.", timetable.Layout.Name)));
     }
 
     internal int Delete(string layoutName)

@@ -43,7 +43,7 @@ public class XplnImporterTests
     public void ImportsMemoryMappedFile()
     {
         using var m = MemoryMappedFile.CreateFromFile(TestDocumentsDirectory.FullName + "\\Montan2023H0e.ods");
-        var result = Target.GetSchedule(m.CreateViewStream(), "Montan2023H0e");
+        var result = Target.ImportSchedule(m.CreateViewStream(), "Montan2023H0e");
         if (result.IsFailure)
         {
             Assert.Fail();
@@ -80,10 +80,10 @@ public class XplnImporterTests
         CultureInfo.CurrentCulture = new CultureInfo(culture);
         CultureInfo.CurrentUICulture = CultureInfo.CurrentCulture;
         var file = TestDocumentsDirectory.EnumerateFiles(scheduleName + FileSuffix).Single();
-        var result = Target.GetSchedule(file, scheduleName);
+        var result = Target.ImportSchedule(file, scheduleName);
         if (result.IsFailure)
         {
-            WriteLines(result.Messages, file);
+            WriteLines(result.Messages.ToStrings(), file);
             Assert.Fail("Stopping errors.");
         }
 
@@ -94,7 +94,7 @@ public class XplnImporterTests
         Assert.AreEqual(expectedDuties, result.Item.DriverDuties.Count, "Duties");
 
         var validationErrors = result.Item.GetValidationErrors(ValidationOptions);
-        WriteLines(result.Messages.Concat(validationErrors.ToStrings()), file);
+        WriteLines(result.Messages.ToStrings().Concat(validationErrors.ToStrings()), file);
         Assert.AreEqual(expectedValidationErrors, validationErrors.Count(), "Validation errors");
     }
 
