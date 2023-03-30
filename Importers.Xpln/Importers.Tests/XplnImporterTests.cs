@@ -7,14 +7,11 @@ using TimetablePlanning.Importers.Xpln.DataSetProviders;
 
 namespace TimetablePlanning.Importers.Xpln.Tests;
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-
 [TestClass]
 public class XplnImporterTests
 {
     const string FileSuffix = ".ods";
     private DirectoryInfo TestDocumentsDirectory;
-    private XplnDataImporter Target;
     private readonly ValidationOptions ValidationOptions = new()
     {
         MaxTrainSpeedMetersPerClockMinute = 8.0,
@@ -30,20 +27,24 @@ public class XplnImporterTests
         
     };
 
+    public XplnImporterTests(DirectoryInfo testDocumentsDirectory) => TestDocumentsDirectory = testDocumentsDirectory;
+
     [TestInitialize]
     public void TestInitialize()
     {
         TestDocumentsDirectory = new DirectoryInfo("Test data");
-        var dataSetProvider =
-            new OdsDataSetProvider(NullLogger<OdsDataSetProvider>.Instance);
-        Target = new XplnDataImporter(dataSetProvider, NullLogger<XplnDataImporter>.Instance);
     }
+
+   
 
     [TestMethod]
     public void ImportsMemoryMappedFile()
     {
         using var m = MemoryMappedFile.CreateFromFile(TestDocumentsDirectory.FullName + "\\Montan2023H0e.ods");
-        var result = Target.ImportSchedule(m.CreateViewStream(), "Montan2023H0e");
+        var inputStream = m.CreateViewStream();
+        var dataSetProvider = new OdsDataSetProvider(NullLogger<OdsDataSetProvider>.Instance);
+        using var importer = new XplnDataImporter(inputStream, dataSetProvider, NullLogger<XplnDataImporter>.Instance);
+        var result = importer.ImportSchedule("Montan2023H0e");
         if (result.IsFailure)
         {
             Assert.Fail();
@@ -80,7 +81,9 @@ public class XplnImporterTests
         CultureInfo.CurrentCulture = new CultureInfo(culture);
         CultureInfo.CurrentUICulture = CultureInfo.CurrentCulture;
         var file = TestDocumentsDirectory.EnumerateFiles(scheduleName + FileSuffix).Single();
-        var result = Target.ImportSchedule(file, scheduleName);
+        var dataSetProvider =    new OdsDataSetProvider(NullLogger<OdsDataSetProvider>.Instance);
+        using var importer = new XplnDataImporter(file, dataSetProvider, NullLogger<XplnDataImporter>.Instance);
+        var result = importer.ImportSchedule( scheduleName);
         if (result.IsFailure)
         {
             WriteLines(result.Messages.ToStrings(), file);

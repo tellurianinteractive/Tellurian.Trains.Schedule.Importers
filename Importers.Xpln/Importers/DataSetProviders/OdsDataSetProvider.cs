@@ -17,24 +17,21 @@ public sealed class OdsDataSetProvider : IDataSetProvider
         Logger = logger;
     }
 
-    public string[] GetRowData(DataRow row) => row.GetRowFields();
-
-
-    public DataSet? LoadFromFile(Stream stream, DataSetConfiguration configuration)
+    public DataSet? ImportSchedule(Stream inputStream, DataSetConfiguration dataSetConfiguration)
     {
         try
         {
-            using var archive = GetZipArchive(stream);
+            using var archive = GetZipArchive(inputStream);
             var document = GetContentXmlFile(archive);
             var namespaceMananger = InitializeXmlNamespaceManager(document);
-            var dataSet = new DataSet(configuration.Name);
-            var tables = GetDataTables(document, configuration, namespaceMananger);
+            var dataSet = new DataSet(dataSetConfiguration.Name);
+            var tables = GetDataTables(document, dataSetConfiguration, namespaceMananger);
             dataSet.Tables.AddRange(tables.ToArray());
             return dataSet;
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Error when reading {stream}.", stream.ToString());
+            Logger.LogError(ex, "Error when reading {stream}.", inputStream.ToString());
             throw;
         }
     }

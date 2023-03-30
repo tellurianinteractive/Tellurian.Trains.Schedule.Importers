@@ -11,37 +11,70 @@ using static TimetablePlanning.Importers.Model.Xpln.XplnDataImporter;
 namespace TimetablePlanning.Importers.Xpln;
 public sealed partial class XplnDataImporter : IImportService, IDisposable
 {
-    public readonly IDataSetProvider DataSetProvider;
-    private DataSet? DataSet;
+    private readonly Stream InputStream;
+    private readonly IDataSetProvider DataSetProvider;
     private readonly ILogger Logger;
+    private DataSet? DataSet;
 
-    public XplnDataImporter(IDataSetProvider dataSetProvider, ILogger<XplnDataImporter> logger)
+    public XplnDataImporter(Stream inputStream, IDataSetProvider dataSetProvider, ILogger<XplnDataImporter> logger)
     {
+        InputStream = inputStream;
         DataSetProvider = dataSetProvider;
         Logger = logger;
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
     }
+    public XplnDataImporter(FileInfo inputFile, IDataSetProvider dataSetProvider, ILogger<XplnDataImporter> logger) :
+        this(File.OpenRead(inputFile.FullName), dataSetProvider, logger)
+    { }
 
-    public ImportResult<Schedule> ImportSchedule(FileInfo inputFile, string name)
+
+    public ImportResult<Schedule> ImportSchedule(string name)
     {
-        DataSet = GetData(inputFile.FullName);
+        DataSet = DataSetProvider.ImportSchedule(InputStream, DataSetConfiguration()) ?? throw new IOException("Stream cannot be read.");
         return GetResult(name);
     }
 
-    public ImportResult<Schedule> ImportSchedule(Stream inputStream, string name)
+    private static DataSetConfiguration DataSetConfiguration()
     {
-        DataSet = GetData(inputStream);
-        return GetResult(name);
+        var result = new DataSetConfiguration("Test");
+        result.Add(new WorksheetConfiguration("StationTrack", 8));
+        result.Add(new WorksheetConfiguration("Routes", 11));
+        result.Add(new WorksheetConfiguration("Trains", 11));
+        return result;
+    }
+
+    private void LogMessages(IEnumerable<Message> messages)
+    {
+        foreach (var message in messages)
+        {
+            if (message.Severity == Severity.None) return;
+            if (message.Severity == Severity.Error) Logger.LogError("", message.ToString());
+            else if (message.Severity == Severity.Warning) Logger.LogWarning("", message.ToString());
+            else if (message.Severity == Severity.Information) Logger.LogInformation("", message.ToString());
+            else if (message.Severity == Severity.System) Logger.LogCritical("", message.ToString());
+        }
     }
 
     private ImportResult<Schedule> GetResult(string name)
     {
         var layout = GetLayout(name);
-        if (layout.IsFailure) return new ImportResult<Schedule>() { Messages = layout.Messages };
+        if (layout.IsFailure)
+        {
+            var result = new ImportResult<Schedule>() { Messages = layout.Messages };
+            LogMessages(result.Messages);
+            return result;
+        }
         var timetable = GetTimetable(name, layout.Item);
-        if (timetable.IsFailure) return new ImportResult<Schedule>() { Messages = layout.Messages.Concat(timetable.Messages) };
+        if (timetable.IsFailure)
+        {
+            var result = new ImportResult<Schedule>() { Messages = layout.Messages.Concat(timetable.Messages) };
+            LogMessages(result.Messages);
+            return result;
+        }
         var schedule = GetSchedule(name, timetable.Item);
-        return schedule with { Messages=layout.Messages.Concat(timetable.Messages).Concat(schedule.Messages) };
+        var ImportResult = schedule with { Messages = layout.Messages.Concat(timetable.Messages).Concat(schedule.Messages) };
+        LogMessages(ImportResult.Messages);
+        return ImportResult;
     }
 
 
@@ -71,7 +104,7 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
         var stations = DataSet?.Tables[WorkSheetName];
         if (stations is null)
             return ImportResult<Layout>.Failure(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.WorksheetNotFound, WorkSheetName)));
- 
+
         messages.Add(Message.Information(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ReadingWorksheet, WorkSheetName)));
         var rowNumber = 1;
         Station? current = null;
@@ -674,37 +707,6 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
         }
     }
 
-    private DataSet GetData(string filename)
-    {
-        if (DataSet is not null) return DataSet;
-        try
-        {
-            using var stream = File.OpenRead(filename);
-            return GetData(stream);
-
-        }
-        catch (FileNotFoundException)
-        {
-            Logger.LogCritical("{file} not found.", filename);
-            throw;
-        }
-    }
-
-    private DataSet GetData(Stream stream)
-    {
-        return DataSetProvider.LoadFromFile(stream, DataSetConfiguration()) ?? throw new IOException("Stream cannot be read.");
-    }
-
-    private static DataSetConfiguration DataSetConfiguration()
-    {
-        var result = new DataSetConfiguration("Test");
-        result.Add(new WorksheetConfiguration("StationTrack", 8));
-        result.Add(new WorksheetConfiguration("Routes", 11));
-        result.Add(new WorksheetConfiguration("Trains", 11));
-        return result;
-    }
-
-
     #region IDisposable
 
     private bool IsDisposed;
@@ -714,8 +716,10 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
         {
             if (disposing)
             {
+
                 DataSet?.Dispose();
                 if (DataSetProvider is IDisposable disposable) disposable.Dispose();
+                InputStream?.Dispose();
             }
             IsDisposed = true;
         }
@@ -727,8 +731,5 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
         Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
-
-
-
     #endregion
 }

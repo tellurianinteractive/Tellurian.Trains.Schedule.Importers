@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using Microsoft.Extensions.Logging;
+using System.Data;
 using System.Data.Odbc;
 using System.Globalization;
 using System.Runtime.CompilerServices;
@@ -10,16 +11,46 @@ using TimetablePlanning.Importers.Model;
 
 namespace TimetablePlanning.Importers.Access;
 
-public class AccessRepository 
+public class AccessRepository : IImportService
 {
-    private readonly string DatabaseFileName;
+    private readonly FileInfo DatabaseFile;
+    private readonly ILogger Logger;
 
-    public AccessRepository(string databaseFullPathName)
+    public AccessRepository(FileInfo databaseFile, ILogger<AccessRepository> logger)
     {
-        DatabaseFileName = databaseFullPathName;
+        DatabaseFile = databaseFile;
+        Logger = logger;
     }
 
-    public ImportResult<Layout> GetLayout(string name)
+
+    private void LogMessages(IEnumerable<Message> messages)
+    {
+        foreach (var message in messages)
+        {
+            if (message.Severity == Severity.None) return;
+            if (message.Severity == Severity.Error) Logger.LogError("", message.ToString());
+            else if (message.Severity == Severity.Warning) Logger.LogWarning("", message.ToString());
+            else if (message.Severity == Severity.Information) Logger.LogInformation("", message.ToString());
+            else if (message.Severity == Severity.System) Logger.LogCritical("", message.ToString());
+        }
+    }
+
+    public ImportResult<Schedule> ImportSchedule(string name)
+    {
+        var layout = GetLayout(name);
+        if (layout.IsFailure)
+        {
+            var result = new ImportResult<Schedule>() { Messages = layout.Messages };
+            LogMessages(result.Messages);
+            return result;
+        }
+        var timetable = new Timetable(name, layout.Item);
+        var importResult = ImportResult<Schedule>.SuccessIfNoErrorMessagesOtherwiseFailure( Schedule.Create(name, timetable) , layout.Messages );
+        LogMessages(importResult.Messages);
+        return importResult;
+    }
+
+    private ImportResult<Layout> GetLayout(string name)
     {
         var layout = ReadLayout(name);
         if (layout is not null)
@@ -30,7 +61,7 @@ public class AccessRepository
             ReadTimetableStretches(layout);
             return ImportResult<Layout>.Success(layout);
         }
-        return ImportResult<Layout>.Failure(Message.Error (string.Format(CultureInfo.CurrentCulture, Resources.Strings.TrackLayoutDoesNotExist, name)));
+        return ImportResult<Layout>.Failure(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.TrackLayoutDoesNotExist, name)));
     }
 
     private Layout? ReadLayout(string layoutName)
@@ -49,12 +80,12 @@ public class AccessRepository
         return null;
     }
 
-    public Timetable GetTimetable(string name)
+    private ImportResult<Timetable> GetTimetable(string name, Layout layout)
     {
-        var layout = GetLayout(name);
-        var timetable = new Timetable(name, layout.Item);
+        var timetable = new Timetable(name, layout);
         GetTrains(timetable);
-        return timetable;
+
+        return new ImportResult<Timetable>() { Items = new[] { timetable }, Messages = Enumerable.Empty<Message>() };
     }
 
     private void ReadLayoutStations(Layout layout)
@@ -96,7 +127,7 @@ public class AccessRepository
     {
         using (var connection = CreateConnection())
         {
-            var reader = connection.ExecuteReader( command);
+            var reader = connection.ExecuteReader(command);
             while (reader.Read())
             {
                 itemHandler.Invoke(reader, container);
@@ -147,7 +178,7 @@ public class AccessRepository
         return ExecuteNonQuery(CreateConnection(), command);
     }
 
- 
+
     internal object? ExecuteScalar(IDbCommand command)
     {
         return ExecuteScalar(CreateConnection(), command);
@@ -208,5 +239,5 @@ public class AccessRepository
         return result;
     }
 
-    internal IDbConnection CreateConnection() => IDbConnectionExtensions.CreateMicrosoftAccessDbConnection(DatabaseFileName);
+    internal IDbConnection CreateConnection() => IDbConnectionExtensions.CreateMicrosoftAccessDbConnection(DatabaseFile.FullName);
 }

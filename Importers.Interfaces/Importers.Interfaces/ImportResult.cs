@@ -15,7 +15,7 @@ public readonly struct ImportResult<T>
     public static ImportResult<T> Success(IEnumerable<T> items, Message message) => new(items, new[] { message }, true);
     public static ImportResult<T> Failure(Message message) => new (Array.Empty<T>(), new[] { message }, false);
     public static ImportResult<T> Failure(IEnumerable<Message> messages) => new(Array.Empty<T>(), messages, false);
-    public static ImportResult<T> SuccessIfNoMessagesOtherwiseFailure(IEnumerable<Message> messages) => new(Array.Empty<T>(), messages, !messages.Any());
+    public static ImportResult<T> SuccessIfNoErrorMessagesOtherwiseFailure(T? item, IEnumerable<Message> messages) => new(item is null ? Array.Empty<T>() : new[] { item}, messages, !messages.Any(m => m.Severity > Severity.Warning));
 
     private ImportResult(IEnumerable<T> items, IEnumerable<Message> messages, bool isSuccess)
     {
@@ -23,7 +23,7 @@ public readonly struct ImportResult<T>
         Messages = messages;
         IsSuccess = isSuccess;
     }
-    public IEnumerable<T> Items { get; }
+    public IEnumerable<T> Items { get; init; }
     public T Item => Items.First();
     public IEnumerable<Message> Messages { get; init; }
     public bool IsSuccess { get; }
