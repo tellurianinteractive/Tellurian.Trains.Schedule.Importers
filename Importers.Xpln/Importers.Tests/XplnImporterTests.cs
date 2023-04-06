@@ -37,7 +37,7 @@ public class XplnImporterTests
     [TestMethod]
     public void ImportsMemoryMappedFile()
     {
-        using var m = MemoryMappedFile.CreateFromFile(TestDocumentsDirectory.FullName + "\\Montan2023H0e.ods");
+        using var m = MemoryMappedFile.CreateFromFile(TestDocumentsDirectory!.FullName + "\\Montan2023H0e.ods");
         var inputStream = m.CreateViewStream();
         var dataSetProvider = new OdsDataSetProvider(NullLogger<OdsDataSetProvider>.Instance);
         using var importer = new XplnDataImporter(inputStream, dataSetProvider, NullLogger<XplnDataImporter>.Instance);
