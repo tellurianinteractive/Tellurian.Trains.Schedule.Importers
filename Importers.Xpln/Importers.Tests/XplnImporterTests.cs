@@ -11,7 +11,7 @@ namespace TimetablePlanning.Importers.Xpln.Tests;
 public class XplnImporterTests
 {
     const string FileSuffix = ".ods";
-    private DirectoryInfo TestDocumentsDirectory;
+    private DirectoryInfo? TestDocumentsDirectory;
     private readonly ValidationOptions ValidationOptions = new()
     {
         MaxTrainSpeedMetersPerClockMinute = 8.0,
@@ -24,18 +24,15 @@ public class XplnImporterTests
         ValidateTrainsetSchedules = true,
         ValidateTrainSpeed = true,
         ValidateTrainNumbers = true,
-        
+
     };
 
-    public XplnImporterTests(DirectoryInfo testDocumentsDirectory) => TestDocumentsDirectory = testDocumentsDirectory;
 
     [TestInitialize]
     public void TestInitialize()
     {
         TestDocumentsDirectory = new DirectoryInfo("Test data");
     }
-
-   
 
     [TestMethod]
     public void ImportsMemoryMappedFile()
@@ -52,14 +49,11 @@ public class XplnImporterTests
 
     }
 
-
     [TestMethod]
     public void ImportsMontan2023()
     {
         Import("Montan2023H0e", "de-DE", 32, 3, 28, 3, 0);
     }
-   
- 
 
     [DataTestMethod()]
     [DataRow("Barmstedt2022", "de-DE", 61, 18, 36, 45, 2)]
@@ -73,17 +67,16 @@ public class XplnImporterTests
     [DataRow("Timmele2015", "sv-SE", 37, 13, 0, 33, 4)]
     [DataRow("Hellerup2015", "da-DK", 60, 24, 57, 20, 0)]
     [DataRow("DreamTrack2015", null, 62, 24, 0, 40, 0)]
-
     public void Import(string scheduleName, string? culture, int expectedTrains, int expectedLocos, int expectedTrainsets, int expectedDuties, int expectedValidationErrors)
     {
         if (string.IsNullOrWhiteSpace(scheduleName)) throw new ArgumentNullException(nameof(scheduleName));
         culture ??= "sv-SE";
         CultureInfo.CurrentCulture = new CultureInfo(culture);
         CultureInfo.CurrentUICulture = CultureInfo.CurrentCulture;
-        var file = TestDocumentsDirectory.EnumerateFiles(scheduleName + FileSuffix).Single();
-        var dataSetProvider =    new OdsDataSetProvider(NullLogger<OdsDataSetProvider>.Instance);
+        var file = TestDocumentsDirectory!.EnumerateFiles(scheduleName + FileSuffix).Single();
+        var dataSetProvider = new OdsDataSetProvider(NullLogger<OdsDataSetProvider>.Instance);
         using var importer = new XplnDataImporter(file, dataSetProvider, NullLogger<XplnDataImporter>.Instance);
-        var result = importer.ImportSchedule( scheduleName);
+        var result = importer.ImportSchedule(scheduleName);
         if (result.IsFailure)
         {
             WriteLines(result.Messages.ToStrings(), file);

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Data;
+using System.IO.MemoryMappedFiles;
 using TimetablePlanning.Importers.Xpln.DataSetProviders;
 
 namespace TimetablePlanning.Importers.Xpln.Tests;
@@ -14,7 +15,7 @@ public class OdsDataSetProviderTests
         const string path = "Test data\\Montan2023H0e.ods";
         var target = new OdsDataSetProvider(NullLogger<OdsDataSetProvider>.Instance);
         using var stream = File.OpenRead(path);
-        var dataSet = target.ImportSchedule( stream, DataSetConfiguration());
+        var dataSet = target.ImportSchedule(stream, DataSetConfiguration());
         Assert.IsNotNull(dataSet);
         WriteDataSet(dataSet, path);
     }

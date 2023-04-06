@@ -1,7 +1,5 @@
 ﻿using System.Data;
 using System.Data.Odbc;
-using System.Globalization;
-using TimetablePlanning.Importers.Access.Extensions;
 using TimetablePlanning.Importers.Access.Tests.Extensions;
 using TimetablePlanning.Importers.Model;
 

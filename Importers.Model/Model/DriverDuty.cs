@@ -51,11 +51,11 @@ public static class DriverDutyExtensions
     {
         duty = duty.ValueOrException(nameof(duty));
         part = part.ValueOrException(nameof(part));
-        if (! duty.Parts.Contains(part))
+        if (!duty.Parts.Contains(part))
         {
-            if(part.IsOverlapping(duty.Parts)) return new Maybe<TrainPart>($"Part {part} overlaps existing parts in driver duty '{duty.Identity}'");
+            if (part.IsOverlapping(duty.Parts)) return new Maybe<TrainPart>($"Part {part} overlaps existing parts in driver duty '{duty.Identity}'");
             part.Duty = duty;
-            duty. Parts.Add(part);
+            duty.Parts.Add(part);
         }
         return new Maybe<TrainPart>(part);
     }

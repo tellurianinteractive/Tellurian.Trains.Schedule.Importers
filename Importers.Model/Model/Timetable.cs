@@ -22,7 +22,7 @@ public static class TimetableExtensions
     public static int StartHour(this Timetable me) =>
         (me?.Trains.Select(t => t.Calls.Min(c => c.Arrival)).Min(tt => tt).Hours()) ?? 0;
     public static int EndHour(this Timetable me) =>
-        (me?.Trains.Select(t => t.Calls.Max(c => c.Arrival)).Max(tt => tt).Hours()+1) ?? 24;
+        (me?.Trains.Select(t => t.Calls.Max(c => c.Arrival)).Max(tt => tt).Hours() + 1) ?? 24;
 
     public static IEnumerable<Station> Stations(this Timetable me) =>
         me is null ? Array.Empty<Station>() : me.Layout.Stations;

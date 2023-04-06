@@ -35,7 +35,7 @@ internal static class IDbConnectionExtensions
         }
     }
 
-    
+
     public static object? ExecuteScalar(this IDbConnection connection, string sql)
     {
         using var command = CreateCommand(sql);

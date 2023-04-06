@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
-using System.Linq;
 using System.Runtime.Serialization;
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
@@ -81,14 +78,14 @@ public static class TrainExtensions
         train.Calls.Last().IsDeparture = false;
         return train;
     }
-   public static Train WithFixedSingleCallTrain(this Train train)
+    public static Train WithFixedSingleCallTrain(this Train train)
     {
         if (train.Calls.Count == 1)
         {
             var departure = train.Calls[0];
             departure.Track.Calls.Remove(departure);
             var arrival = new StationCall(departure.Track, departure.Arrival, departure.Arrival);
-            departure = new StationCall(departure.Track,  departure.Departure, departure.Departure);
+            departure = new StationCall(departure.Track, departure.Departure, departure.Departure);
             train.Calls.Clear();
             train.Add(arrival);
             train.Add(departure);

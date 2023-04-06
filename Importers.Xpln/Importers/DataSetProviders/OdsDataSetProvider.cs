@@ -39,7 +39,7 @@ public sealed class OdsDataSetProvider : IDataSetProvider
     private IEnumerable<DataTable> GetDataTables(XmlDocument document, DataSetConfiguration configuration, XmlNamespaceManager namespaceManager)
     {
         var tableNodes = TableNodes(document, namespaceManager);
-        Logger.LogInformation("{count} table nodes in document.",tableNodes?.Count??0);
+        Logger.LogInformation("{count} table nodes in document.", tableNodes?.Count ?? 0);
         if (tableNodes is not null)
         {
             foreach (XmlNode tableNode in tableNodes)
@@ -109,7 +109,7 @@ public sealed class OdsDataSetProvider : IDataSetProvider
         }
         return true;
 
-        static bool HasValue(DataRow row) => row.GetRowFields().Any(f => f.HasText() );
+        static bool HasValue(DataRow row) => row.GetRowFields().Any(f => f.HasText());
     }
 
     private static void GetCell(XmlNode cellNode, DataRow row, int columns, ref int cellIndex)

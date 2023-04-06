@@ -14,7 +14,7 @@ internal static class ScheduleExtensions
         using var connection = new OdbcConnection(connectionString);
         var stations = GetStations(layoutId, connectionString);
         var tracks = stations.SelectMany(s => s.Tracks).ToArray();
-            connection.Open();
+        connection.Open();
         foreach (var train in me.Timetable.Trains)
         {
             var trainSql = $"INSERT INTO [Train] ([Layout], [Operator], [Number], [OperatingDays], [Category]) VALUES ({layoutId}, 'DSB', {train.Number}, 8, 1)";
@@ -36,7 +36,7 @@ internal static class ScheduleExtensions
                         if (track is not null)
                         {
                             var callSql = "INSERT INTO TrainStationCall (IsTrain, IsStationTrack, ArrivalTime, DepartureTime, IsStop, HideArrival, HideDeparture) VALUES " +
-                                $"({trainId}, {track.Id}, '{call.Arrival}', '{call.Departure}', -1, {(callNumber==1 ? -1 : 0)}, {(callNumber == callsCount ? -1 : 0)} )";
+                                $"({trainId}, {track.Id}, '{call.Arrival}', '{call.Departure}', -1, {(callNumber == 1 ? -1 : 0)}, {(callNumber == callsCount ? -1 : 0)} )";
                             var saveCallCommand = new OdbcCommand(callSql) { Connection = connection };
                             saveCallCommand.ExecuteNonQuery();
                         }
@@ -78,7 +78,7 @@ internal static class ScheduleExtensions
             }
             var track = new StationTrack(reader.GetString(reader.GetOrdinal("TrackNumber")), true, true);
             track.SetId(reader.GetInt32(reader.GetOrdinal("TrackId")));
-            station.Add( track);
+            station.Add(track);
             lastStationId = stationId;
 
         }

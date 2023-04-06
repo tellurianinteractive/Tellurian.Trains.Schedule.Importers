@@ -32,7 +32,7 @@ internal static class Layouts
             CommandText = "INSERT INTO Layout ([Name], StartHour, EndHour) VALUES (@Name)"
         };
         result.Parameters.AddWithValue("@Name", layout.Name);
-         return result;
+        return result;
     }
 
     public static IDbCommand CreateDeleteCommand(string layoutName)

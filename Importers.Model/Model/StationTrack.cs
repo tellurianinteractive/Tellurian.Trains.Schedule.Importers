@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
@@ -50,7 +48,7 @@ public sealed record StationTrack : IEquatable<StationTrack>
     public bool Equals(StationTrack? other) => Number.Equals(other?.Number, StringComparison.OrdinalIgnoreCase) && Station.Equals(other?.Station);
     public override int GetHashCode() => Number.GetHashCode(StringComparison.OrdinalIgnoreCase);
     public override string ToString() => Number;
-    public static StationTrack Example { get { return new StationTrack("1") { Station=Station.Example }; } }
+    public static StationTrack Example { get { return new StationTrack("1") { Station = Station.Example }; } }
     private StationTrack() { } // Only for deserialization.
     public void SetId(int id) => _Id = id;
 }
@@ -60,7 +58,8 @@ public static class StationTrackExtensions
     internal static StationCall Add(this StationTrack me, StationCall call)
     {
         if (call == null) throw new ArgumentNullException(nameof(call));
-        if (!me.Calls.Contains(call)) {
+        if (!me.Calls.Contains(call))
+        {
             me.Calls.Add(call);
         }
         return call;

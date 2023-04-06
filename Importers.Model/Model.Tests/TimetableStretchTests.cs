@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Linq;
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
@@ -12,25 +11,29 @@ public class TimetableStretchTests
     private TimetableStretch Target { get; set; }
 
     [TestInitialize]
-    public void TestInitialize() {
+    public void TestInitialize()
+    {
         TestDataFactory.Init();
         Target = new TimetableStretch("10", "Ten");
     }
 
     [ExpectedException(typeof(ArgumentNullException))]
     [TestMethod]
-    public void NullNumberThrows() {
+    public void NullNumberThrows()
+    {
         Target = new TimetableStretch(null);
     }
 
     [TestMethod]
-    public void PropertiesAreSet() {
+    public void PropertiesAreSet()
+    {
         Assert.AreEqual("10", Target.Number);
         Assert.AreEqual("Ten", Target.Description);
     }
 
     [TestMethod]
-    public void EqualsWithSameNumber() {
+    public void EqualsWithSameNumber()
+    {
         var other = new TimetableStretch("10");
         Assert.AreEqual(Target, other);
     }

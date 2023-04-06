@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
@@ -19,7 +17,7 @@ public sealed record StationCall : IEquatable<StationCall>, IComparable<StationC
     public bool IsArrival { get; set; }
     public bool IsDeparture { get; set; }
     public ICollection<Note> Notes { get; }
-    public bool IsStop => IsArrival || IsDeparture; 
+    public bool IsStop => IsArrival || IsDeparture;
     public Time SortTime => IsDeparture ? Departure : Arrival;
 
     public StationCall(StationTrack track, Time arrival, Time departure)
@@ -31,7 +29,7 @@ public sealed record StationCall : IEquatable<StationCall>, IComparable<StationC
         Notes = new List<Note>();
     }
 
-    public bool Equals(StationCall? other) => 
+    public bool Equals(StationCall? other) =>
          other != null &&
          Arrival.Equals(other.Arrival) &&
          Departure.Equals(other.Departure) &&

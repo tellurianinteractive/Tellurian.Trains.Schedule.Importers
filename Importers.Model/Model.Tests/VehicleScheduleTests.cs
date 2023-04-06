@@ -35,7 +35,7 @@ public class VehicleScheduleTests
     {
         TestDataFactory.Init();
         var train = TestDataFactory.CreateTrains("Persontåg", Time.FromHourAndMinute(12, 00)).First();
-        var part = train.AsTrainPart( 0, 1);
+        var part = train.AsTrainPart(0, 1);
         Target.Add(part);
         Assert.AreEqual(part, Target.Parts.First());
     }

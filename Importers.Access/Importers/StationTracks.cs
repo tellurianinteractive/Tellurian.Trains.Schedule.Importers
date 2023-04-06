@@ -6,7 +6,7 @@ namespace TimetablePlanning.Importers.Access;
 
 internal static class StationTracks
 {
-    public static IDbCommand CreateGetIdCommand(StationTrack track)  =>
+    public static IDbCommand CreateGetIdCommand(StationTrack track) =>
         new OdbcCommand
         {
             CommandType = CommandType.Text,

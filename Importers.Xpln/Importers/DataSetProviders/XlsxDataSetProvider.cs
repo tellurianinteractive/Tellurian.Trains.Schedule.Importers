@@ -8,7 +8,7 @@ namespace TimetablePlanning.Importers.Xpln.DataSetProviders;
 public sealed class XlsxDataSetProvider : IDataSetProvider
 {
     private readonly ILogger Logger;
-    public XlsxDataSetProvider( ILogger logger)
+    public XlsxDataSetProvider(ILogger logger)
     {
         Logger = logger;
     }
@@ -22,9 +22,9 @@ public sealed class XlsxDataSetProvider : IDataSetProvider
             var dataSet = reader.AsDataSet();
             if (worksheets.Any())
             {
-                foreach(DataTable table in dataSet.Tables)
+                foreach (DataTable table in dataSet.Tables)
                 {
-                    if (! worksheets.Any(w  => w.Equals(table.TableName, StringComparison.OrdinalIgnoreCase)))
+                    if (!worksheets.Any(w => w.Equals(table.TableName, StringComparison.OrdinalIgnoreCase)))
                     {
                         dataSet.Tables.Remove(table);
                     }
@@ -39,5 +39,5 @@ public sealed class XlsxDataSetProvider : IDataSetProvider
         }
     }
 
-    
+
 }

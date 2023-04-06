@@ -13,9 +13,9 @@ public readonly struct ImportResult<T>
     public static ImportResult<T> Success(IEnumerable<T> items) => new(items, Array.Empty<Message>(), true);
     public static ImportResult<T> Success(IEnumerable<T> items, IEnumerable<Message> messages) => new(items, messages, true);
     public static ImportResult<T> Success(IEnumerable<T> items, Message message) => new(items, new[] { message }, true);
-    public static ImportResult<T> Failure(Message message) => new (Array.Empty<T>(), new[] { message }, false);
+    public static ImportResult<T> Failure(Message message) => new(Array.Empty<T>(), new[] { message }, false);
     public static ImportResult<T> Failure(IEnumerable<Message> messages) => new(Array.Empty<T>(), messages, false);
-    public static ImportResult<T> SuccessIfNoErrorMessagesOtherwiseFailure(T? item, IEnumerable<Message> messages) => new(item is null ? Array.Empty<T>() : new[] { item}, messages, !messages.Any(m => m.Severity > Severity.Warning));
+    public static ImportResult<T> SuccessIfNoErrorMessagesOtherwiseFailure(T? item, IEnumerable<Message> messages) => new(item is null ? Array.Empty<T>() : new[] { item }, messages, !messages.Any(m => m.Severity > Severity.Warning));
 
     private ImportResult(IEnumerable<T> items, IEnumerable<Message> messages, bool isSuccess)
     {

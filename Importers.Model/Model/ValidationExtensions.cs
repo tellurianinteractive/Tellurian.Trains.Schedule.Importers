@@ -109,7 +109,7 @@ public static class ValidationExtensions
             var first = passings[i];
             var second = passings[i + me.TracksCount];
             if (first.To.Train.Number != second.To.Train.Number && first.To.Arrival > second.From.Departure)
-                result.Add(Message.Information (Resources.Strings.TrainBetweenPassingIsConflictingWithTrainBetweenPassing, first.From.Train.Number, first, second.To.Train.Number, second));
+                result.Add(Message.Information(Resources.Strings.TrainBetweenPassingIsConflictingWithTrainBetweenPassing, first.From.Train.Number, first, second.To.Train.Number, second));
         }
         return result;
     }
@@ -150,7 +150,7 @@ public static class ValidationExtensions
             {
                 var time = c2.Arrival.Subtract(c1.Departure);
                 var length = maybeStretch.Value.Distance < 2 ? 2 : maybeStretch.Value.Distance;
-                
+
                 var speed = time.TotalMinutes == 0 ? 0 : length / time.TotalMinutes;
                 if (speed == 0) continue;
                 if (speed < minTrainSpeedMetersPerClockMinute)

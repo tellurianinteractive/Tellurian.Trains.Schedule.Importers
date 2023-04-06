@@ -1,5 +1,4 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace TimetablePlanning.Importers.Model;
 
@@ -7,12 +6,12 @@ public struct Time : IComparable<Time?>, IEquatable<Time>
 {
     public static Time FromString(string time)
     {
-        if ( TimeSpan.TryParse(time, out var value)) return new(value);
+        if (TimeSpan.TryParse(time, out var value)) return new(value);
         throw new ArgumentException("Not a valid time.", time);
     }
-    public static Time FromTimeSpan(TimeSpan value) => new (value);
+    public static Time FromTimeSpan(TimeSpan value) => new(value);
     public static Time FromHourAndMinute(int hours, int minutes) => FromDayHourMinute(0, hours, minutes);
-    public static Time FromDayHourMinute(int days, int hours, int minutes) => new (new TimeSpan(days, hours, minutes, 0));
+    public static Time FromDayHourMinute(int days, int hours, int minutes) => new(new TimeSpan(days, hours, minutes, 0));
     public static Time FromDays(string value) => value is null ? FromDays(0) : FromDays(double.Parse(value.Replace(",", ".", StringComparison.OrdinalIgnoreCase), NumberStyles.Float, CultureInfo.InvariantCulture));
     public static Time FromDays(double days)
     {
@@ -47,7 +46,7 @@ public struct Time : IComparable<Time?>, IEquatable<Time>
 public static class TimeExtensions
 {
     public static string HHMM(this Time me) => string.Format(CultureInfo.InvariantCulture, "{0:hh\\:mm}", me.Value);
-    public static int Hours(this Time me) =>  me.Value.Hours;
+    public static int Hours(this Time me) => me.Value.Hours;
     public static Time Subtract(this Time time1, Time time2) => Time.FromTimeSpan(time1.Value - time2.Value);
     public static Time AddMinutes(this Time me, int minutes) => Time.FromTimeSpan(me.Value.Add(TimeSpan.FromMinutes(minutes)));
     public static Time AddDays(this Time me, int days) => Time.FromTimeSpan(me.Value.Add(TimeSpan.FromDays(days)));

@@ -4,14 +4,14 @@ namespace TimetablePlanning.Importers.Model;
 
 public sealed record Message : IEquatable<Message>
 {
-    public static Message Information(string text) => new (text, Severity.Information);
+    public static Message Information(string text) => new(text, Severity.Information);
     public static Message Information(string format, params object[] args) => new(string.Format(CultureInfo.CurrentCulture, format, args), Severity.Information);
-    public static Message Warning(string text) => new (text, Severity.Warning);
+    public static Message Warning(string text) => new(text, Severity.Warning);
 
-    public static Message Warning(string format, params object[] args) => new (string.Format(CultureInfo.CurrentCulture, format, args), Severity.Warning);
-    public static Message Error(string text) => new (text, Severity.Error);
-    public static Message Error(string format, params object[] args) => new (string.Format(CultureInfo.CurrentCulture, format, args), Severity.Error);
-    public static Message System(string text) => new (text, Severity.System);
+    public static Message Warning(string format, params object[] args) => new(string.Format(CultureInfo.CurrentCulture, format, args), Severity.Warning);
+    public static Message Error(string text) => new(text, Severity.Error);
+    public static Message Error(string format, params object[] args) => new(string.Format(CultureInfo.CurrentCulture, format, args), Severity.Error);
+    public static Message System(string text) => new(text, Severity.System);
     public static Message Copy(string text) => new(text, Severity.None);
 
     private Message(string text, Severity severity) { Text = text; Severity = severity; }
@@ -19,7 +19,7 @@ public sealed record Message : IEquatable<Message>
     public string Text { get; }
     public Severity Severity { get; }
 
-    public override string ToString()=>
+    public override string ToString() =>
         Severity == Severity.None ? Text :
         $"{Severity.ToLanguageString(CultureInfo.CurrentCulture)}: {Text}";
 
@@ -48,6 +48,6 @@ public static class ErrorMessageExtensions
 
 internal static class SeverityExtensions
 {
-    public static string ToLanguageString(this Severity me, CultureInfo culture)=>
+    public static string ToLanguageString(this Severity me, CultureInfo culture) =>
         Resources.Strings.ResourceManager.GetString(me.ToString(), culture) ?? string.Empty;
 }

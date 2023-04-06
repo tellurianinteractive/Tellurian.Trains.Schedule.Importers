@@ -3,7 +3,7 @@ public record DataSetConfiguration(string Name)
 {
     private readonly List<WorksheetConfiguration> _WorksheetConfigurations = new();
 
-    public string[] Worksheets => 
+    public string[] Worksheets =>
         _WorksheetConfigurations.Select(x => x.WorksheetName).ToArray();
 
     public void Add(WorksheetConfiguration configuration)
@@ -12,7 +12,7 @@ public record DataSetConfiguration(string Name)
             _WorksheetConfigurations.Add(configuration);
     }
 
-    private bool ContainsWorksheet(string? name) => 
+    private bool ContainsWorksheet(string? name) =>
         !string.IsNullOrEmpty(name) &&
         _WorksheetConfigurations.Any((Func<WorksheetConfiguration, bool>)(wc => wc.WorksheetName.Equals(name, StringComparison.OrdinalIgnoreCase)));
 

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace TimetablePlanning.Importers.Model;
+﻿namespace TimetablePlanning.Importers.Model;
 
 public abstract record VehicleSchedule
 {
@@ -20,7 +17,7 @@ public abstract record VehicleSchedule
 
 public sealed record LocoSchedule : VehicleSchedule
 {
-    public LocoSchedule(string number): base(number) { }
+    public LocoSchedule(string number) : base(number) { }
 }
 public sealed record TrainsetSchedule : VehicleSchedule
 {

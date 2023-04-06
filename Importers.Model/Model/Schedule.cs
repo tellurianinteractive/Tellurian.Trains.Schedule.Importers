@@ -20,42 +20,42 @@ public record Schedule
         TrainsetSchedules = new List<TrainsetSchedule>();
         DriverDuties = new List<DriverDuty>();
     }
-public override string ToString() => Name;
+    public override string ToString() => Name;
 }
 
 public static class ScheduleExtensions
 {
-public static VehicleSchedule AddLocoSchedule(this Schedule me, LocoSchedule locoSchedule)
-{
-    me = me.ValueOrException(nameof(me));
-    locoSchedule = locoSchedule.ValueOrException(nameof(locoSchedule));
-    if (!me.LocoSchedules.Contains(locoSchedule))
+    public static VehicleSchedule AddLocoSchedule(this Schedule me, LocoSchedule locoSchedule)
     {
-        me.LocoSchedules.Add(locoSchedule);
+        me = me.ValueOrException(nameof(me));
+        locoSchedule = locoSchedule.ValueOrException(nameof(locoSchedule));
+        if (!me.LocoSchedules.Contains(locoSchedule))
+        {
+            me.LocoSchedules.Add(locoSchedule);
+        }
+        return locoSchedule;
     }
-    return locoSchedule;
-}
 
-public static VehicleSchedule AddTrainsetSchedule(this Schedule me, TrainsetSchedule trainsetSchedule)
-{
-    me = me.ValueOrException(nameof(me));
-    trainsetSchedule = trainsetSchedule.ValueOrException(nameof(trainsetSchedule));
-    if (!me.TrainsetSchedules.Contains(trainsetSchedule))
+    public static VehicleSchedule AddTrainsetSchedule(this Schedule me, TrainsetSchedule trainsetSchedule)
     {
-        me.TrainsetSchedules.Add(trainsetSchedule);
+        me = me.ValueOrException(nameof(me));
+        trainsetSchedule = trainsetSchedule.ValueOrException(nameof(trainsetSchedule));
+        if (!me.TrainsetSchedules.Contains(trainsetSchedule))
+        {
+            me.TrainsetSchedules.Add(trainsetSchedule);
+        }
+        return trainsetSchedule;
     }
-    return trainsetSchedule;
-}
 
-public static DriverDuty AddDriverDuty(this Schedule schedule, DriverDuty driverDuty)
-{
-    schedule = schedule.ValueOrException(nameof(schedule));
-    driverDuty = driverDuty.ValueOrException(nameof(driverDuty));
-    if (!schedule.DriverDuties.Contains(driverDuty))
+    public static DriverDuty AddDriverDuty(this Schedule schedule, DriverDuty driverDuty)
     {
-        driverDuty.Schedule = schedule;
-        schedule.DriverDuties.Add(driverDuty);
+        schedule = schedule.ValueOrException(nameof(schedule));
+        driverDuty = driverDuty.ValueOrException(nameof(driverDuty));
+        if (!schedule.DriverDuties.Contains(driverDuty))
+        {
+            driverDuty.Schedule = schedule;
+            schedule.DriverDuties.Add(driverDuty);
+        }
+        return driverDuty;
     }
-    return driverDuty;
-}
 }

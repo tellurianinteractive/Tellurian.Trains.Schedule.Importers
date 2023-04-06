@@ -23,7 +23,7 @@ public class TrackStretch : IEquatable<TrackStretch>
 
     [DataMember(IsRequired = false, Order = 1, Name = "Id")]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    private int _Id =0;
+    private int _Id = 0;
 
     public int Id => _Id;
 

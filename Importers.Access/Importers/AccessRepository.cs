@@ -45,7 +45,7 @@ public class AccessRepository : IImportService
             return result;
         }
         var timetable = new Timetable(name, layout.Item);
-        var importResult = ImportResult<Schedule>.SuccessIfNoErrorMessagesOtherwiseFailure( Schedule.Create(name, timetable) , layout.Messages );
+        var importResult = ImportResult<Schedule>.SuccessIfNoErrorMessagesOtherwiseFailure(Schedule.Create(name, timetable), layout.Messages);
         LogMessages(importResult.Messages);
         return importResult;
     }

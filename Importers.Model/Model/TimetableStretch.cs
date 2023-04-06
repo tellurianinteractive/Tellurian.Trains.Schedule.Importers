@@ -31,7 +31,7 @@ public sealed record TimetableStretch : IEquatable<TimetableStretch>
     [NotMapped]
     public IEnumerable<Station> Stations => Stretches.Select(s => s.Start).Concat(new[] { Stretches.Last().End });
 
-    public bool Equals(TimetableStretch? other) => other != null &&  Number.Equals(other?.Number, StringComparison.OrdinalIgnoreCase);
+    public bool Equals(TimetableStretch? other) => other != null && Number.Equals(other?.Number, StringComparison.OrdinalIgnoreCase);
     public override int GetHashCode() => Number.GetHashCode(StringComparison.OrdinalIgnoreCase);
 
     public override string ToString() => string.Format(CultureInfo.CurrentCulture, "{0}: {1}", Number, this.GetDescription());
