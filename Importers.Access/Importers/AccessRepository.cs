@@ -85,7 +85,7 @@ public class AccessRepository : IImportService
         var timetable = new Timetable(name, layout);
         GetTrains(timetable);
 
-        return new ImportResult<Timetable>() { Items = new[] { timetable }, Messages = Enumerable.Empty<Message>() };
+        return new ImportResult<Timetable>() { Items = new[] { timetable }, Messages =Array.Empty<Message>() };
     }
 
     private void ReadLayoutStations(Layout layout)

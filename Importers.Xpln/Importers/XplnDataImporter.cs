@@ -60,19 +60,19 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
         var layout = GetLayout(name);
         if (layout.IsFailure)
         {
-            var result = new ImportResult<Schedule>() { Messages = layout.Messages };
+            var result = new ImportResult<Schedule>() { Name=name, Messages = layout.Messages };
             LogMessages(result.Messages);
             return result;
         }
         var timetable = GetTimetable(name, layout.Item);
         if (timetable.IsFailure)
         {
-            var result = new ImportResult<Schedule>() { Messages = layout.Messages.Concat(timetable.Messages) };
+            var result = new ImportResult<Schedule>() { Name = name, Messages = layout.Messages.Concat(timetable.Messages).ToArray() };
             LogMessages(result.Messages);
             return result;
         }
         var schedule = GetSchedule(name, timetable.Item);
-        var ImportResult = schedule with { Messages = layout.Messages.Concat(timetable.Messages).Concat(schedule.Messages) };
+        var ImportResult = schedule with { Name=name, Messages = layout.Messages.Concat(timetable.Messages).Concat(schedule.Messages).ToArray() };
         LogMessages(ImportResult.Messages);
         return ImportResult;
     }

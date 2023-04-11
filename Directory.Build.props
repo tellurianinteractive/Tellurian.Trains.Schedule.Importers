@@ -4,7 +4,7 @@
 		<Company>Tellurian Interactive AB</Company>
 		<Copyright>© Stefan Fjällemark 2023</Copyright>
 		<Authors>Stefan Fjällemark</Authors>
-		<Version>1.0.0</Version>
+		<Version>1.0.2</Version>
 		<AssemblyVersion>1.0.0.0</AssemblyVersion>
 		<NeutralLanguage>en-GB</NeutralLanguage>
 		<Platforms>AnyCPU</Platforms>
@@ -14,7 +14,7 @@
 	<PropertyGroup>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
-		<PackageTags>model.trains scheduling timetables</PackageTags>
+		<PackageTags>model-trains scheduling timetables</PackageTags>
 		<PackageReleaseNotes></PackageReleaseNotes>
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 		<IncludeSymbols>true</IncludeSymbols>

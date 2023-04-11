@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Importers.Access", "Importe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Importers.Access.Tests", "Importers.Access\Importers.Tests\Importers.Access.Tests.csproj", "{0D52D792-3D47-4F29-829F-390D83B87F02}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Importers.Interfaces.Tests", "Importers.Interfaces\Importers.Interfaces.Tests\Importers.Interfaces.Tests.csproj", "{92225513-5AEC-47D9-8C35-39D367BF2F89}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{0D52D792-3D47-4F29-829F-390D83B87F02}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0D52D792-3D47-4F29-829F-390D83B87F02}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D52D792-3D47-4F29-829F-390D83B87F02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92225513-5AEC-47D9-8C35-39D367BF2F89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92225513-5AEC-47D9-8C35-39D367BF2F89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92225513-5AEC-47D9-8C35-39D367BF2F89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92225513-5AEC-47D9-8C35-39D367BF2F89}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

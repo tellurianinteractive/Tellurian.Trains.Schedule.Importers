@@ -14,7 +14,7 @@ public sealed record Message : IEquatable<Message>
     public static Message System(string text) => new(text, Severity.System);
     public static Message Copy(string text) => new(text, Severity.None);
 
-    private Message(string text, Severity severity) { Text = text; Severity = severity; }
+    public Message(string text, Severity severity) { Text = text; Severity = severity; }
 
     public string Text { get; }
     public Severity Severity { get; }

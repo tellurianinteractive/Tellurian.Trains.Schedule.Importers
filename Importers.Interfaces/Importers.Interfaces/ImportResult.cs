@@ -17,17 +17,25 @@ public readonly struct ImportResult<T>
     public static ImportResult<T> Failure(IEnumerable<Message> messages) => new(Array.Empty<T>(), messages, false);
     public static ImportResult<T> SuccessIfNoErrorMessagesOtherwiseFailure(T? item, IEnumerable<Message> messages) => new(item is null ? Array.Empty<T>() : new[] { item }, messages, !messages.Any(m => m.Severity > Severity.Warning));
 
-    private ImportResult(IEnumerable<T> items, IEnumerable<Message> messages, bool isSuccess)
+    [JsonConstructor]
+    public ImportResult()
+    {
+        Items = Enumerable.Empty<T>();
+        Messages = Array.Empty<Message>();
+    }
+    public ImportResult(IEnumerable<T> items, IEnumerable<Message> messages, bool isSuccess)
     {
         Items = items;
-        Messages = messages;
+        Messages = messages.ToArray();
         IsSuccess = isSuccess;
     }
+    public string? Name { get; init; }
+    [JsonIgnore]
     public IEnumerable<T> Items { get; init; }
-    public T Item => Items.First();
-    public IEnumerable<Message> Messages { get; init; }
-    public bool IsSuccess { get; }
-    public bool IsFailure => !IsSuccess;
+    public Message[] Messages { get; init; }
+    public bool IsSuccess { get; init; }
+    [JsonIgnore] public bool IsFailure => !IsSuccess;
+    [JsonIgnore] public T Item => Items.First();
 }
 
 public static class ImportResultExtensions
