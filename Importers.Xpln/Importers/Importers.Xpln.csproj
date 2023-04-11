@@ -4,35 +4,7 @@
 		<TargetFramework>net70</TargetFramework>
 		<AssemblyName>TimetablePlanning.Importers.Xpln</AssemblyName>
 		<RootNamespace>TimetablePlanning.Importers.Xpln</RootNamespace>
-		<Description>Import operations for layouts, timetables and schedules.</Description>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Copyright>© Stefan Fjällemark 2023</Copyright>
-		<Authors>Stefan Fjällemark</Authors>
-		<Version>1.0.0</Version>
-		<AssemblyVersion>1.0.0.0</AssemblyVersion>
 		<PackageId>TimetablePlanning.Importers.Xpln</PackageId>
-		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
-		<RepositoryUrl>https://github.com/tellurianinteractive/TimetablePlanning.Importers/</RepositoryUrl>
-		<RepositoryType>Github</RepositoryType>
-		<PackageReleaseNotes></PackageReleaseNotes>
-		<NeutralLanguage>en-GB</NeutralLanguage>
-		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-		<Company>Tellurian Interactive AB</Company>
-		<PackageProjectUrl>https://github.com/tellurianinteractive/TimetablePlanning.Importers/</PackageProjectUrl>
-		<PackageTags>model.trains scheduling timetables</PackageTags>
-		<Platforms>AnyCPU</Platforms>
-		<ImplicitUsings>true</ImplicitUsings>
-		<Nullable>enable</Nullable>
-	</PropertyGroup>
-
-	<PropertyGroup>
-		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-		<PackageReleaseNotes>2.0.0: No dependencies on Microsoft Excel.</PackageReleaseNotes>
-		<PackageProjectUrl>https://github.com/tellurianinteractive/Tellurian.Trains.Repositories.Xpln/projects</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/tellurianinteractive/Tellurian.Trains.Repositories.Xpln</RepositoryUrl>
-		<RepositoryType>Github</RepositoryType>
-		<PackageTags>xpln model.railway planning timetable schedule</PackageTags>
-		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -41,13 +13,18 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
 		<PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Importers.Interfaces\Importers.Interfaces\Importers.Interfaces.csproj" />
 		<ProjectReference Include="..\..\Importers.Model\Model\Importers.Model.csproj" />
 	</ItemGroup>
-	
+
 
 	<ItemGroup>
 		<Compile Update="Resources\Strings.Designer.cs">
@@ -63,9 +40,10 @@
 			<LastGenOutput>Strings.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
 	</ItemGroup>
-	
-	<Target Name="CopyPackage" AfterTargets="Pack">
+
+	<Target Condition="'$(Configuration)' == 'Release'" Name="CopyPackage" AfterTargets="Pack">
 		<Copy SourceFiles="$(OutputPath)..\$(PackageId).$(PackageVersion).nupkg" DestinationFolder="C:\NuGets\" />
+		<Copy SourceFiles="$(OutputPath)..\$(PackageId).$(PackageVersion).snupkg" DestinationFolder="C:\NuGets\" />
 	</Target>
 
 </Project>

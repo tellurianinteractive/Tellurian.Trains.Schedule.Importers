@@ -1,0 +1,33 @@
+<Project>
+	<PropertyGroup>
+		<Product>Tellurian Trains</Product>
+		<Company>Tellurian Interactive AB</Company>
+		<Copyright>© Stefan Fjällemark 2023</Copyright>
+		<Authors>Stefan Fjällemark</Authors>
+		<Version>1.0.0</Version>
+		<AssemblyVersion>1.0.0.0</AssemblyVersion>
+		<NeutralLanguage>en-GB</NeutralLanguage>
+		<Platforms>AnyCPU</Platforms>
+		<ImplicitUsings>true</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+	<PropertyGroup>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+		<PackageTags>model.trains scheduling timetables</PackageTags>
+		<PackageReleaseNotes></PackageReleaseNotes>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<Description>Import operations for layouts, timetables and schedules.</Description>
+	</PropertyGroup>
+	<PropertyGroup>
+		<RepositoryType>Github</RepositoryType>
+		<RepositoryUrl>https://github.com/fjallemark/Xpln/</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/fjallemark/Xpln/</PackageProjectUrl>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+	</PropertyGroup>
+</Project>
