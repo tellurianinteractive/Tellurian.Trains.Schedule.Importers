@@ -35,6 +35,12 @@
 		<None Update="Test data\Barmstedt2022.ods">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="Test data\FAHRPLAN_LTK_2020_Final.ods">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Test data\Givskud2021.ods">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="Test data\Kolding2022.ods">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>

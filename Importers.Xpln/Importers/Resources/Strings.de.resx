@@ -169,7 +169,7 @@
     <value>Reihe {0}: Spalte {1} muss einen Wert enthalten.</value>
   </data>
   <data name="UnsupportedSubType" xml:space="preserve">
-    <value>Reihe {0}: SypType {1} wird nicht unterstützt. Bitte wenden Sie sich an den Entwickler, wenn Ihnen ein Typ fehlt.</value>
+    <value>Reihe {0}: SubType {1} wird nicht unterstützt. Bitte wenden Sie sich an den Entwickler, wenn Ihnen ein Typ fehlt.</value>
   </data>
   <data name="ColumnMustBeANumber" xml:space="preserve">
     <value>Reihe {0}: Spalte {1} muss eine Zahl enthalten, aktueller Wert ist {2}.</value>

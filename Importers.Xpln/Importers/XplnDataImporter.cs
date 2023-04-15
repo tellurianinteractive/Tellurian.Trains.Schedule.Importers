@@ -201,11 +201,9 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
             var messages = new List<Message>();
             if (fields[TrackName].IsEmpty())
                 messages.Add(Message.Error(Resources.Strings.ColumnMustHaveAValue, rowNumber, "TrackName"));
-            if (fields[Lenght].IsEmpty())
-                messages.Add(Message.Warning(Resources.Strings.ColumnIsNotSpecified, rowNumber, "Length"));
-            else if (!fields[Lenght].IsNumber())
+            if (!fields[Lenght].IsEmpty() && !fields[Lenght].IsNumber())
                 messages.Add(Message.Error(Resources.Strings.ColumnMustBeANumber, rowNumber, "Length", fields[Lenght]));
-            if (!fields[SubType].ValueOrEmpty().Is("Main", "Siding", "Depot", "Goods"))
+            if (!fields[SubType].ValueOrEmpty().Is("Main", "Side", "Siding", "Depot", "Goods"))
                 messages.Add(Message.Error(Resources.Strings.UnsupportedSubType, rowNumber, fields[SubType]));
             return messages.ToArray();
         }
@@ -461,7 +459,7 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
             if (!fields[Arrival].IsTime())
                 messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustBeATime, rowNumber, "Arrival", fields[Arrival])));
             if (!fields[Departure].IsTime())
-                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustBeATime, rowNumber, "Departure", fields[Arrival])));
+                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustBeATime, rowNumber, "Departure", fields[Departure])));
             else if (!fields[Type].Is("Traindef", "Timetable", "Locomotive", "Trainset", "Job", "Wheel", "Group"))
                 messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.UnsupportedType, rowNumber, fields[Type])));
             return messages.ToArray();
@@ -619,12 +617,14 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
                         case "wheel":
                             {
                                 if (currentTrain is null) break;
+                                // Length in axles
 
                             }
                             break;
                         case "group":
                             {
                                 if (currentTrain is null) break;
+                                // Grouping of trains
 
                             }
                             break;

@@ -50,12 +50,13 @@ public class XplnImporterTests
     }
 
     [TestMethod]
-    public void ImportsMontan2023()
+    public void Imports()
     {
-        Import("Montan2023H0e", "de-DE", 32, 3, 28, 3, 0);
+        Import("Givskud2021", "de-DE", 32, 3, 28, 3, 0);
     }
 
     [DataTestMethod()]
+    [DataRow("Montan2023H0e", "de-DE", 32, 3, 28, 3, 0)]
     [DataRow("Barmstedt2022", "de-DE", 61, 18, 36, 45, 2)]
     [DataRow("Kolding2022", "da-DK", 73, 26, 55, 55, 0)]
     [DataRow("Kolding202009", "da-DK", 38, 14, 36, 28, 0)]
