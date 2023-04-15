@@ -169,7 +169,7 @@ namespace TimetablePlanning.Importers.Xpln.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Row {0}: Object &apos;{1}&apos; in train {2} has wrong timing. Arrival {3} is before departure {4}..
+        ///   Looks up a localized string similar to Row {0}: Object &apos;{1}&apos; in train {2} has wrong timing. Departure {3} is before arrival {4}..
         /// </summary>
         internal static string ObjectInTrainHasWrongTimingEndStartionIsBeforeStartStation {
             get {

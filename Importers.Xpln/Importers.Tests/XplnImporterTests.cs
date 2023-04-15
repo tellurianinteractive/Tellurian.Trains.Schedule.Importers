@@ -52,12 +52,14 @@ public class XplnImporterTests
     [TestMethod]
     public void Imports()
     {
-        Import("Givskud2021", "de-DE", 32, 3, 28, 3, 0);
+        Import("Langhurst 2019", "de-DE", 15, 4, 22, 4, 25);
     }
 
     [DataTestMethod()]
     [DataRow("Montan2023H0e", "de-DE", 32, 3, 28, 3, 0)]
     [DataRow("Barmstedt2022", "de-DE", 61, 18, 36, 45, 2)]
+    [DataRow("Givskud2021", "da-DK", 32, 3, 28, 3, 0, 7)]
+    [DataRow("Kolding_Epoke_III_2022", "da-DK", 60, 16, 32, 38, 6)]
     [DataRow("Kolding2022", "da-DK", 73, 26, 55, 55, 0)]
     [DataRow("Kolding202009", "da-DK", 38, 14, 36, 28, 0)]
     [DataRow("KoldingNorge2019", "no-NO", 56, 16, 0, 56, 1)]
@@ -68,31 +70,44 @@ public class XplnImporterTests
     [DataRow("Timmele2015", "sv-SE", 37, 13, 0, 33, 4)]
     [DataRow("Hellerup2015", "da-DK", 60, 24, 57, 20, 0)]
     [DataRow("DreamTrack2015", null, 62, 24, 0, 40, 0)]
-    public void Import(string scheduleName, string? culture, int expectedTrains, int expectedLocos, int expectedTrainsets, int expectedDuties, int expectedValidationErrors)
+    [DataRow("H0e-Schutterwald2013", "de-DE", 26, 6, 20, 25, 6)]
+
+    public void Import(string scheduleName, string? culture, int expectedTrains, int expectedLocos, int expectedTrainsets, int expectedDuties, int expectedValidationWarnings = 0, int expectedStoppingErrors = 0)
     {
         if (string.IsNullOrWhiteSpace(scheduleName)) throw new ArgumentNullException(nameof(scheduleName));
         culture ??= "sv-SE";
         CultureInfo.CurrentCulture = new CultureInfo(culture);
         CultureInfo.CurrentUICulture = CultureInfo.CurrentCulture;
-        var file = TestDocumentsDirectory!.EnumerateFiles(scheduleName + FileSuffix).Single();
-        var dataSetProvider = new OdsDataSetProvider(NullLogger<OdsDataSetProvider>.Instance);
-        using var importer = new XplnDataImporter(file, dataSetProvider, NullLogger<XplnDataImporter>.Instance);
-        var result = importer.ImportSchedule(scheduleName);
-        if (result.IsFailure)
-        {
-            WriteLines(result.Messages.ToStrings(), file);
-            Assert.Fail("Stopping errors.");
+        var files = TestDocumentsDirectory!.EnumerateFiles(scheduleName + FileSuffix);
+        if (files.Any())
+        { 
+            var file = files.First();
+            var dataSetProvider = new OdsDataSetProvider(NullLogger<OdsDataSetProvider>.Instance);
+            using var importer = new XplnDataImporter(file, dataSetProvider, NullLogger<XplnDataImporter>.Instance);
+            var result = importer.ImportSchedule(scheduleName);
+            if (result.IsFailure)
+            {
+                WriteLines(result.Messages.ToStrings(), file);
+                Assert.AreEqual(expectedStoppingErrors, result.Messages.Count(m => m.Severity == Severity.Error), "Stopping errors");
+            }
+            else
+            {
+                var timetable = result.Item.Timetable;
+                Assert.AreEqual(expectedTrains, timetable.Trains.Count, "Trains");
+                Assert.AreEqual(expectedLocos, result.Item.LocoSchedules.Count, "Locos");
+                Assert.AreEqual(expectedTrainsets, result.Item.TrainsetSchedules.Count, "Trainsets");
+                Assert.AreEqual(expectedDuties, result.Item.DriverDuties.Count, "Duties");
+
+                var validationErrors = result.Item.GetValidationErrors(ValidationOptions);
+                WriteLines(result.Messages.ToStrings().Concat(validationErrors.ToStrings()), file);
+                Assert.AreEqual(expectedValidationWarnings, validationErrors.Count(), "Validation errors");
+            }
+
         }
-
-        var timetable = result.Item.Timetable;
-        Assert.AreEqual(expectedTrains, timetable.Trains.Count, "Trains");
-        Assert.AreEqual(expectedLocos, result.Item.LocoSchedules.Count, "Locos");
-        Assert.AreEqual(expectedTrainsets, result.Item.TrainsetSchedules.Count, "Trainsets");
-        Assert.AreEqual(expectedDuties, result.Item.DriverDuties.Count, "Duties");
-
-        var validationErrors = result.Item.GetValidationErrors(ValidationOptions);
-        WriteLines(result.Messages.ToStrings().Concat(validationErrors.ToStrings()), file);
-        Assert.AreEqual(expectedValidationErrors, validationErrors.Count(), "Validation errors");
+        else
+        {
+            Assert.Fail($"File {scheduleName}.ODS is not found. Forget setting to copy to output?");
+        }
     }
 
     private static void WriteLines(IEnumerable<string> messages, FileInfo file)

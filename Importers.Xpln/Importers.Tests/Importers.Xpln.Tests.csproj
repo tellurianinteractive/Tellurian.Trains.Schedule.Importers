@@ -41,6 +41,9 @@
 		<None Update="Test data\Givskud2021.ods">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="Test data\H0e-Schutterwald2013.ods">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="Test data\Kolding2022.ods">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
@@ -55,6 +58,12 @@
 		</None>
 		<None Update="Test data\KoldingNorge2019.ods">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Test data\Kolding_Epoke_III_2022.ods">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Test data\Langhurst 2019.ods">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="Test data\Montan2023H0e.ods">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>

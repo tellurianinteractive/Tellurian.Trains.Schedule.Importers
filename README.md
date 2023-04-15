@@ -1,11 +1,28 @@
-# XPLN Validator
-**This repository contains source code for a package for reading and validating XPLN (.ods) files.**
-> NOTE: This is an experimental software. It is not intended for production use, only
-> to demonstrate the issues with importing XPLN files into a database.
+# Schedule Importers
 
-## XPLN
-XPLN is the defacto tool withing the FREMO community
-to create model railway schedules and printed media for module meetings.
+**This repository contains features to validate and import schedule data into an object model.
+The objetc model can then be mapped to storage in databases or files.**
+
+> NOTE: This software only reads data into an object model in menory and has no logic for storing data. 
+> That have to be implemented elsewhere. This separation of reading and writing is flexible in choosing storage format, 
+
+## Output
+This project produces four NuGet packages:
+- **TimetablePlanning.Importers.Interfaces** defining import operations
+- **TimetablePlanning.Importers.Model** defining the object model.
+- **TimetablePlanning.Importers.Access** with logic to read the prototype's Access database.
+- **TimetablePlanning.Importers.Xpln** with logic to read XPLN .ODS-files.
+
+## Access Importer
+Validates and imports timetable data from the [timetable prototype app](https://github.com/fjallemark/TimetablePlanningApp).
+It us currently only experimental and incomplete.
+
+## XPLN Importer
+Validates and mports .ODS-files containing XPLN planning data.
+
+### XPLN
+XPLN is the defacto tool withing the FREMO community to 
+create model railway schedules and printed media for module meetings.
 It is developed based on *OpenOffice Calc*, with scripting and forms. 
 With this tool most aspect of model railway scheduling can be made. 
 
@@ -16,7 +33,17 @@ Because it lacks the data integrity of a real database, it requires users to
 follow a strict workflow to not end up with inconsistent data.
 
 Therefore it is essential that XPLN-documents can be read and validated for formal data consistency
-before it can be imported into *Tellurian.Trains* database.
+before it can be imported into a database.
+
+### What data is read?
+The package reads and validates the following parts of an XPLN file:
+* **Station Track** Stations and tracks
+* **Routes** Stretches and lines
+* **Train** Trains with station times and notes, loco and trainset schedules, and jobs.
+
+The *wheel* and *group* tags are currenly not read.
+- *Wheels* denotes train length in axles. It will be added in a forthcoming release.
+- *Group* is only for internal purposes in XPLN.
 
 ### Validation of XPLN-files
 A rigoruios validation is required before it is possible to import XPLN-files into a database.
@@ -26,6 +53,11 @@ This means that all references between objects in the worksheets must be valid.
 Errors found in this stage must be fixed in the XPLN-document.
 * When the referntial integrity is ok, the second validation phase checks for possible scheduling conflicts. 
 Warnings found in this stage can be fixed either in XPLN or later in the forthcoming online planning application.
+
+### Multiple language support
+A lot of effort has been made to have descriptive validation messages.
+Errors found in the data integrity phase also displays the row number in the XPLN-file when the error is detected.
+Validation messages are currently in English, German, Danish, Norwegian and Swedish.
 
 ### The story of reading XPLN-files
 XPLN is stored in ODS-files, an *Open Document* format. 
@@ -46,25 +78,6 @@ All of the tested XPLN-files had some kind of data integrity issue that required
 before it could be succesfully validated. 
 This clearly demonstrates the problems with using a spreadsheet for complex data storage.
 
-### The package
-The package reads and validates the following parts of an XPLN file:
-* Stations and tracks
-* Stretches and lines
-* Trains with station times and notes
-* Loco schedules
-* Trainset schedules
-* Jobs
 
-The *wheel* and *group* tags are currenly not read. The groups I don't yet understand the meaning of.
 
-#### Multiple language support
-A lot of effort has been made to have descriptive validation messages.
-Errors found in the data integrity phase also displays the row number in the XPLN-file when the error is detected.
-Validation messages are currently in English, German, Danish, Norwegian and Swedish.
 
-#### Future plans
-The next step is to offer the XPLN-valdidation as a cloud-service, as part of the [*Module Registry* toolset](https://moduleregistry.azurewebsites.net/Tools).
-The purpose is to help planners finding errors, but also to learn more about any weaknesses in the validation.
-
-After that, I see a clear case to be able to import XPLN-plans into the forthcoming cloud-based scheduling database.
-This could be a quickstart to utilise the report functionality and features not available in XPLN.

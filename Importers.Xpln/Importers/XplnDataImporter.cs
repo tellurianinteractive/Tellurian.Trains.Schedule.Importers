@@ -661,7 +661,7 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
                     messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ObjectAtStationWithArrivalDoNotRefersToAnExistingTimeInTrain, rowNumber, fields[Object], fields[To], fields[Arrival].AsTime(), currentTrain)));
                 }
                 if (toCall.HasValue && fromCall.HasValue && fromIndex >= toIndex)
-                    messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ObjectInTrainHasWrongTimingEndStartionIsBeforeStartStation, rowNumber, fields[Object], currentTrain, fields[Departure].AsTime(), fields[Arrival].AsTime())));
+                    messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ObjectInTrainHasWrongTimingEndStartionIsBeforeStartStation, rowNumber, $"{fields[Type]}{fields[Object]}", currentTrain, fields[Departure].AsTime(), fields[Arrival].AsTime())));
             }
             return new TrainPartKeys(fromCall, toCall, messages);
         }

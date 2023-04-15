@@ -133,7 +133,7 @@
     <value>Rad {0}: Objekt '{1}' ved stasjon {2} avg {3} refererer til en tid der ikke finnes i tog {4}.</value>
   </data>
   <data name="ObjectInTrainHasWrongTimingEndStartionIsBeforeStartStation" xml:space="preserve">
-    <value>Rad {0}: Objekt '{1}' i tog {2} har tider i feil rekkefølge. Ankomst {3} er innen avgang {4}.</value>
+    <value>Rad {0}: Objekt '{1}' i tog {2} har tider i feil rekkefølge. Avgang {3} er innen ankomst {4}.</value>
   </data>
   <data name="Warning" xml:space="preserve">
     <value>Advarsel</value>

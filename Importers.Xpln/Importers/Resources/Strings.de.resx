@@ -121,7 +121,7 @@
     <value>Reihe {0}: Nicht alle Felder vorhanden, erwartete Anzahl ist {1}, tatsächliche Anzahl ist {2}.</value>
   </data>
   <data name="ObjectInTrainHasWrongTimingEndStartionIsBeforeStartStation" xml:space="preserve">
-    <value>Reihe {0}: Objekt '{1}' in Zug {2} hat falsches Timing. Ankunft {3} ist vor Abflug {4}.</value>
+    <value>Reihe {0}: Objekt '{1}' in Zug {2} hat falsches Timing. Abfahrt {3} ist vor Ankunft {4}.</value>
   </data>
   <data name="ObjectAtStationWithDepartureDoNotRefersToAnExistingTimeInTrain" xml:space="preserve">
     <value>Reihe {0}: Objekt '{1}' am Bahnhof {2} mit Abfahrt {3} verweist auf eine nicht existierende Zeit in Zug {4}.</value>

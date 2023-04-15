@@ -133,7 +133,7 @@
     <value>Row {0}: Object '{1}' at station {2} with departure {3} refers to a non existing time in train {4}.</value>
   </data>
   <data name="ObjectInTrainHasWrongTimingEndStartionIsBeforeStartStation" xml:space="preserve">
-    <value>Row {0}: Object '{1}' in train {2} has wrong timing. Arrival {3} is before departure {4}.</value>
+    <value>Row {0}: Object '{1}' in train {2} has wrong timing. Departure {3} is before arrival {4}.</value>
   </data>
   <data name="Information" xml:space="preserve">
     <value>Information</value>
