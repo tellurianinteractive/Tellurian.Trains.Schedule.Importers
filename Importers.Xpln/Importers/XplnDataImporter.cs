@@ -60,7 +60,7 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
         var layout = GetLayout(name);
         if (layout.IsFailure)
         {
-            var result = new ImportResult<Schedule>() { Name=name, Messages = layout.Messages };
+            var result = new ImportResult<Schedule>() { Name = name, Messages = layout.Messages };
             LogMessages(result.Messages);
             return result;
         }
@@ -72,7 +72,7 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
             return result;
         }
         var schedule = GetSchedule(name, timetable.Item);
-        var ImportResult = schedule with { Name=name, Messages = layout.Messages.Concat(timetable.Messages).Concat(schedule.Messages).ToArray() };
+        var ImportResult = schedule with { Name = name, Messages = layout.Messages.Concat(timetable.Messages).Concat(schedule.Messages).ToArray() };
         LogMessages(ImportResult.Messages);
         return ImportResult;
     }
@@ -645,7 +645,7 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
             var messages = new List<Message>();
             var (start, end, startTime, endTime) = GetTrainPartFields(fields);
             if (startTime > endTime)
-                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ObjectInTrainHasWrongTimingEndStartionIsBeforeStartStation, rowNumber, fields[Object], currentTrain, fields[Arrival].AsTime(), fields[Departure].AsTime())));
+                messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ObjectInTrainHasWrongTimingEndStartionIsBeforeStartStation, rowNumber, ObjectDescription(fields), currentTrain, fields[Arrival].AsTime(), fields[Departure].AsTime())));
             var (fromCall, fromIndex) = currentTrain.FindBetweenArrivalAndDeparture(start, startTime, rowNumber);
             var (toCall, toIndex) = currentTrain.FindBetweenArrivalAndDeparture(end, endTime, rowNumber);
             if (messages.HasNoStoppingErrors())
@@ -653,18 +653,20 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
                 if (fromCall.IsNone)
                 {
                     messages.Add(Message.Error(fromCall.Message));
-                    messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ObjectAtStationWithDepartureDoNotRefersToAnExistingTimeInTrain, rowNumber, fields[Object], fields[From], fields[Departure].AsTime(), currentTrain)));
+                    messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ObjectAtStationWithDepartureDoNotRefersToAnExistingTimeInTrain, rowNumber, ObjectDescription(fields), fields[From], fields[Departure].AsTime(), currentTrain)));
                 }
                 if (toCall.IsNone)
                 {
                     messages.Add(Message.Error(toCall.Message));
-                    messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ObjectAtStationWithArrivalDoNotRefersToAnExistingTimeInTrain, rowNumber, fields[Object], fields[To], fields[Arrival].AsTime(), currentTrain)));
+                    messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ObjectAtStationWithArrivalDoNotRefersToAnExistingTimeInTrain, rowNumber, ObjectDescription(fields), fields[To], fields[Arrival].AsTime(), currentTrain)));
                 }
                 if (toCall.HasValue && fromCall.HasValue && fromIndex >= toIndex)
-                    messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ObjectInTrainHasWrongTimingEndStartionIsBeforeStartStation, rowNumber, $"{fields[Type]}{fields[Object]}", currentTrain, fields[Departure].AsTime(), fields[Arrival].AsTime())));
+                    messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ObjectInTrainHasWrongTimingEndStartionIsBeforeStartStation, rowNumber, ObjectDescription(fields), currentTrain, fields[Departure].AsTime(), fields[Arrival].AsTime())));
             }
             return new TrainPartKeys(fromCall, toCall, messages);
         }
+
+        static string ObjectDescription(string[] fields) => fields[Object].HasText() ? $"{fields[Type]}:{fields[Object]}".Trim() : fields[Type];
 
 
         static (string from, string to, Time departure, Time arrival) GetTrainPartFields(string[] fields) =>

@@ -52,7 +52,7 @@ public class XplnImporterTests
     [TestMethod]
     public void Imports()
     {
-        Import("Langhurst 2019", "de-DE", 15, 4, 22, 4, 25);
+        Import("LTK2020", "de-DE", 15, 4, 22, 4, 25, 18);
     }
 
     [DataTestMethod()]
@@ -60,6 +60,7 @@ public class XplnImporterTests
     [DataRow("Barmstedt2022", "de-DE", 61, 18, 36, 45, 2)]
     [DataRow("Givskud2021", "da-DK", 32, 3, 28, 3, 0, 7)]
     [DataRow("Kolding_Epoke_III_2022", "da-DK", 60, 16, 32, 38, 6)]
+    [DataRow("Langhurst 2019", "de-DE", 15, 4, 22, 4, 25)]
     [DataRow("Kolding2022", "da-DK", 73, 26, 55, 55, 0)]
     [DataRow("Kolding202009", "da-DK", 38, 14, 36, 28, 0)]
     [DataRow("KoldingNorge2019", "no-NO", 56, 16, 0, 56, 1)]

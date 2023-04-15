@@ -65,6 +65,9 @@
 		<None Update="Test data\Langhurst 2019.ods">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="Test data\LTK2020.ods">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="Test data\Montan2023H0e.ods">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
