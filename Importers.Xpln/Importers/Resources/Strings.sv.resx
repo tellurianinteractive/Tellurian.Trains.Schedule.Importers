@@ -195,4 +195,13 @@
   <data name="ReadingWorksheet" xml:space="preserve">
     <value>Läser arbetsblad {0}...</value>
   </data>
+  <data name="RowMessage" xml:space="preserve">
+    <value>Rad {0}: {1}.</value>
+  </data>
+  <data name="ThereIsNoStation" xml:space="preserve">
+    <value>Det finns ingen station '{0}'.</value>
+  </data>
+  <data name="TheTrackIsItNotInStation" xml:space="preserve">
+    <value>Spåret '{0}' finns inte på stationen '{1}'.</value>
+  </data>
 </root>

@@ -1,4 +1,5 @@
-﻿using TimetablePlanning.Importers.Model;
+﻿using System.Globalization;
+using TimetablePlanning.Importers.Model;
 
 namespace TimetablePlanning.Importers.Xpln.Extensions
 {
@@ -7,9 +8,11 @@ namespace TimetablePlanning.Importers.Xpln.Extensions
         public static Maybe<StationTrack> Track(this Layout me, string stationSignature, string trackNumber)
         {
             var station = me.Station(stationSignature);
-            if (station.IsNone) return Maybe<StationTrack>.None;
+            if (station.IsNone) 
+                return Maybe<StationTrack>.NoneWithReason(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ThereIsNoStation, stationSignature));
             var track = station.Value.Tracks.SingleOrDefault(t => t.Number.Equals(trackNumber, StringComparison.OrdinalIgnoreCase));
-            if (track is null) return Maybe<StationTrack>.None;
+            if (track is null) 
+                return Maybe<StationTrack>.NoneWithReason(string.Format(CultureInfo.CurrentCulture, Resources.Strings.TheTrackIsItNotInStation, trackNumber, stationSignature));
             return new Maybe<StationTrack>(track);
         }
     }

@@ -205,11 +205,38 @@ namespace TimetablePlanning.Importers.Xpln.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Row {0}: {1}..
+        /// </summary>
+        internal static string RowMessage {
+            get {
+                return ResourceManager.GetString("RowMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Row {0}: Station &apos;{1}&apos; not found in current layout..
         /// </summary>
         internal static string StationNotFoundInLayout {
             get {
                 return ResourceManager.GetString("StationNotFoundInLayout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is no station &apos;{0}&apos;..
+        /// </summary>
+        internal static string ThereIsNoStation {
+            get {
+                return ResourceManager.GetString("ThereIsNoStation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Track &apos;{0}&apos; is not in station &apos;{1}&apos;..
+        /// </summary>
+        internal static string TheTrackIsItNotInStation {
+            get {
+                return ResourceManager.GetString("TheTrackIsItNotInStation", resourceCulture);
             }
         }
         

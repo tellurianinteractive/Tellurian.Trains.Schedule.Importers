@@ -52,7 +52,7 @@ public class XplnImporterTests
     [TestMethod]
     public void Imports()
     {
-        Import("LTK2020", "de-DE", 15, 4, 22, 4, 25, 18);
+        Import("FREMODERN-2023-Final-1-1", "da-DK", 15, 4, 22, 4, 25, 14);
     }
 
     [DataTestMethod()]
@@ -72,6 +72,7 @@ public class XplnImporterTests
     [DataRow("Hellerup2015", "da-DK", 60, 24, 57, 20, 0)]
     [DataRow("DreamTrack2015", null, 62, 24, 0, 40, 0)]
     [DataRow("H0e-Schutterwald2013", "de-DE", 26, 6, 20, 25, 6)]
+    [DataRow("LTK2020", "de-DE", 15, 4, 22, 4, 25, 18)]
 
     public void Import(string scheduleName, string? culture, int expectedTrains, int expectedLocos, int expectedTrainsets, int expectedDuties, int expectedValidationWarnings = 0, int expectedStoppingErrors = 0)
     {

@@ -363,7 +363,7 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
                                     var track = layout.Track(fields[Station], fields[Track]);
                                     if (track.IsNone)
                                     {
-                                        messages.Add(Message.Error(track.Message));
+                                        messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.RowMessage,rowNumber,track.Message)));
                                     }
                                     else
                                     {

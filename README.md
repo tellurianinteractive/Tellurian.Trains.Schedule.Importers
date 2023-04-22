@@ -4,7 +4,7 @@
 The objetc model can then be mapped to storage in databases or files.**
 
 > NOTE: This software only reads data into an object model in menory and has no logic for storing data. 
-> That have to be implemented elsewhere. This separation of reading and writing is flexible in choosing storage format, 
+> That have to be implemented elsewhere. This separation of reading and writing is flexible in choosing storage format.
 
 ## Output
 This project produces four NuGet packages:
@@ -18,7 +18,7 @@ Validates and imports timetable data from the [timetable prototype app](https://
 It us currently only experimental and incomplete.
 
 ## XPLN Importer
-Validates and mports .ODS-files containing XPLN planning data.
+Validates and imports .ODS-files containing XPLN planning data.
 
 ### XPLN
 XPLN is the defacto tool withing the FREMO community to 
@@ -29,6 +29,7 @@ With this tool most aspect of model railway scheduling can be made.
 Unlike databases, spreadsheed files like XPLN-files cannot guarantee consistent data. 
 In XPLN, a user has the option to run macros to help achieve consistensy, 
 but any cell can be modified without automatic check of consistence.
+
 Because it lacks the data integrity of a real database, it requires users to
 follow a strict workflow to not end up with inconsistent data.
 
@@ -37,9 +38,9 @@ before it can be imported into a database.
 
 ### What data is read?
 The package reads and validates the following parts of an XPLN file:
-* **Station Track** Stations and tracks
-* **Routes** Stretches and lines
-* **Train** Trains with station times and notes, loco and trainset schedules, and jobs.
+* **Station Track**: Stations and tracks
+* **Routes**: Stretches and lines
+* **Train**: Trains with station times and notes, loco and trainset schedules, and jobs.
 
 The *wheel* and *group* tags are currenly not read.
 - *Wheels* denotes train length in axles. It will be added in a forthcoming release.
@@ -51,13 +52,15 @@ Validation is performed in two phases:
 * In the first phase, the referential integrity of the XPLN-document is checked to verify that it is consistent. 
 This means that all references between objects in the worksheets must be valid.
 Errors found in this stage must be fixed in the XPLN-document.
-* When the referntial integrity is ok, the second validation phase checks for possible scheduling conflicts. 
+* When the referential integrity is ok, the second validation phase checks for possible scheduling conflicts. 
 Warnings found in this stage can be fixed either in XPLN or later in the forthcoming online planning application.
 
 ### Multiple language support
 A lot of effort has been made to have descriptive validation messages.
 Errors found in the data integrity phase also displays the row number in the XPLN-file when the error is detected.
+
 Validation messages are currently in English, German, Danish, Norwegian and Swedish.
+Additional languages can be added on request.
 
 ### The story of reading XPLN-files
 XPLN is stored in ODS-files, an *Open Document* format. 
@@ -74,6 +77,7 @@ After some tweaking, I made i work. And it had much better performance than the 
 Not two planners use XPLN exacly the same way, validating one XPLN-file is'nt enough.
 The only way to test is to have a large number of XPLN-files to read an validate.
 Therefore, the tests of this software uses a set of XPLN files from different origins.
+
 All of the tested XPLN-files had some kind of data integrity issue that required correction of the XPLN-file 
 before it could be succesfully validated. 
 This clearly demonstrates the problems with using a spreadsheet for complex data storage.
