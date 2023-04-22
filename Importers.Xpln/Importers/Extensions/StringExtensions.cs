@@ -4,10 +4,14 @@ using TimetablePlanning.Importers.Model;
 
 namespace TimetablePlanning.Importers.Xpln.Extensions
 {
-    public static class StringExtensions
+    public static partial class StringExtensions
     {
-        public static string TrainNumber(this string me) => Regex.Match(me, @"\d+").Value.TrimStart('0');
+        [GeneratedRegex("\\d+")]
+        private static partial Regex TrainNumberRegex(); 
+        public static string TrainNumber(this string me) => TrainNumberRegex().Match(me).Value.TrimStart('0');
 
+        [GeneratedRegex("\\d+")]
+        private static partial Regex TrainCategoryRegex();
         public static string TrainCategory(this string me)
         {
             var start = me.IndexOf(".") + 1;
@@ -17,7 +21,7 @@ namespace TimetablePlanning.Importers.Xpln.Extensions
                 length = end - start;
             else
             {
-                var re = new Regex(@"\d+");
+                var re = TrainCategoryRegex();
                 Match m = re.Match(me[start..]);
                 if (m.Success) length = m.Index;
             }
@@ -25,14 +29,14 @@ namespace TimetablePlanning.Importers.Xpln.Extensions
         }
 
         public static Time AsTime(this string value) =>
-            TimeSpan.TryParse(value, out var timespan) ? Time.FromTimeSpan(timespan) :
-            DateTime.TryParse(value, out var dateTime) ? Time.FromTimeSpan(dateTime.TimeOfDay) :
+            TimeSpan.TryParse(value, CultureInfo.InvariantCulture, out var timespan) ? Time.FromTimeSpan(timespan) :
+            DateTime.TryParse(value, CultureInfo.InvariantCulture, out var dateTime) ? Time.FromTimeSpan(dateTime.TimeOfDay) :
             Time.FromDays(double.Parse(value.Replace(",", "."), NumberStyles.Float, CultureInfo.InvariantCulture));
 
         public static bool IsTime(this string? value) =>
             value.HasValue() &&
-                (TimeSpan.TryParse(value, out var _) ||
-                DateTime.TryParse(value, out var _) ||
+                (TimeSpan.TryParse(value, CultureInfo.InvariantCulture, out var _) ||
+                DateTime.TryParse(value, CultureInfo.InvariantCulture, out var _) ||
                 double.TryParse(value.Replace(",", "."), NumberStyles.Float, CultureInfo.InvariantCulture, out var t) && t >= 0.0 && t <= 1.0);
 
 
