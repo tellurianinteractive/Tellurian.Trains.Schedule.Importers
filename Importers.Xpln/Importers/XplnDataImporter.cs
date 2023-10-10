@@ -48,10 +48,10 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
         foreach (var message in messages)
         {
             if (message.Severity == Severity.None) return;
-            if (message.Severity == Severity.Error) Logger.LogError("", message.ToString());
-            else if (message.Severity == Severity.Warning) Logger.LogWarning("", message.ToString());
-            else if (message.Severity == Severity.Information) Logger.LogInformation("", message.ToString());
-            else if (message.Severity == Severity.System) Logger.LogCritical("", message.ToString());
+            if (message.Severity == Severity.Error) Logger.LogError("{ErrorMessage}", message.ToString());
+            else if (message.Severity == Severity.Warning) Logger.LogWarning("{WarningMessage}", message.ToString());
+            else if (message.Severity == Severity.Information) Logger.LogInformation("{InformationMessage}", message.ToString());
+            else if (message.Severity == Severity.System) Logger.LogCritical("{CriticalMessage}", message.ToString());
         }
     }
 
@@ -244,13 +244,13 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
                 if (end.IsNone)
                     itemMessages.Add(Message.Error(Resources.Strings.StationNotFoundInLayout, rowNumber, fields[EndStation]));
                 if (!fields[Tracks].IsNumber())
-                    itemMessages.Add(Message.Error(Resources.Strings.ColumnMustBeANumber, rowNumber, nameof(Tracks)));
+                    itemMessages.Add(Message.Error(Resources.Strings.ColumnMustBeANumber, rowNumber, nameof(Tracks), fields[Tracks]));
                 if (!fields[Speed].IsNumber())
-                    itemMessages.Add(Message.Error(Resources.Strings.ColumnMustBeANumber, rowNumber, nameof(Speed)));
+                    itemMessages.Add(Message.Error(Resources.Strings.ColumnMustBeANumber, rowNumber, nameof(Speed), fields[Speed]));
                 if (!fields[Time].IsNumber())
-                    itemMessages.Add(Message.Error(Resources.Strings.ColumnMustBeANumber, rowNumber, nameof(Time)));
+                    itemMessages.Add(Message.Error(Resources.Strings.ColumnMustBeANumber, rowNumber, nameof(Time), fields[Time]));
                 if (!fields[EndPosition].IsNumber())
-                    itemMessages.Add(Message.Error(Resources.Strings.ColumnMustBeANumber, rowNumber, nameof(EndPosition)));
+                    itemMessages.Add(Message.Error(Resources.Strings.ColumnMustBeANumber, rowNumber, nameof(EndPosition), fields[EndPosition]));
                 if (itemMessages.HasNoStoppingErrors())
                 {
                     TimetableStretch? timetableStretch = null;

@@ -172,13 +172,13 @@
     <value>Rad {0}: SubType {1} støttes ikke. Ta kontakt med utvikleren hvis du mangler en type.</value>
   </data>
   <data name="ColumnMustBeANumber" xml:space="preserve">
-    <value>Rad {0}: Kolonne {1} må inneholde et tall, gjeldende verdi er {2}.</value>
+    <value>Rad {0}: Kolonne {1} må inneholde et tall, gjeldende verdi er '{2}'.</value>
   </data>
   <data name="ColumnIsNotSpecified" xml:space="preserve">
     <value>Rad {0}: Kolonne {1} er ikke spesifisert.</value>
   </data>
   <data name="ColumnMustBeATime" xml:space="preserve">
-    <value>Rad {0}: Kolonne {1} må være et tidspunkt, gjeldende verdi er {2}.</value>
+    <value>Rad {0}: Kolonne {1} må være et tidspunkt, gjeldende verdi er '{2}'.</value>
   </data>
   <data name="TrainHasNoCalls" xml:space="preserve">
     <value>Rad {0}: Tog {1} har ingen tider på stasjoner.</value>

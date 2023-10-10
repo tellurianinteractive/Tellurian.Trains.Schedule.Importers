@@ -172,13 +172,13 @@
     <value>Row {0}: SubType {1} is not supported. Please, contact developer if you are missing a type.</value>
   </data>
   <data name="ColumnMustBeANumber" xml:space="preserve">
-    <value>Row {0}: Column {1} must contain a number, current value is {2}.</value>
+    <value>Row {0}: Column {1} must contain a number, current value is '{2}'.</value>
   </data>
   <data name="ColumnIsNotSpecified" xml:space="preserve">
     <value>Row {0}: Column {1} is not specified.</value>
   </data>
   <data name="ColumnMustBeATime" xml:space="preserve">
-    <value>Row {0}: Column {1} must be a time, current value is {2}.</value>
+    <value>Row {0}: Column {1} must be a time, current value is '{2}'.</value>
   </data>
   <data name="TrainHasNoCalls" xml:space="preserve">
     <value>Row {0}: Train {1} has no times at stations.</value>

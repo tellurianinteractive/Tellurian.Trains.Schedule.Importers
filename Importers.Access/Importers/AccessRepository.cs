@@ -28,10 +28,10 @@ public class AccessRepository : IImportService
         foreach (var message in messages)
         {
             if (message.Severity == Severity.None) return;
-            if (message.Severity == Severity.Error) Logger.LogError("", message.ToString());
-            else if (message.Severity == Severity.Warning) Logger.LogWarning("", message.ToString());
-            else if (message.Severity == Severity.Information) Logger.LogInformation("", message.ToString());
-            else if (message.Severity == Severity.System) Logger.LogCritical("", message.ToString());
+            if (message.Severity == Severity.Error) Logger.LogError("Error {ErrorMessage}", message.ToString());
+            else if (message.Severity == Severity.Warning) Logger.LogWarning("Warning {WarningMessage}", message.ToString());
+            else if (message.Severity == Severity.Information) Logger.LogInformation("Information {InformationMessage}", message.ToString());
+            else if (message.Severity == Severity.System) Logger.LogCritical("Critical {CriticalMessage}", message.ToString());
         }
     }
 

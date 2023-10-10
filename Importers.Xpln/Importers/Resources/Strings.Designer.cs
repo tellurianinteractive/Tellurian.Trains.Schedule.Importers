@@ -88,7 +88,7 @@ namespace TimetablePlanning.Importers.Xpln.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Row {0}: Column {1} must contain a number, current value is {2}..
+        ///   Looks up a localized string similar to Row {0}: Column {1} must contain a number, current value is &apos;{2}&apos;..
         /// </summary>
         internal static string ColumnMustBeANumber {
             get {
@@ -97,7 +97,7 @@ namespace TimetablePlanning.Importers.Xpln.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Row {0}: Column {1} must be a time, current value is {2}..
+        ///   Looks up a localized string similar to Row {0}: Column {1} must be a time, current value is &apos;{2}&apos;..
         /// </summary>
         internal static string ColumnMustBeATime {
             get {

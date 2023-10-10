@@ -18,9 +18,9 @@
 	<ItemGroup>
 		<PackageReference Include="ExcelDataReader" Version="3.6.0" />
 		<PackageReference Include="ExcelDataReader.DataSet" Version="3.6.0" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-		<PackageReference Include="MSTest.TestAdapter" Version="3.0.2" />
-		<PackageReference Include="MSTest.TestFramework" Version="3.0.2" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
+		<PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
+		<PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
 		<PackageReference Include="System.Data.Odbc" Version="7.0.0" />
 		<PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
 	</ItemGroup>
@@ -69,6 +69,9 @@
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="Test data\LTK2020.ods">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Test data\Magdeburg_v_DB33_DSB32_WTB11.ods">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="Test data\Montan2023H0e.ods">

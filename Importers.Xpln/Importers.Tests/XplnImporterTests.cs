@@ -52,7 +52,7 @@ public class XplnImporterTests
     [TestMethod]
     public void Imports()
     {
-        Import("FREMODERN-2023-Final-1-1", "da-DK", 142, 58, 77, 119);
+        Import("Magdeburg_v_DB33_DSB32_WTB11", "de-DE", 142, 58, 77, 119, 0, 9);
     }
 
     [DataTestMethod()]
