@@ -7,7 +7,7 @@ namespace TimetablePlanning.Importers.Xpln.Extensions
     public static partial class StringExtensions
     {
         [GeneratedRegex("\\d+")]
-        private static partial Regex TrainNumberRegex(); 
+        private static partial Regex TrainNumberRegex();
         public static string TrainNumber(this string me) => TrainNumberRegex().Match(me).Value.TrimStart('0');
 
         [GeneratedRegex("\\d+")]
@@ -61,6 +61,11 @@ namespace TimetablePlanning.Importers.Xpln.Extensions
 
         public static bool IsNumber(this string? value) =>
             int.TryParse(value, out var _) || double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var _);
+        public static bool IsNumberOrEmpty(this string? value) =>
+            value.IsEmpty() || value.IsNumber();
+
+        public static bool IsZeroOrEmpty(this string? value) =>
+            value is null || value == "0";
 
         public static int AsInteger(this string? value) =>
             int.TryParse(value, out var number) ? number : 0;

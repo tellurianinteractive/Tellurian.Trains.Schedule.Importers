@@ -52,7 +52,7 @@ public class XplnImporterTests
     [TestMethod]
     public void Imports()
     {
-        Import("Magdeburg_v_DB33_DSB32_WTB11", "de-DE", 142, 58, 77, 119, 0, 9);
+        Import("Magdeburg_v_DB33_DSB32_WTB11", "de-DE", 142, 58, 77, 119, 0, 40);
     }
 
     [DataTestMethod()]
@@ -73,7 +73,7 @@ public class XplnImporterTests
     [DataRow("DreamTrack2015", null, 62, 24, 0, 40, 0)]
     [DataRow("H0e-Schutterwald2013", "de-DE", 26, 6, 20, 25, 6)]
     [DataRow("LTK2020", "de-DE", 15, 4, 22, 4, 25, 18)]
-    [DataRow("FREMODERN-2023-Final-1-1", "da-DK", 142, 58, 77, 119)]
+    [DataRow("FREMODERN-2023-Final-1-1", "da-DK", 142, 58, 77, 119, 0, 0)]
 
     public void Import(string scheduleName, string? culture, int expectedTrains, int expectedLocos, int expectedTrainsets, int expectedDuties, int expectedValidationWarnings = 0, int expectedStoppingErrors = 0)
     {
@@ -83,7 +83,7 @@ public class XplnImporterTests
         CultureInfo.CurrentUICulture = CultureInfo.CurrentCulture;
         var files = TestDocumentsDirectory!.EnumerateFiles(scheduleName + FileSuffix);
         if (files.Any())
-        { 
+        {
             var file = files.First();
             var dataSetProvider = new OdsDataSetProvider(NullLogger<OdsDataSetProvider>.Instance);
             using var importer = new XplnDataImporter(file, dataSetProvider, NullLogger<XplnDataImporter>.Instance);

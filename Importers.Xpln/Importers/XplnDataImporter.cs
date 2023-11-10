@@ -222,20 +222,21 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
         const int Tracks = 7;
         const int Time = 8;
 
-        var stations = DataSet?.Tables[WorkSheetName];
-        if (stations is null)
+        var routes = DataSet?.Tables[WorkSheetName];
+        if (routes is null)
             return ImportResult<Layout>.Failure(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.WorksheetNotFound, WorkSheetName)));
         else
             messages.Add(Message.Information(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ReadingWorksheet, WorkSheetName)));
 
         var rowNumber = 1;
-        foreach (DataRow station in stations.Rows)
+        foreach (DataRow route in routes.Rows)
         {
             if (rowNumber > 1)
             {
                 var itemMessages = new List<Message>();
-                var fields = station.GetRowFields();
+                var fields = route.GetRowFields();
                 if (fields.IsEmptyFields()) { if (layout.Stations.Any()) break; else continue; }
+                if (fields[StartStation].IsZeroOrEmpty() && fields[EndStation].IsZeroOrEmpty()) continue;
 
                 var start = layout.Station(fields[StartStation]);
                 var end = layout.Station(fields[EndStation]);

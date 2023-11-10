@@ -12,7 +12,7 @@ public sealed class XlsxDataSetProvider : IDataSetProvider
     {
         Logger = logger;
     }
-    public string[] GetRowData(DataRow row) => row.GetRowFields();
+    public static string[] GetRowData(DataRow row) => row.GetRowFields();
     public DataSet? ImportSchedule(Stream stream, DataSetConfiguration configuration)
     {
         var worksheets = configuration.Worksheets;
