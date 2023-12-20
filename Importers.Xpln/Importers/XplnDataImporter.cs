@@ -67,12 +67,12 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
         var timetable = GetTimetable(name, layout.Item);
         if (timetable.IsFailure)
         {
-            var result = new ImportResult<Schedule>() { Name = name, Messages = layout.Messages.Concat(timetable.Messages).ToArray() };
+            var result = new ImportResult<Schedule>() { Name = name, Messages = [.. layout.Messages, .. timetable.Messages] };
             LogMessages(result.Messages);
             return result;
         }
         var schedule = GetSchedule(name, timetable.Item);
-        var ImportResult = schedule with { Name = name, Messages = layout.Messages.Concat(timetable.Messages).Concat(schedule.Messages).ToArray() };
+        var ImportResult = schedule with { Name = name, Messages = [.. layout.Messages, .. timetable.Messages, .. schedule.Messages] };
         LogMessages(ImportResult.Messages);
         return ImportResult;
     }
@@ -115,7 +115,7 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
                 if (IsRepeatedHeader(station)) continue;
                 var itemMessages = new List<Message>();
                 var fields = station.GetRowFields();
-                if (fields.IsEmptyFields()) { if (layout.Stations.Any()) break; else continue; }
+                if (fields.IsEmptyFields()) { if (layout.Stations.Count > 0) break; else continue; }
                 itemMessages.AddRange(ValidateRow(fields, rowNumber));
                 if (itemMessages.HasNoStoppingErrors())
                 {
@@ -171,7 +171,7 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
             new(fields[TrackName])
             {
                 IsMain = fields[SubType].Is("Main"),
-                IsScheduled = fields[SubType].Is("Main", "Depot"),
+                IsScheduled = fields[SubType].IsAny("Main", "Depot"),
                 Usage = fields[Remark],
                 DisplayOrder = fields[1].NumberOrZero(),
             };
@@ -181,9 +181,9 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
             var messages = new List<Message>();
             if (fields.Length < MinLength)
                 messages.Add(Message.Error(Resources.Strings.NotAllFieldsArePresent, rowNumber, MinLength, fields.Length));
-            if (!fields[Type].ValueOrEmpty().Is("Station", "Track"))
+            if (!fields[Type].ValueOrEmpty().IsAny("Station", "Track"))
                 messages.Add(Message.Error(Resources.Strings.UnsupportedType, rowNumber, fields[Type]));
-            return messages.ToArray();
+            return [.. messages];
         }
 
         static Message[] ValidateStation(string[] fields, int rowNumber)
@@ -191,9 +191,9 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
             var messages = new List<Message>();
             if (fields[Signature].IsEmpty())
                 messages.Add(Message.Error(Resources.Strings.ColumnMustHaveAValue, rowNumber, "Name"));
-            if (!fields[SubType].ValueOrEmpty().Is("Station", "Block"))
+            if (!fields[SubType].ValueOrEmpty().IsAny("Station", "Block"))
                 messages.Add(Message.Error(Resources.Strings.UnsupportedSubType, rowNumber, fields[SubType]));
-            return messages.ToArray();
+            return [.. messages];
         }
 
         static Message[] ValidateTrack(string[] fields, int rowNumber)
@@ -203,9 +203,9 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
                 messages.Add(Message.Error(Resources.Strings.ColumnMustHaveAValue, rowNumber, "TrackName"));
             if (!fields[Lenght].IsEmpty() && !fields[Lenght].IsNumber())
                 messages.Add(Message.Error(Resources.Strings.ColumnMustBeANumber, rowNumber, "Length", fields[Lenght]));
-            if (!fields[SubType].ValueOrEmpty().Is("Main", "Side", "Siding", "Depot", "Goods"))
+            if (!fields[SubType].ValueOrEmpty().IsAny("Main", "Side", "Siding", "Depot", "Goods"))
                 messages.Add(Message.Error(Resources.Strings.UnsupportedSubType, rowNumber, fields[SubType]));
-            return messages.ToArray();
+            return [.. messages];
         }
     }
 
@@ -235,7 +235,7 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
             {
                 var itemMessages = new List<Message>();
                 var fields = route.GetRowFields();
-                if (fields.IsEmptyFields()) { if (layout.Stations.Any()) break; else continue; }
+                if (fields.IsEmptyFields()) { if (layout.Stations.Count > 0) break; else continue; }
                 if (fields[StartStation].IsZeroOrEmpty() && fields[EndStation].IsZeroOrEmpty()) continue;
 
                 var start = layout.Station(fields[StartStation]);
@@ -279,8 +279,8 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
                     }
                     if (itemMessages.HasNoStoppingErrors())
                     {
-                        var distance = Math.Abs(fields[EndPosition].AsDouble() - fields[StartPosition].AsDouble());
-                        var stretch = new TrackStretch(start.Value, end.Value, distance, fields[Tracks].AsInteger(), fields[Speed].AsInteger(), fields[Time].AsInteger());
+                        var distance = Math.Abs(fields[EndPosition].ToDouble() - fields[StartPosition].ToDouble());
+                        var stretch = new TrackStretch(start.Value, end.Value, distance, fields[Tracks].ToInteger(), fields[Speed].ToInteger(), fields[Time].ToInteger());
                         stretch = timetableStretch!.AddLast(stretch);
                         layout.Add(stretch);
                     }
@@ -329,7 +329,7 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
             {
                 var itemMessages = new List<Message>();
                 var fields = row.GetRowFields();
-                if (fields.IsEmptyFields()) { if (result.Trains.Any()) break; else continue; }
+                if (fields.IsEmptyFields()) { if (result.Trains.Count > 0) break; else continue; }
                 itemMessages.AddRange(ValidateRow(fields, rowNumber));
                 if (itemMessages.HasNoStoppingErrors())
                 {
@@ -461,9 +461,9 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
                 messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustBeATime, rowNumber, "Arrival", fields[Arrival])));
             if (!fields[Departure].IsTime())
                 messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustBeATime, rowNumber, "Departure", fields[Departure])));
-            else if (!fields[Type].Is("Traindef", "Timetable", "Locomotive", "Trainset", "Job", "Wheel", "Group"))
+            else if (!fields[Type].IsAny("Traindef", "Timetable", "Locomotive", "Trainset", "Job", "Wheel", "Group"))
                 messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.UnsupportedType, rowNumber, fields[Type])));
-            return messages.ToArray();
+            return [.. messages];
         }
 
         static Message[] ValidateTrain(string[] fields, int rowNumber)
@@ -471,7 +471,7 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
             var messages = new List<Message>();
             if (fields[Object].IsEmpty())
                 messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustHaveAValue, rowNumber, "Object")));
-            return messages.ToArray();
+            return [.. messages];
         }
 
         static Message[] ValidateCall(string[] fields, int rowNumber)
@@ -479,7 +479,7 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
             var messages = new List<Message>();
             if (fields[Track].IsEmpty())
                 messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustHaveAValue, rowNumber, "Track")));
-            return messages.ToArray();
+            return [.. messages];
         }
     }
 
@@ -520,7 +520,7 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
             {
                 var itemMessages = new List<Message>();
                 var fields = row.GetRowFields();
-                if (fields.IsEmptyFields()) { if (locoSchedules.Any() || trainsetSchedules.Any() || driverDuties.Any()) break; else continue; }
+                if (fields.IsEmptyFields()) { if (locoSchedules.Count > 0 || trainsetSchedules.Count >0 || driverDuties.Count > 0) break; else continue; }
                 itemMessages.AddRange(ValidateRow(fields, rowNumber));
                 if (itemMessages.HasNoStoppingErrors())
                 {
@@ -682,9 +682,9 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
                 messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustBeATime, rowNumber, "Arrival", fields[Arrival])));
             if (!fields[Departure].IsTime())
                 messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustBeATime, rowNumber, "Departure", fields[Arrival])));
-            else if (!fields[Type].Is("Traindef", "Timetable", "Locomotive", "Trainset", "Job", "Wheel", "Group"))
+            else if (!fields[Type].IsAny("Traindef", "Timetable", "Locomotive", "Trainset", "Job", "Wheel", "Group"))
                 messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.UnsupportedType, rowNumber, fields[Type])));
-            return messages.ToArray();
+            return [.. messages];
         }
 
         static Message[] ValidateLoco(string[] fields, int rowNumber)
@@ -692,21 +692,21 @@ public sealed partial class XplnDataImporter : IImportService, IDisposable
             var messages = new List<Message>();
             if (fields[Object].IsEmpty())
                 messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustHaveAValue, rowNumber, "Object")));
-            return messages.ToArray();
+            return [.. messages];
         }
         static Message[] ValidateJob(string[] fields, int rowNumber)
         {
             var messages = new List<Message>();
             if (fields[Object].OrElse(fields[TrainNumber]).IsEmpty())
                 messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustHaveAValue, rowNumber, "Object|TrainNumber")));
-            return messages.ToArray();
+            return [.. messages];
         }
         static Message[] ValidateTrainset(string[] fields, int rowNumber)
         {
             var messages = new List<Message>();
             if (fields[Object].IsEmpty() && fields[TrainName].IsEmpty())
                 messages.Add(Message.Error(string.Format(CultureInfo.CurrentCulture, Resources.Strings.ColumnMustHaveAValue, rowNumber, "Object|TrainName")));
-            return messages.ToArray();
+            return [.. messages];
         }
     }
 

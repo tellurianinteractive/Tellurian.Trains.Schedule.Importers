@@ -1,7 +1,7 @@
 ﻿namespace TimetablePlanning.Importers.Xpln.DataSetProviders;
 public record DataSetConfiguration(string Name)
 {
-    private readonly List<WorksheetConfiguration> _WorksheetConfigurations = new();
+    private readonly List<WorksheetConfiguration> _WorksheetConfigurations = [];
 
     public string[] Worksheets =>
         _WorksheetConfigurations.Select(x => x.WorksheetName).ToArray();

@@ -1,7 +1,6 @@
 ﻿using System.Globalization;
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-#pragma warning disable CA1308 // Normalize strings to uppercase
 #pragma warning disable CS0649
 
 namespace TimetablePlanning.Importers.Model;
@@ -37,7 +36,7 @@ public sealed record Station : IEquatable<Station>
 public static class StationExtensions
 {
     public static IEnumerable<Train> Trains(this Station? me) =>
-        me is null ? Array.Empty<Train>() : me.Calls().Select(c => c.Train).Distinct();
+        me is null ? Array.Empty<Train>() : me.Calls().Where(c => c.Train.HasValue()).Select(c => c.Train!).Distinct();
 
     public static IEnumerable<StationCall> Calls(this Station me) =>
        me is null ? Array.Empty<StationCall>() : me.Tracks.SelectMany(t => t.Calls);
@@ -51,7 +50,7 @@ public static class StationExtensions
     public static StationTrack Add(this Station station, StationTrack stationTrack)
     {
         stationTrack = stationTrack.ValueOrException(nameof(stationTrack));
-        if (stationTrack == null) throw new ArgumentNullException(nameof(stationTrack));
+        ArgumentNullException.ThrowIfNull(stationTrack);
         stationTrack.Station = station.ValueOrException(nameof(station));
         station.Tracks.Add(stationTrack);
         return stationTrack;

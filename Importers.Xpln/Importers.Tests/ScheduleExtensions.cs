@@ -48,7 +48,7 @@ internal static class ScheduleExtensions
 
     }
 
-    private static IEnumerable<Station> GetStations(int layoutId, string connectionString)
+    private static List<Station> GetStations(int layoutId, string connectionString)
     {
         using var connection = new OdbcConnection(connectionString);
         var command = new OdbcCommand($"SELECT * FROM XplnGetStations WHERE LayoutId = {layoutId};")

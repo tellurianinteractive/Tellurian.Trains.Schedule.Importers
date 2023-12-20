@@ -2,7 +2,7 @@
 
 namespace TimetablePlanning.Importers.Model;
 
-public struct Time : IComparable<Time?>, IEquatable<Time>
+public readonly struct Time : IComparable<Time?>, IEquatable<Time>
 {
     public static Time FromString(string time)
     {

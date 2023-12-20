@@ -57,7 +57,7 @@ public static class StationTrackExtensions
 {
     internal static StationCall Add(this StationTrack me, StationCall call)
     {
-        if (call == null) throw new ArgumentNullException(nameof(call));
+        ArgumentNullException.ThrowIfNull(call);
         if (!me.Calls.Contains(call))
         {
             me.Calls.Add(call);

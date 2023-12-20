@@ -38,7 +38,7 @@ internal static class Stations
 
     public static bool AddOrUpdateStation(int layoutId, Station station, IDbConnection connection)
     {
-        var stationId = (int?)IDbConnectionExtensions.ExecuteScalar(connection, CreateGetIdCommand(station.Name));
+        var stationId = (int?)OdbcConnectionExtensions.ExecuteScalar(connection, CreateGetIdCommand(station.Name));
         if (!stationId.HasValue)
         {
             AccessRepository.ExecuteNonQuery(connection, CreateInsertCommand(station));

@@ -17,10 +17,10 @@ public sealed record TrainPart : IEquatable<TrainPart>
     {
         From = from.ValueOrException(nameof(from));
         To = to.ValueOrException(nameof(to));
-        From.Train.NotEqualsThrow(To.Train, $"Departure {from} is not same train as arrival {to}.");
+        From.Train.IfNotEqualsThrow(To.Train, $"Departure {from} is not same train as arrival {to}.");
     }
 
-    public Train Train => From.Train;
+    public Train Train => From.Train!;
     public Time? Departure => From.Departure;
     public Time? Arrival => To.Arrival;
 
@@ -35,8 +35,8 @@ public static class TrainPartExtensions
     {
         var t = train.ValueOrException(nameof(train));
         var c = t.Calls.Count;
-        (fromCallIndex < 0 || fromCallIndex > c - 2).TrueThrows(nameof(fromCallIndex));
-        (toCallIndex <= fromCallIndex || toCallIndex > c - 1).TrueThrows(nameof(toCallIndex));
+        (fromCallIndex < 0 || fromCallIndex > c - 2).IfTrueThrows(nameof(fromCallIndex));
+        (toCallIndex <= fromCallIndex || toCallIndex > c - 1).IfTrueThrows(nameof(toCallIndex));
         var calls = t.Calls.ToArray();
         return new TrainPart(calls[fromCallIndex], calls[toCallIndex]);
     }

@@ -8,14 +8,9 @@ using TimetablePlanning.Importers.Xpln.Extensions;
 
 namespace TimetablePlanning.Importers.Xpln.DataSetProviders;
 
-public sealed class OdsDataSetProvider : IDataSetProvider
+public sealed class OdsDataSetProvider(ILogger<OdsDataSetProvider> logger) : IDataSetProvider
 {
-    private readonly ILogger Logger;
-
-    public OdsDataSetProvider(ILogger<OdsDataSetProvider> logger)
-    {
-        Logger = logger;
-    }
+    private readonly ILogger Logger = logger;
 
     public DataSet? ImportSchedule(Stream inputStream, DataSetConfiguration dataSetConfiguration)
     {

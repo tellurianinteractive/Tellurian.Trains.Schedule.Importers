@@ -64,7 +64,7 @@ public static class TimetableStretchExtensions
     public static TrackStretch AddLast(this TimetableStretch timetableStretch, TrackStretch trackStretch)
     {
         var me = timetableStretch.ValueOrException(nameof(timetableStretch));
-        if (trackStretch == null) throw new ArgumentNullException(nameof(trackStretch));
+        ArgumentNullException.ThrowIfNull(trackStretch);
         {
             me.Stretches.Add(trackStretch);
             return trackStretch;

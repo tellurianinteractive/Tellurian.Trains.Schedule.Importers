@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Runtime.Serialization;
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-#pragma warning disable CS0649, IDE0044, RCS1169
 
 namespace TimetablePlanning.Importers.Model;
 
@@ -16,13 +15,6 @@ public class Train : IEquatable<Train>
         Calls = new List<StationCall>();
         ExtenalId = string.Empty;
     }
-
-    [DataMember(IsRequired = false, Order = 1, Name = "Id")]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    private int _Id;
-
-    public int Id => _Id;
-
     public Train(string number, string externalId) : this(number)
     {
         ExtenalId = !string.IsNullOrWhiteSpace(externalId) ? externalId : throw new ArgumentNullException(nameof(externalId));

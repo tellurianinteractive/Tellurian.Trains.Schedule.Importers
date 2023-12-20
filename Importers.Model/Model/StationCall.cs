@@ -1,13 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-
 namespace TimetablePlanning.Importers.Model;
 
 public sealed record StationCall : IEquatable<StationCall>, IComparable<StationCall>
 {
-    internal Train Train { get; set; }
+    internal Train? Train { get; set; }
 
     public int Id { get; init; }
     public Station Station => Track.Station;

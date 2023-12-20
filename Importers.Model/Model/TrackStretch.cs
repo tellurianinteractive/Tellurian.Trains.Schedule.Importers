@@ -13,7 +13,7 @@ public class TrackStretch : IEquatable<TrackStretch>
     {
         Start = start.ValueOrException(nameof(start));
         End = end.ValueOrException(nameof(end));
-        (!Start.Layout.Equals(end.Layout)).TrueThrows(nameof(end), $"Both {start} and {end} must be in the same layout.");
+        (!Start.Layout.Equals(end.Layout)).IfTrueThrows(nameof(end), $"Both {start} and {end} must be in the same layout.");
         Distance = distance;
         TracksCount = tracksCount;
         Speed = speed;
@@ -52,9 +52,6 @@ public class TrackStretch : IEquatable<TrackStretch>
     public override bool Equals(object? obj) => obj is TrackStretch other && Equals(other);
     public override int GetHashCode() => Start.GetHashCode() ^ End.GetHashCode();
     public override string ToString() => string.Format(CultureInfo.CurrentCulture, Resources.Strings.StretchToString, Start, End);
-
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-    private TrackStretch() { } // For deserialization.
 }
 
 public static class TrackStretchExtensions

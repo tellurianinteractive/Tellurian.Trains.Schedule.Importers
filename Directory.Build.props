@@ -4,8 +4,8 @@
 		<Company>Tellurian Interactive AB</Company>
 		<Copyright>© Stefan Fjällemark 2023</Copyright>
 		<Authors>Stefan Fjällemark</Authors>
-		<Version>1.0.10</Version>
-		<AssemblyVersion>1.0.0.0</AssemblyVersion>
+		<Version>1.1.0</Version>
+		<AssemblyVersion>1.1.0.0</AssemblyVersion>
 		<NeutralLanguage>en-GB</NeutralLanguage>
 		<Platforms>AnyCPU</Platforms>
 		<ImplicitUsings>true</ImplicitUsings>

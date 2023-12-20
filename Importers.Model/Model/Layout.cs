@@ -78,7 +78,7 @@ public static class LayoutExtensions
     {
         layout = layout.ValueOrException(nameof(layout));
         timetableStretch = timetableStretch.ValueOrException(nameof(timetableStretch));
-        if (timetableStretch == null) throw new ArgumentNullException(nameof(timetableStretch));
+        ArgumentNullException.ThrowIfNull(timetableStretch);
         if (!layout.TimetableStretches.Contains(timetableStretch))
         {
             layout.TimetableStretches.Add(timetableStretch);
@@ -113,7 +113,7 @@ public static class LayoutTracksExtensions
             string.Format(CultureInfo.CurrentCulture, Resources.Strings.ThereIsNoStretchBetweenStation1AndStation2, fromStationNameOrSignature, toStationNameOrSignature));
     }
 
-    private static IEnumerable<TrackStretch> Between(this Layout me, string fromStationNameOrSignature, string toStationNameOrSignature)
+    private static IEnumerable<TrackStretch> Between(this Layout me, string fromStationNameOrSignature, string? toStationNameOrSignature = null)
         => me.TrackStretches.Where(ts =>
             (ts.Start.Name.EqualsIgnoreCase(fromStationNameOrSignature)
             || ts.Start.Signature.EqualsIgnoreCase(fromStationNameOrSignature))

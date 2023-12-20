@@ -5,13 +5,10 @@ using TimetablePlanning.Importers.Xpln.Extensions;
 
 namespace TimetablePlanning.Importers.Xpln.DataSetProviders;
 
-public sealed class XlsxDataSetProvider : IDataSetProvider
+public sealed class XlsxDataSetProvider(ILogger logger) : IDataSetProvider
 {
-    private readonly ILogger Logger;
-    public XlsxDataSetProvider(ILogger logger)
-    {
-        Logger = logger;
-    }
+    private readonly ILogger Logger = logger;
+
     public static string[] GetRowData(DataRow row) => row.GetRowFields();
     public DataSet? ImportSchedule(Stream stream, DataSetConfiguration configuration)
     {
@@ -20,7 +17,7 @@ public sealed class XlsxDataSetProvider : IDataSetProvider
         {
             using var reader = ExcelReaderFactory.CreateReader(stream);
             var dataSet = reader.AsDataSet();
-            if (worksheets.Any())
+            if (worksheets.Length > 0)
             {
                 foreach (DataTable table in dataSet.Tables)
                 {

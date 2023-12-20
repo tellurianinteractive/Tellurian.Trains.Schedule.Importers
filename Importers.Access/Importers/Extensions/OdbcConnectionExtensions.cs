@@ -5,7 +5,7 @@ using System.Globalization;
 
 namespace TimetablePlanning.Importers.Access.Tests.Extensions;
 
-internal static class IDbConnectionExtensions
+internal static class OdbcConnectionExtensions
 {
     public static IDbConnection CreateMicrosoftAccessDbConnection(string databaseFilePath)
     {
@@ -35,7 +35,6 @@ internal static class IDbConnectionExtensions
         }
     }
 
-
     public static object? ExecuteScalar(this IDbConnection connection, string sql)
     {
         using var command = CreateCommand(sql);
@@ -56,7 +55,7 @@ internal static class IDbConnectionExtensions
         }
     }
 
-    private static IDbCommand CreateCommand(string sql)
+    private static OdbcCommand CreateCommand(string sql)
     {
         return new OdbcCommand
         {

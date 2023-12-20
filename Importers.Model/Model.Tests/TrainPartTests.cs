@@ -1,13 +1,13 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
 namespace TimetablePlanning.Importers.Model.Tests;
 
 [TestClass]
 public class TrainPartTests
 {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     public Train Train { get; set; }
 
     [TestInitialize]

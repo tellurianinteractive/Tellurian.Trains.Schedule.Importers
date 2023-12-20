@@ -1,27 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
-		<AssemblyName>TimetablePlanning.Importers.Interfaces.Tests</AssemblyName>
-		<RootNamespace>TimetablePlanning.Importers.Interfaces.Tests</RootNamespace>
-		<IsPackable>false</IsPackable>
-		<IsTestProject>true</IsTestProject>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
-		<PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
-		<PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
-		<PackageReference Include="coverlet.collector" Version="6.0.0">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\..\Importers.Model\Model\Importers.Model.csproj" />
-		<ProjectReference Include="..\..\Importers.Xpln\Importers\Importers.Xpln.csproj" />
-		<ProjectReference Include="..\Importers.Interfaces\Importers.Interfaces.csproj" />
-	</ItemGroup>
-
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>TimetablePlanning.Importers.Interfaces.Tests</AssemblyName>
+    <RootNamespace>TimetablePlanning.Importers.Interfaces.Tests</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
+    <PackageReference Include="coverlet.collector" Version="6.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Importers.Model\Model\Importers.Model.csproj" />
+    <ProjectReference Include="..\..\Importers.Xpln\Importers\Importers.Xpln.csproj" />
+    <ProjectReference Include="..\Importers.Interfaces\Importers.Interfaces.csproj" />
+  </ItemGroup>
 </Project>

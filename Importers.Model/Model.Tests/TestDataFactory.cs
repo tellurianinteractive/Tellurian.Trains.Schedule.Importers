@@ -1,12 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-
-namespace TimetablePlanning.Importers.Model.Tests;
+﻿namespace TimetablePlanning.Importers.Model.Tests;
 
 internal static class TestDataFactory
 {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     public static StationTrack CreateStationTrack()
     {
         var result = StationTrack.Example;

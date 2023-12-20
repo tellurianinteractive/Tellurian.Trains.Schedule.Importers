@@ -6,7 +6,7 @@ internal static class DataSetExtensions
     public static string[] GetRowFields(this DataRow row)
     {
         var items = row.ItemArray;
-        if (items is null) return Array.Empty<string>();
+        if (items is null) return [];
         return items.Select(i => i is null ? string.Empty : i.ToString()).ToArray()!;
     }
 

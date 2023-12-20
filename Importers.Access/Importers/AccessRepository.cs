@@ -11,17 +11,10 @@ using TimetablePlanning.Importers.Model;
 
 namespace TimetablePlanning.Importers.Access;
 
-public class AccessRepository : IImportService
+public class AccessRepository(FileInfo databaseFile, ILogger<AccessRepository> logger) : IImportService
 {
-    private readonly FileInfo DatabaseFile;
-    private readonly ILogger Logger;
-
-    public AccessRepository(FileInfo databaseFile, ILogger<AccessRepository> logger)
-    {
-        DatabaseFile = databaseFile;
-        Logger = logger;
-    }
-
+    private readonly FileInfo DatabaseFile = databaseFile;
+    private readonly ILogger Logger = logger;
 
     private void LogMessages(IEnumerable<Message> messages)
     {
@@ -85,7 +78,7 @@ public class AccessRepository : IImportService
         var timetable = new Timetable(name, layout);
         GetTrains(timetable);
 
-        return new ImportResult<Timetable>() { Items = new[] { timetable }, Messages =Array.Empty<Message>() };
+        return new ImportResult<Timetable>() { Items = new[] { timetable }, Messages = [] };
     }
 
     private void ReadLayoutStations(Layout layout)
@@ -239,5 +232,5 @@ public class AccessRepository : IImportService
         return result;
     }
 
-    internal IDbConnection CreateConnection() => IDbConnectionExtensions.CreateMicrosoftAccessDbConnection(DatabaseFile.FullName);
+    internal IDbConnection CreateConnection() => OdbcConnectionExtensions.CreateMicrosoftAccessDbConnection(DatabaseFile.FullName);
 }

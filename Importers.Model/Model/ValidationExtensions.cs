@@ -51,7 +51,7 @@ public static class ValidationExtensions
     #region StationTrack
     public static IEnumerable<Message> GetValidationErrors(this StationTrack me, IEnumerable<LocoSchedule> locos) =>
         me is null ? Array.Empty<Message>() :
-        me.GetConflicts(locos).Select(c => Message.Information(Resources.Strings.CallAtStationHasConflictsWithOtherCall, c.one.Train, c.one, c.another.Train, c.another));
+        me.GetConflicts(locos).Select(c => Message.Information(Resources.Strings.CallAtStationHasConflictsWithOtherCall, c.one.Train!, c.one, c.another.Train!, c.another));
 
     private static IEnumerable<(StationCall one, StationCall another)> GetConflicts(this StationTrack me, IEnumerable<LocoSchedule> locos)
     {
@@ -60,10 +60,10 @@ public static class ValidationExtensions
         return result.Distinct();
     }
 
-    private static IEnumerable<(StationCall one, StationCall other)> GetConflicts(this StationCall me, IEnumerable<StationCall> remaining, IEnumerable<LocoSchedule> locos)
+    private static List<(StationCall one, StationCall other)> GetConflicts(this StationCall me, IEnumerable<StationCall> remaining, IEnumerable<LocoSchedule> locos)
     {
         var result = new List<(StationCall, StationCall)>();
-        var conflictingWithMe = remaining.Where(r => r.Track.Equals(me.Track) && !r.Train.Equals(me.Train) && r.Arrival > me.Departure && r.Departure < me.Arrival && !locos.HasSameLoco(r, me)).ToList();
+        var conflictingWithMe = remaining.Where(r => r.Track.Equals(me.Track) && !r.Train!.Equals(me.Train) && r.Arrival > me.Departure && r.Departure < me.Arrival && !locos.HasSameLoco(r, me)).ToList();
         result.AddRange(conflictingWithMe.Select(c => (me, c)));
         if (remaining.Count() > 1) result.AddRange(GetConflicts(remaining.First(), remaining.Skip(1), locos));
         return result;
@@ -90,7 +90,6 @@ public static class ValidationExtensions
     #region StationCall
     public static IEnumerable<Message> GetValidationErrors(this StationCall stationCall)
     {
-        if (stationCall?.Train.Number == "9991") Debugger.Break();
         stationCall = stationCall.ValueOrException(nameof(stationCall));
         var result = new List<Message>();
         if (stationCall.Arrival > stationCall.Departure)
@@ -108,8 +107,8 @@ public static class ValidationExtensions
         {
             var first = passings[i];
             var second = passings[i + me.TracksCount];
-            if (first.To.Train.Number != second.To.Train.Number && first.To.Arrival > second.From.Departure)
-                result.Add(Message.Information(Resources.Strings.TrainBetweenPassingIsConflictingWithTrainBetweenPassing, first.From.Train.Number, first, second.To.Train.Number, second));
+            if (first.To.Train!.Number != second.To.Train!.Number && first.To.Arrival > second.From.Departure)
+                result.Add(Message.Information(Resources.Strings.TrainBetweenPassingIsConflictingWithTrainBetweenPassing, first.From.Train!.Number, first, second.To.Train!.Number, second));
         }
         return result;
     }
@@ -137,7 +136,7 @@ public static class ValidationExtensions
         return result;
     }
 
-    private static IEnumerable<Message> CheckTrainSpeed(this Train me, double minTrainSpeedMetersPerClockMinute, double maxTrainSpeedMetersPerClockMinute)
+    private static List<Message> CheckTrainSpeed(this Train me, double minTrainSpeedMetersPerClockMinute, double maxTrainSpeedMetersPerClockMinute)
     {
         var result = new List<Message>();
         var calls = me.Calls.ToArray();
@@ -154,9 +153,9 @@ public static class ValidationExtensions
                 var speed = time.TotalMinutes == 0 ? 0 : length / time.TotalMinutes;
                 if (speed == 0) continue;
                 if (speed < minTrainSpeedMetersPerClockMinute)
-                    result.Add(Message.Information(Resources.Strings.TrainSpeedBetweenCallsIsTooSlow, c1.Train, c1.Station, c1.Departure.HHMM(), c2.Station, c2.Arrival.HHMM(), length));
+                    result.Add(Message.Information(Resources.Strings.TrainSpeedBetweenCallsIsTooSlow, c1.Train!, c1.Station, c1.Departure.HHMM(), c2.Station, c2.Arrival.HHMM(), length));
                 if (speed > maxTrainSpeedMetersPerClockMinute)
-                    result.Add(Message.Information(Resources.Strings.TrainSpeedBetweenCallsIsTooFast, c1.Train, c1.Station, c1.Departure.HHMM(), c2.Station, c2.Arrival.HHMM(), length));
+                    result.Add(Message.Information(Resources.Strings.TrainSpeedBetweenCallsIsTooFast, c1.Train!, c1.Station, c1.Departure.HHMM(), c2.Station, c2.Arrival.HHMM(), length));
             }
         }
         return result;
@@ -172,13 +171,13 @@ public static class ValidationExtensions
         else
         {
             var conflicts = me.GetConflicts();
-            if (conflicts.Any())
+            if (conflicts.Count > 0)
                 result.AddRange(conflicts.Select(c => Message.Information(Resources.Strings.TrainHasConflictingCalls, me, c.one, c.another)));
         }
         return result;
     }
 
-    private static IEnumerable<(StationCall one, StationCall another)> GetConflicts(this Train me)
+    private static List<(StationCall one, StationCall another)> GetConflicts(this Train me)
     {
         var result = new List<(StationCall, StationCall)>();
         if (me.Calls.Count == 2 && me.Calls.First().Station.Equals(me.Calls.Last().Station))
@@ -214,7 +213,7 @@ public static class ValidationExtensions
 
     #region VehicleSchedule
 
-    private static IEnumerable<Message> ValidateOverlappingParts(this VehicleSchedule me)
+    private static List<Message> ValidateOverlappingParts(this VehicleSchedule me)
     {
         var messages = new List<Message>();
         var parts = me.Parts.ToArray();

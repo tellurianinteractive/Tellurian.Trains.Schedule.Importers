@@ -15,13 +15,13 @@ public readonly struct ImportResult<T>
     public static ImportResult<T> Success(IEnumerable<T> items, Message message) => new(items, new[] { message }, true);
     public static ImportResult<T> Failure(Message message) => new(Array.Empty<T>(), new[] { message }, false);
     public static ImportResult<T> Failure(IEnumerable<Message> messages) => new(Array.Empty<T>(), messages, false);
-    public static ImportResult<T> SuccessIfNoErrorMessagesOtherwiseFailure(T? item, IEnumerable<Message> messages) => new(item is null ? Array.Empty<T>() : new[] { item }, messages, !messages.Any(m => m.Severity > Severity.Warning));
+    public static ImportResult<T> SuccessIfNoErrorMessagesOtherwiseFailure(T? item, IEnumerable<Message> messages) => new(item is null ? [] : new[] { item }, messages, !messages.Any(m => m.Severity > Severity.Warning));
 
     [JsonConstructor]
     public ImportResult()
     {
         Items = Enumerable.Empty<T>();
-        Messages = Array.Empty<Message>();
+        Messages = [];
     }
     public ImportResult(IEnumerable<T> items, IEnumerable<Message> messages, bool isSuccess)
     {
@@ -40,9 +40,10 @@ public readonly struct ImportResult<T>
 
 public static class ImportResultExtensions
 {
+    static readonly JsonSerializerOptions options = new() { WriteIndented = true, ReferenceHandler = ReferenceHandler.Preserve };
     public static string Json<T>(this ImportResult<T> me)
     {
-        return JsonSerializer.Serialize(me, new JsonSerializerOptions { WriteIndented = true, ReferenceHandler = ReferenceHandler.Preserve });
+        return JsonSerializer.Serialize(me, options);
     }
 
     public static void Write<T>(this ImportResult<T> me)

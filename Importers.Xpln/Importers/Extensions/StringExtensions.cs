@@ -14,9 +14,9 @@ namespace TimetablePlanning.Importers.Xpln.Extensions
         private static partial Regex TrainCategoryRegex();
         public static string TrainCategory(this string me)
         {
-            var start = me.IndexOf(".") + 1;
+            var start = me.IndexOf('.') + 1;
             var length = 0;
-            var end = me.IndexOf(" ");
+            var end = me.IndexOf(' ');
             if (end >= 0)
                 length = end - start;
             else
@@ -48,7 +48,7 @@ namespace TimetablePlanning.Importers.Xpln.Extensions
             me is not null &&
             value is not null &&
             me.Equals(value, StringComparison.OrdinalIgnoreCase);
-        public static bool Is(this string? me, params string[] values) =>
+        public static bool IsAny(this string? me, params string[] values) =>
              me is not null &&
              values is not null &&
              values.Any(o => o.Equals(me, StringComparison.OrdinalIgnoreCase));
@@ -61,16 +61,17 @@ namespace TimetablePlanning.Importers.Xpln.Extensions
 
         public static bool IsNumber(this string? value) =>
             int.TryParse(value, out var _) || double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var _);
+        
         public static bool IsNumberOrEmpty(this string? value) =>
             value.IsEmpty() || value.IsNumber();
 
         public static bool IsZeroOrEmpty(this string? value) =>
             value is null || value == "0";
 
-        public static int AsInteger(this string? value) =>
+        public static int ToInteger(this string? value) =>
             int.TryParse(value, out var number) ? number : 0;
 
-        public static double AsDouble(this string? value) =>
+        public static double ToDouble(this string? value) =>
             double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var number) ? number : 0.0;
 
         public static bool IsEmpty(this string? value) =>

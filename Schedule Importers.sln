@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32120.378
@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Importers.Access", "Importe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Importers.Access.Tests", "Importers.Access\Importers.Tests\Importers.Access.Tests.csproj", "{0D52D792-3D47-4F29-829F-390D83B87F02}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Importers.Interfaces.Tests", "Importers.Interfaces\Importers.Interfaces.Tests\Importers.Interfaces.Tests.csproj", "{92225513-5AEC-47D9-8C35-39D367BF2F89}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Importers.Interfaces.Tests", "Importers.Interfaces\Importers.Interfaces.Tests\Importers.Interfaces.Tests.csproj", "{92225513-5AEC-47D9-8C35-39D367BF2F89}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
